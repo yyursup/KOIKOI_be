@@ -12,52 +12,50 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class Account {
-@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-     @NotBlank(message = "This username can not be empty!")
-     @Column(unique = true)
-     String Username;
+    @NotBlank(message = "This username can not be empty!")
+    @Column(unique = true)
+    String Username;
 
-     @NotBlank(message =  "This full name can not be empty!")
-     String Fullname;
-
-
-     @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})",message = "Phone invalid!")
-     @Column(unique = true)
-     String Phone_number;
-
-     @Email(message = "Email not valid!")
-     @Column(unique = true)
-     String email;
-
-     Date create_date;
-
-     String status;
-
-     @NotBlank(message = "Password can not blank!")
-     @Size(min = 6, message = "Password must be at least 6 characters")
-     String password;
-
-     int role;
-
-     String city;
-
-     String state;
-
-     String country;
-
-     String description;
+    @NotBlank(message = "This full name can not be empty!")
+    String Fullname;
 
 
+    @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})", message = "Phone invalid!")
+    @Column(unique = true)
+    String Phone_number;
 
+    @Email(message = "Email not valid!")
+    @Column(unique = true)
+    String email;
+
+    Date create_date;
+
+    String status;
+
+    @NotBlank(message = "Password can not blank!")
+    @Size(min = 6, message = "Password must be at least 6 characters")
+    String password;
+
+    int role;
+
+    String city;
+
+    String state;
+
+    String country;
+
+    String description;
 
 
 }

@@ -4,24 +4,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
 
-@Setter
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-public class OrderDetails {
+public class Koi_Type {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    String customerId;
+    @NotBlank(message = "This name can not be empty!")
+    String name;
 
-    String unitPrice;
-
-    int quantity;
+    @NotBlank(message = "This description can not be empty!")
+    String description;
 }
