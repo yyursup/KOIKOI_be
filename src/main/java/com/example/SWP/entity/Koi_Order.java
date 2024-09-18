@@ -6,14 +6,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.util.Date;
+
 @Entity
 public class Koi_Order {
     @Id
-            @GeneratedValue(strategy = GenerationType.IDENTITY)
-            long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    long id;
 
 
-            String customerId;
+    String customerId;
 
     double total_Amount;
 
