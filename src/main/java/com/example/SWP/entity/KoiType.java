@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-public class Koi_Type {
+public class KoiType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;

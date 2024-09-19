@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import java.util.Date;
 
 @Entity
-public class Koi_Order {
+public class KoiOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;

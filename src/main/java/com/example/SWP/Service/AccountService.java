@@ -28,7 +28,37 @@ public class AccountService {
     }
 
     public List<Account> getAllAccount(){
-       List<Account> accountList = accountRepository.findAll();
+       List<Account> accountList = accountRepository.findAccountsByIsDeletedFalse();
        return accountList;
+    }
+
+    public Account accountUpdate(Account account, long AccountId){
+        Account oldAccount = accountRepository.findAccountById(AccountId);
+
+        if(oldAccount == null){
+            throw new RuntimeException("Can not find this id" + AccountId );
+        }
+        oldAccount.setUsername(account.getUsername());
+        oldAccount.setFullname(account.getFullname());
+        oldAccount.setPhone_number(account.getPhone_number());
+        oldAccount.setEmail(account.getEmail());
+        oldAccount.setPassword(account.getPassword());
+        oldAccount.setCity(account.getCity());
+        oldAccount.setState(account.getState());
+        oldAccount.setCountry(account.getCountry());
+        oldAccount.setSpecific_Address(account.getSpecific_Address());
+        oldAccount.setDeleted(account.isDeleted());
+        return accountRepository.save(oldAccount);
+    }
+
+    public Account deleteAccount(Long accountId){
+        Account oldAccount = accountRepository.findAccountById(accountId);
+
+        if(oldAccount == null){
+            throw new RuntimeException("Can not found this id" + accountId);
+
+        }
+        oldAccount.setDeleted(true);
+        return accountRepository.save(oldAccount);
     }
 }

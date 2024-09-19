@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -22,6 +23,8 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+
+    boolean isDeleted = false;
 
     @NotBlank(message = "This username can not be empty!")
     @Column(unique = true)
@@ -55,7 +58,7 @@ public class Account {
 
     String country;
 
-    String description;
+    String specific_Address;
 
 
 }
