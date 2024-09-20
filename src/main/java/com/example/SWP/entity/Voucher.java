@@ -27,7 +27,7 @@ public class Voucher {
 
     @NotBlank(message = "code can not blank")
     @Column(unique = true)
-    String code;
+    UUID code;
 
     String description;
 

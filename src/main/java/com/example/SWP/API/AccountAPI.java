@@ -2,6 +2,7 @@ package com.example.SWP.API;
 
 import com.example.SWP.Service.AccountService;
 import com.example.SWP.entity.Account;
+import com.example.SWP.model.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,22 @@ public class AccountAPI {
     @Autowired
     AccountService accountService;
 
+
+
     @PostMapping("register")
-    public ResponseEntity register(@Valid @RequestBody Account account){
-         Account newAccount = accountService.register(account);
-         return ResponseEntity.ok(newAccount);
+    public ResponseEntity register(@Valid @RequestBody RegisterRequest registerRequest){
+        RegisterResponse newAccount = accountService.register(registerRequest);
+            return ResponseEntity.ok(newAccount);
+
+
+    }
+
+    @PostMapping("login")
+    public ResponseEntity login(@Valid @RequestBody LoginRequest loginRequest){
+        LoginResponse newAccount = accountService.login(loginRequest);
+        return ResponseEntity.ok(newAccount);
+
+
     }
 
     @GetMapping("get")

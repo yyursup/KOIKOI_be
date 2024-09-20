@@ -8,5 +8,8 @@ import java.util.List;
 public interface AccountRepository extends JpaRepository<Account,Long> {
     Account findAccountById(long id);
 
-    List <Account> findAccountsByIsDeletedFalse();
+    List<Account> findAccountsByIsDeletedFalse();
+
+
+    Account findAccountByUsername(String username);
 }
