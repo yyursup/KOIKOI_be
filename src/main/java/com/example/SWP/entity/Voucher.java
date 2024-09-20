@@ -20,8 +20,8 @@ import java.util.UUID;
 @Entity
 public class Voucher {
     @Id
-   @GeneratedValue(strategy = GenerationType.IDENTITY)
-            long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    long id;
 
     boolean isDeleted = false;
 
