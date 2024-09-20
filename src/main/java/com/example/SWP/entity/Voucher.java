@@ -33,7 +33,6 @@ public class Voucher {
 
     @NotNull(message = "Discount amount can not null")
 
-
     double discount_amount;
 
     Date start_date;
