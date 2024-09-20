@@ -58,6 +58,20 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 			<version>3.3.3</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+			<version>3.3.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.modelmapper/modelmapper -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+
+
 
 
 		<dependency>
@@ -70,16 +84,9 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>2.0.0</version>
-		</dependency>
-
 	</dependencies>
 
 	<build>
-		<finalName>be</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

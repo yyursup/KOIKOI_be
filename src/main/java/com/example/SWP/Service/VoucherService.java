@@ -35,7 +35,7 @@ public class VoucherService {
         if(oldVoucher == null){
             throw new RuntimeException("can not found this id of voucher");
         }
-        oldVoucher.setCode(voucher.getCode());
+
         oldVoucher.setDescription(voucher.getDescription());
         oldVoucher.setDiscount_amount(voucher.getDiscount_amount());
         oldVoucher.setStart_date(voucher.getStart_date());
