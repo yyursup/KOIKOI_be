@@ -10,7 +10,7 @@ public class ConsigmentAgreement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    long ConsigmentID;
+    long Consigmentid;
 
     String Product_Name;
 

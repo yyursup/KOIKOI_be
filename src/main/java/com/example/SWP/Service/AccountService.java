@@ -2,10 +2,7 @@ package com.example.SWP.Service;
 
 import com.example.SWP.Repository.AccountRepository;
 import com.example.SWP.entity.Account;
-import com.example.SWP.model.LoginRequest;
-import com.example.SWP.model.LoginResponse;
-import com.example.SWP.model.RegisterResponse;
-import com.example.SWP.model.RegisterRequest;
+import com.example.SWP.model.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService implements UserDetailsService {
@@ -69,31 +67,53 @@ public class AccountService implements UserDetailsService {
 
 
 
-    public List<Account> getAllAccount() {
+//    public List<Account> getAllAccount() {
+//        List<Account> accountList = accountRepository.findAccountsByIsDeletedFalse();
+//        return accountList;
+//    }
+    public List<ViewProfileResponse> getAllAccount() {
         List<Account> accountList = accountRepository.findAccountsByIsDeletedFalse();
-        return accountList;
+
+
+        return accountList.stream().map(account ->
+                modelMapper.map(account, ViewProfileResponse.class)).collect(Collectors.toList());
     }
 
-    public Account accountUpdate(Account account, long AccountId) {
+    public ViewProfileResponse viewProfile(long Accountid){
+
+        try{
+            Account account = accountRepository.findAccountById(Accountid);
+            return modelMapper.map(account,ViewProfileResponse.class);
+        }catch (Exception e){
+            throw new RuntimeException("Can not found this account");
+        }
+
+    }
+
+
+
+    public UpdateAndDeleteProfileResponse accountUpdate(UpdateProfileRequest updateProfileRequest, long AccountId) {
         Account oldAccount = accountRepository.findAccountById(AccountId);
 
         if (oldAccount == null) {
             throw new RuntimeException("Can not find this id" + AccountId);
         }
-        oldAccount.setUsername(account.getUsername());
-        oldAccount.setFullname(account.getFullname());
-        oldAccount.setPhone_number(account.getPhone_number());
-        oldAccount.setEmail(account.getEmail());
-        oldAccount.setPassword(account.getPassword());
-        oldAccount.setCity(account.getCity());
-        oldAccount.setState(account.getState());
-        oldAccount.setCountry(account.getCountry());
-        oldAccount.setSpecific_Address(account.getSpecific_Address());
-        oldAccount.setDeleted(account.isDeleted());
-        return accountRepository.save(oldAccount);
+        oldAccount.setUsername(updateProfileRequest.getUsername());
+        oldAccount.setFullname(updateProfileRequest.getFullname());
+        oldAccount.setPhone_number(updateProfileRequest.getPhone_number());
+        oldAccount.setEmail(updateProfileRequest.getEmail());
+//        oldAccount.setPassword(updateProfileRequest.getPassword());
+        oldAccount.setCity(updateProfileRequest.getCity());
+        oldAccount.setState(updateProfileRequest.getState());
+        oldAccount.setCountry(updateProfileRequest.getCountry());
+        oldAccount.setSpecific_Address(updateProfileRequest.getSpecific_Address());
+//        oldAccount.setDeleted(account.isDeleted());
+
+       accountRepository.save(oldAccount);
+       return modelMapper.map(oldAccount, UpdateAndDeleteProfileResponse.class);
     }
 
-    public Account deleteAccount(Long accountId) {
+    public UpdateAndDeleteProfileResponse deleteAccount(Long accountId) {
         Account oldAccount = accountRepository.findAccountById(accountId);
 
         if (oldAccount == null) {
@@ -101,7 +121,8 @@ public class AccountService implements UserDetailsService {
 
         }
         oldAccount.setDeleted(true);
-        return accountRepository.save(oldAccount);
+        accountRepository.save(oldAccount);
+        return modelMapper.map(oldAccount,UpdateAndDeleteProfileResponse.class);
     }
 
     @Override

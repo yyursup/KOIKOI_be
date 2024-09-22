@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 @RestController
 @RequestMapping("/api/account")
@@ -33,17 +34,31 @@ public class AccountAPI {
 
     }
 
+//    @GetMapping("get")
+//    public ResponseEntity getAllList(){
+//       List<Account> accountList = accountService.getAllAccount();
+//         return ResponseEntity.ok(accountList);
+//    }
+
     @GetMapping("get")
-    public ResponseEntity getAllList(){
-       List<Account> accountList = accountService.getAllAccount();
-         return ResponseEntity.ok(accountList);
+    public ResponseEntity getAllList1(){
+        List<ViewProfileResponse> accountList = accountService.getAllAccount();
+        return ResponseEntity.ok(accountList);
     }
 
+    @GetMapping("viewProfile/{id}")
+    public ResponseEntity ViewProfile(long id){
+        ViewProfileResponse view = accountService.viewProfile(id);
+        return ResponseEntity.ok(view);
+    }
+
+
+
     @PutMapping("update/{id}")
-    public ResponseEntity updateStudent(@Valid @RequestBody Account account, @PathVariable long id){
+    public ResponseEntity updateStudent(@Valid @RequestBody UpdateProfileRequest updateProfileRequest, @PathVariable long id){
         try{
-            Account newAccount = accountService.accountUpdate(account,id);
-            return ResponseEntity.ok(newAccount);
+         UpdateAndDeleteProfileResponse newAccount = accountService.accountUpdate(updateProfileRequest,id);
+         return ResponseEntity.ok(newAccount);
         }catch (Exception e){
             throw new RuntimeException("Id of account " + id + " not found ");
         }
@@ -53,10 +68,10 @@ public class AccountAPI {
     @DeleteMapping("delete/{id}")
     public ResponseEntity deleteAccount(@PathVariable long id){
         try{
-            Account oldAccount = accountService.deleteAccount(id);
+            UpdateAndDeleteProfileResponse oldAccount = accountService.deleteAccount(id);
             return ResponseEntity.ok(oldAccount);
         }catch (Exception e){
-            throw new RuntimeException("Id of account : " + id + "not found");
+            throw new RuntimeException("Id of account : " + id + " not found");
         }
     }
 }
