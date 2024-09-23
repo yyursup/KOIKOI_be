@@ -126,7 +126,6 @@ public class AccountService implements UserDetailsService {
         oldAccount.setFullname(updateProfileRequest.getFullname());
         oldAccount.setPhone_number(updateProfileRequest.getPhone_number());
         oldAccount.setEmail(updateProfileRequest.getEmail());
-//        oldAccount.setPassword(updateProfileRequest.getPassword());
         oldAccount.setCity(updateProfileRequest.getCity());
         oldAccount.setState(updateProfileRequest.getState());
         oldAccount.setCountry(updateProfileRequest.getCountry());
@@ -193,7 +192,7 @@ public class AccountService implements UserDetailsService {
         }
 
 
-        ForgotPassword fp = forgotPasswordRepository.findByOtpAndAccount(otp, account);
+        ForgotPassword fp = forgotPasswordRepository.findByOtpAndAccount(otp,account);
 
 
         if (fp == null) {
