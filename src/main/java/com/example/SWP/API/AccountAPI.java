@@ -1,7 +1,9 @@
 package com.example.SWP.API;
 
+import com.example.SWP.Repository.ForgotPasswordRepository;
 import com.example.SWP.Service.AccountService;
 import com.example.SWP.entity.Account;
+import com.example.SWP.entity.ForgotPassword;
 import com.example.SWP.model.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,11 @@ public class AccountAPI {
 
 
 
+    @Autowired
+    ForgotPasswordRepository forgotPasswordRepository;
+
+
+
     @PostMapping("register")
     public ResponseEntity register(@Valid @RequestBody RegisterRequest registerRequest){
         RegisterResponse newAccount = accountService.register(registerRequest);
@@ -28,10 +35,8 @@ public class AccountAPI {
 
     @PostMapping("login")
     public ResponseEntity login(@Valid @RequestBody LoginRequest loginRequest){
-        LoginResponse newAccount = accountService.login(loginRequest);
+        LoginResponse newAccount = accountService.loginWithUserName(loginRequest);
         return ResponseEntity.ok(newAccount);
-
-
     }
 
 //    @GetMapping("get")
@@ -74,4 +79,25 @@ public class AccountAPI {
             throw new RuntimeException("Id of account : " + id + " not found");
         }
     }
+
+    @PostMapping("/verifyEmail/{email}")
+    public  ResponseEntity verifyEmail (@PathVariable String email){
+        ForgotPassword forgotPassword = accountService.verifyEmail(email);
+        return ResponseEntity.ok(forgotPassword);
+    }
+
+    @PostMapping("/verifyOtp/{otp}/{email}")
+    public  ResponseEntity verifyOTP (@PathVariable Integer otp, @PathVariable String email){
+        ForgotPassword forgotPassword = accountService.verifyOTP(otp,email);
+        return ResponseEntity.ok("OTP verified");
+    }
+
+    @PostMapping("/changePassword/{email}")
+    public ResponseEntity changePasswordHandler(@RequestBody ChangePassword changePassword, @PathVariable String email){
+        ChangePassword changePassword1 = accountService.changePassword(changePassword,email);
+        return ResponseEntity.ok(changePassword1);
+    }
+
+
+
 }

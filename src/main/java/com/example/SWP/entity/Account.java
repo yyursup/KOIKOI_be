@@ -62,6 +62,9 @@ public class Account implements UserDetails {
 
     String specific_Address;
 
+    @OneToOne
+    ForgotPassword forgotPassword;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
