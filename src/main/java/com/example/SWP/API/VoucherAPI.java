@@ -30,7 +30,7 @@ public class VoucherAPI {
         return ResponseEntity.ok(voucherList);
     }
 
-    @PutMapping("update/{id}")
+    @PutMapping("{id}")
     public ResponseEntity updateVoucher(@Valid @RequestBody Voucher voucher, @PathVariable long id){
         try{
             Voucher newVoucher = voucherService.updateVoucher(voucher,id);
@@ -41,7 +41,7 @@ public class VoucherAPI {
 
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity deleteVoucher(@PathVariable long id){
         try{
             Voucher oldVoucher = voucherService.deleteVoucher(id);
