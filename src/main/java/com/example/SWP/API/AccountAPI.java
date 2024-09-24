@@ -51,23 +51,20 @@ public class AccountAPI {
         return ResponseEntity.ok(accountList);
     }
 
-    @GetMapping("viewProfile/{id}")
-    public ResponseEntity ViewProfile(long id){
+    @GetMapping("viewAccount/{id}")
+    public ResponseEntity ViewAccount(long id){
         ViewProfileResponse view = accountService.viewProfile(id);
         return ResponseEntity.ok(view);
     }
 
-
-
-    @PutMapping("update/{id}")
-    public ResponseEntity updateStudent(@Valid @RequestBody UpdateProfileRequest updateProfileRequest, @PathVariable long id){
+    @PutMapping("updateAccount/{id}")
+    public ResponseEntity updateAccount(@Valid @RequestBody UpdateProfileRequest updateProfileRequest, @PathVariable long id){
         try{
          UpdateAndDeleteProfileResponse newAccount = accountService.accountUpdate(updateProfileRequest,id);
          return ResponseEntity.ok(newAccount);
         }catch (Exception e){
-            throw new RuntimeException("Id of account " + id + " not found ");
+            throw new RuntimeException("Id of profile " + id + " not found ");
         }
-
     }
 
     @DeleteMapping("delete/{id}")
