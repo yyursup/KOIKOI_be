@@ -60,7 +60,7 @@ public class AccountAPI {
 
 
     @PutMapping("{id}")
-    public ResponseEntity updateStudent(@Valid @RequestBody UpdateProfileRequest updateProfileRequest, @PathVariable long id){
+    public ResponseEntity updateAccount(@Valid @RequestBody UpdateProfileRequest updateProfileRequest, @PathVariable long id){
         try{
          UpdateAndDeleteProfileResponse newAccount = accountService.accountUpdate(updateProfileRequest,id);
          return ResponseEntity.ok(newAccount);
