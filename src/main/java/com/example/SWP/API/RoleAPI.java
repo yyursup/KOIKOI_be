@@ -21,7 +21,7 @@ public class RoleAPI {
         return ResponseEntity.ok(newRole);
     }
 
-    @PutMapping("update/{id}")
+    @PutMapping("{id}")
     public ResponseEntity updateRole(@RequestBody Role role,@PathVariable long id){
         try{
             Role oldRole = roleService.updateRole(role,id);
