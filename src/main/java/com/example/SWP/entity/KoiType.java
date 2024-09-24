@@ -5,7 +5,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
+@Data
 @Entity
 public class KoiType {
     @Id
@@ -17,4 +19,6 @@ public class KoiType {
 
     @NotBlank(message = "This description can not be empty!")
     String description;
+
+    boolean isDeleted = false;
 }

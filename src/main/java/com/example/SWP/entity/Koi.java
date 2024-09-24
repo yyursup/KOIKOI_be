@@ -6,8 +6,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Data;
 
 @Entity
+@Data
 public class Koi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,11 +20,10 @@ public class Koi {
 
     String description;
 
-    @NotBlank(message = "This price can not be empty!")
-    @Pattern(regexp = "\\d{1,3}(.\\d{3})*(\\.\\d+)?\\s?VND", message = "Price Invalid")
+    boolean isDeleted = false;
+
     double price;
 
-    @NotBlank(message = "This age can not be empty!")
     int age;
 
     @NotBlank(message = "This size can not be empty!")
