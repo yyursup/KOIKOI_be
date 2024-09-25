@@ -46,6 +46,9 @@ public class AccountService implements UserDetailsService {
     @Autowired
     ForgotPasswordRepository forgotPasswordRepository;
 
+    @Autowired
+    TokenService tokenService;
+
     public RegisterResponse register(RegisterRequest registerRequest) {
         Account account = modelMapper.map(registerRequest, Account.class);
         try {
@@ -72,7 +75,9 @@ public class AccountService implements UserDetailsService {
                    loginRequest.getPassword()
            ));
     Account account = (Account) authentication.getPrincipal();
-    return modelMapper.map(account,LoginResponse.class);
+    LoginResponse loginResponse = modelMapper.map(account, LoginResponse.class);
+    loginResponse.setToken(tokenService.generateToken(account));
+    return loginResponse;
        }catch (Exception e){
            throw new RuntimeException("User or password not found");
        }

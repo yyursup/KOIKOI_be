@@ -2,6 +2,7 @@ package com.example.SWP.API;
 
 import com.example.SWP.Service.KoiService;
 import com.example.SWP.entity.Koi;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/Koi")
 @CrossOrigin("*")
+@SecurityRequirement(name = "api")
 public class KoiAPI {
 
     @Autowired

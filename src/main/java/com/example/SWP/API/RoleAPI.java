@@ -2,6 +2,7 @@ package com.example.SWP.API;
 
 import com.example.SWP.Service.RoleService;
 import com.example.SWP.entity.Role;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/role")
 @CrossOrigin("*")
-
+@SecurityRequirement(name = "api")
 public class RoleAPI {
     @Autowired
     RoleService roleService;

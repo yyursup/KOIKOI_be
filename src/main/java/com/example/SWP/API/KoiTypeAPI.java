@@ -3,6 +3,7 @@ package com.example.SWP.API;
 
 import com.example.SWP.Service.KoiTypeService;
 import com.example.SWP.entity.KoiType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/KoiType")
 @CrossOrigin("*")
+@SecurityRequirement(name = "api")
 public class KoiTypeAPI {
     @Autowired
     KoiTypeService koiTypeService;
