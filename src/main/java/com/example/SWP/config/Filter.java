@@ -86,8 +86,8 @@ public class Filter extends OncePerRequestFilter {
     }
 
     public String getToken(HttpServletRequest request) {
-        String authorization = request.getHeader("Authorization");
-        if (authorization == null) return null;
-        return authorization.substring(7);
+        String authorizations = request.getHeader("Authorization");
+        if (authorizations == null) return null;
+        return authorizations.substring(7);
     }
 }
