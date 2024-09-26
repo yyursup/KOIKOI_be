@@ -26,6 +26,9 @@ public class Account implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
+    @Enumerated(EnumType.STRING)
+    Role role;
+
     boolean isDeleted = false;
 
     @NotBlank(message = "This username can not be empty!")
