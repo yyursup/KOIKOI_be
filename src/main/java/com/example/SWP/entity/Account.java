@@ -55,7 +55,6 @@ public class Account implements UserDetails {
     @Size(min = 6, message = "Password must be at least 6 characters")
     String password;
 
-    long Roleid;
 
     String city;
 
