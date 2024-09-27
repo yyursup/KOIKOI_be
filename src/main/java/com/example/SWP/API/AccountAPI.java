@@ -61,7 +61,7 @@ public class AccountAPI {
 
 
     @PutMapping("{id}")
-    public ResponseEntity updateAccount(@Valid @RequestBody UpdateProfileRequest updateProfileRequest, @PathVariable long id){
+    public ResponseEntity updateAccount(@Valid @RequestBody UpdateProfileRequest updateProfileRequest, @PathVariable Long id){
         try{
          UpdateAndDeleteProfileResponse newAccount = accountService.accountUpdate(updateProfileRequest,id);
          return ResponseEntity.ok(newAccount);
@@ -72,7 +72,7 @@ public class AccountAPI {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity deleteAccount(@PathVariable long id){
+    public ResponseEntity deleteAccount(@PathVariable Long id){
         try{
             UpdateAndDeleteProfileResponse oldAccount = accountService.deleteAccount(id);
             return ResponseEntity.ok(oldAccount);
