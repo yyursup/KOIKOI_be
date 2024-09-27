@@ -1,6 +1,6 @@
 package com.example.SWP.Service;
 
-import com.example.SWP.DTO.MailBody;
+import com.example.SWP.model.MailBody;
 import com.example.SWP.Repository.AccountRepository;
 import com.example.SWP.Repository.ForgotPasswordRepository;
 import com.example.SWP.entity.Account;
@@ -55,6 +55,11 @@ public class AccountService implements UserDetailsService {
             String originpassword = account.getPassword();
             account.setPassword(passwordEncoder.encode(originpassword));
             Account newAccount = accountRepository.save(account);
+            MailBody mailBody = new MailBody();
+            mailBody.setTo(newAccount);
+            mailBody.setSubject("WELCOME TO MY KOI FISH SHOP");
+            mailBody.setLink("http://koifish.store/");
+            emailService.sendSimpleMessage(mailBody);
             return modelMapper.map(newAccount, RegisterResponse.class);
         } catch (Exception e) {
             if (e.getMessage().contains(account.getUsername())) {
@@ -158,33 +163,33 @@ public class AccountService implements UserDetailsService {
         return accountRepository.findAccountByUsername(username);
     }
 
-    public ForgotPassword verifyEmail(String email){
+    public ForgotPassword verifyEmail(String email) {
         Account account = accountRepository.findAccountByEmail(email);
 
-
-        if(account == null){
-
-            throw new RuntimeException("Can not found this account");
-
-        }else{
-
+        if (account == null) {
+            throw new RuntimeException("Cannot find this account");
+        } else {
             int otp = otpGenerator();
-            MailBody mailBody = MailBody.builder()
-                    .to(email)
-                    .text("This is the OTP for your Forgot password request :"+ otp)
-                    .subject("OTP for forgot password request")
-                    .build();
 
+            // Create MailBody object using constructor, no builder required
+            MailBody mailBody = new MailBody(
+                    account,  // Pass the Account object
+                    "OTP for forgot password request",  // Subject
+                    "This is the OTP for your Forgot password request: " + otp  // Text
+            );
+
+            // Create ForgotPassword object
             ForgotPassword fp = ForgotPassword.builder()
                     .otp(otp)
-                    .expirationTime(new Date(System.currentTimeMillis() + 5 * 60 * 1000))
+                    .expirationTime(new Date(System.currentTimeMillis() + 5 * 60 * 1000))  // 5 minutes expiration
                     .account(account)
                     .build();
 
-            emailService.sendSimpleMessage(mailBody);
-         return forgotPasswordRepository.save(fp);
+            emailService.sendSimpleMessage(mailBody);  // Send the email
+            return forgotPasswordRepository.save(fp);  // Save and return ForgotPassword object
         }
     }
+
 
 
     public ForgotPassword verifyOTP(Integer otp, String email) {
