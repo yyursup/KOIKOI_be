@@ -2,7 +2,6 @@ package com.example.SWP.API;
 
 import com.example.SWP.Repository.ForgotPasswordRepository;
 import com.example.SWP.Service.AccountService;
-import com.example.SWP.entity.Account;
 import com.example.SWP.entity.ForgotPassword;
 import com.example.SWP.model.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
