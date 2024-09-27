@@ -25,7 +25,7 @@ public class Voucher {
 
     boolean isDeleted = false;
 
-    @NotBlank(message = "code can not blank")
+
     @Column(unique = true)
     UUID code;
 

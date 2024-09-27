@@ -27,12 +27,12 @@ public class KoiAPI {
 
     @GetMapping("AllKoi")
     public ResponseEntity getAllKoi(){
-        List<Koi> koiList = koiService.getAllKois();
+        List<Koi> koiList = koiService.getAllKoi();
         return ResponseEntity.ok(koiList);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity updateKoi(@Valid @RequestBody Koi koiUpdate, @PathVariable long id){
+    public ResponseEntity updateKoi(@Valid @RequestBody Koi koiUpdate, @PathVariable Long id){
         try{
             Koi newKoi = koiService.updateKoi(id, koiUpdate);
             return ResponseEntity.ok(newKoi);
@@ -43,7 +43,7 @@ public class KoiAPI {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity deleteKoi(@PathVariable long id){
+    public ResponseEntity deleteKoi(@PathVariable Long id){
         try{
             Koi oldKoi = koiService.deleteKoi(id);
             return ResponseEntity.ok(oldKoi);

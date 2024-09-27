@@ -17,7 +17,7 @@ public class KoiService {
     @Autowired
     KoiRepository koiRepository;
 
-    public List<Koi> getAllKois() {
+    public List<Koi> getAllKoi() {
         List<Koi> koiList = koiRepository.findKoisByIsDeletedFalse();
         return koiList;
     }

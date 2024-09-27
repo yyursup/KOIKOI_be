@@ -32,7 +32,7 @@ public class KoiTypeAPI {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity updateKoiType(@Valid @RequestBody KoiType koiIsUpdate, @PathVariable long id){
+    public ResponseEntity updateKoiType(@Valid @RequestBody KoiType koiIsUpdate, @PathVariable Long id){
         try{
             KoiType newKoiType = koiTypeService.updateKoiTypes(id, koiIsUpdate);
             return ResponseEntity.ok(newKoiType);
@@ -43,7 +43,7 @@ public class KoiTypeAPI {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity deleteKoiType(@PathVariable long id){
+    public ResponseEntity deleteKoiType(@PathVariable Long id){
         try{
             KoiType oldKoiType = koiTypeService.deleteKoiTypes(id);
             return ResponseEntity.ok(oldKoiType);
