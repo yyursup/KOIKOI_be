@@ -12,20 +12,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/KoiType")
+@RequestMapping("/api/KoiTypes")
 @CrossOrigin("*")
 @SecurityRequirement(name = "api")
 public class KoiTypeAPI {
     @Autowired
     KoiTypeService koiTypeService;
 
-    @PostMapping("CreateKoiType")
+    @PostMapping()
     public ResponseEntity newKoiType(@Valid @RequestBody KoiType koiType ) {
         KoiType newKoiType = koiTypeService.createKoiTypes(koiType);
         return ResponseEntity.ok(newKoiType);
     }
 
-    @GetMapping("AllKoiType")
+    @GetMapping()
     public ResponseEntity getAllKoiType(){
         List<KoiType> koiTypeList = koiTypeService.getAllKoiTypes();
         return ResponseEntity.ok(koiTypeList);

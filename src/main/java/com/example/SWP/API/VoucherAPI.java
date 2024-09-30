@@ -20,13 +20,13 @@ public class VoucherAPI {
     @Autowired
     VoucherService voucherService;
 
-    @PostMapping("create")
+    @PostMapping()
     public ResponseEntity createVoucher(@Valid @RequestBody Voucher voucher){
         Voucher newVoucher = voucherService.createVoucher(voucher);
         return ResponseEntity.ok(newVoucher);
     }
 
-    @GetMapping("get")
+    @GetMapping()
     public ResponseEntity getAllVoucher(){
         List<Voucher> voucherList = voucherService.getAllVoucher();
         return ResponseEntity.ok(voucherList);

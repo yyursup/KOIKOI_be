@@ -21,13 +21,13 @@ public class KoiAPI {
     @Autowired
     KoiService koiService;
 
-    @PostMapping("newKoiFish")
+    @PostMapping()
     public ResponseEntity newKoiFish(@Valid @RequestBody KoiRequest koiRequest ) {
         KoiResponse newKoi = koiService.createKoi(koiRequest);
         return ResponseEntity.ok(newKoi);
     }
 
-    @GetMapping("AllKoi")
+    @GetMapping()
     public ResponseEntity getAllKoi(){
         List<KoiResponse> koiList = koiService.getAllKoi();
         return ResponseEntity.ok(koiList);
