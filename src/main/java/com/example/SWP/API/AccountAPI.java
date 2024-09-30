@@ -52,9 +52,9 @@ public class AccountAPI {
         return ResponseEntity.ok(accountList);
     }
 
-    @GetMapping("viewProfile/{token}")
-    public ResponseEntity ViewProfile(String token){
-        ViewProfileResponse view = accountService.viewProfile(token);
+    @GetMapping("viewProfile")
+    public ResponseEntity ViewProfile(){
+        ViewProfileResponse view = accountService.viewProfile();
         return ResponseEntity.ok(view);
     }
 

@@ -6,6 +6,7 @@ import com.example.SWP.Repository.ForgotPasswordRepository;
 import com.example.SWP.entity.Account;
 import com.example.SWP.entity.ForgotPassword;
 import com.example.SWP.model.*;
+import com.example.SWP.utils.AccountUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -48,6 +49,9 @@ public class AccountService implements UserDetailsService {
 
     @Autowired
     TokenService tokenService;
+
+    @Autowired
+    AccountUtils accountUtils;
 
     public RegisterResponse register(RegisterRequest registerRequest) {
         Account account = modelMapper.map(registerRequest, Account.class);
@@ -113,10 +117,9 @@ public class AccountService implements UserDetailsService {
 //
 //    }
 
-    public ViewProfileResponse viewProfile(String token){
-
+    public ViewProfileResponse viewProfile(){
         try{
-            Account account = tokenService.getAccountByToken(token);
+            Account account = accountUtils.getCurrentAccount();
             return modelMapper.map(account,ViewProfileResponse.class);
         }catch (Exception e){
             throw new RuntimeException("Can not found this account");
