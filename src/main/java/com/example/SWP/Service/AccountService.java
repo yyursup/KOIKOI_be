@@ -1,5 +1,6 @@
 package com.example.SWP.Service;
 
+import com.example.SWP.entity.Role;
 import com.example.SWP.model.MailBody;
 import com.example.SWP.Repository.AccountRepository;
 import com.example.SWP.Repository.ForgotPasswordRepository;
@@ -55,6 +56,7 @@ public class AccountService implements UserDetailsService {
 
     public RegisterResponse register(RegisterRequest registerRequest) {
         Account account = modelMapper.map(registerRequest, Account.class);
+        account.setRole(Role.CUSTOMER);
         try {
             String originpassword = account.getPassword();
             account.setPassword(passwordEncoder.encode(originpassword));
@@ -76,6 +78,31 @@ public class AccountService implements UserDetailsService {
 
         }
     }
+    public RegisterResponse registerForManager(RegisterRequest registerRequest) {
+        Account account = modelMapper.map(registerRequest, Account.class);
+        account.setRole(Role.MANAGER);
+        try {
+            String originpassword = account.getPassword();
+            account.setPassword(passwordEncoder.encode(originpassword));
+            Account newAccount = accountRepository.save(account);
+            MailBody mailBody = new MailBody();
+            mailBody.setTo(newAccount);
+            mailBody.setSubject("WELCOME TO MY KOI FISH SHOP");
+            mailBody.setLink("http://koifish.store/");
+            emailService.sendSimpleMessage(mailBody);
+            return modelMapper.map(newAccount, RegisterResponse.class);
+        } catch (Exception e) {
+            if (e.getMessage().contains(account.getUsername())) {
+                throw new RuntimeException("Duplicate username");
+            } else if (e.getMessage().contains(account.getPhone_number())) {
+                throw new RuntimeException("Duplicate phone");
+            } else {
+                throw new RuntimeException("Duplicate email");
+            }
+
+        }
+    }
+
 
     public LoginResponse loginWithUserName(LoginRequest loginRequest){
        try{
