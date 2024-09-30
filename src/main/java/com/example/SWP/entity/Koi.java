@@ -11,6 +11,7 @@ import lombok.Data;
 @Entity
 @Data
 public class Koi {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;

@@ -34,6 +34,14 @@ public class AccountAPI {
 
     }
 
+    @PostMapping("registerForManager")
+    public ResponseEntity registerManager(@Valid @RequestBody RegisterRequest registerRequest){
+        RegisterResponse newAccount = accountService.registerForManager(registerRequest);
+        return ResponseEntity.ok(newAccount);
+
+
+    }
+
     @PostMapping("login")
     public ResponseEntity login(@Valid @RequestBody LoginRequest loginRequest){
         LoginResponse newAccount = accountService.loginWithUserName(loginRequest);
