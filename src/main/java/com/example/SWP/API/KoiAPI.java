@@ -2,6 +2,8 @@ package com.example.SWP.API;
 
 import com.example.SWP.Service.KoiService;
 import com.example.SWP.entity.Koi;
+import com.example.SWP.model.KoiRequest;
+import com.example.SWP.model.KoiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +22,14 @@ public class KoiAPI {
     KoiService koiService;
 
     @PostMapping("newKoiFish")
-    public ResponseEntity newKoiFish(@Valid @RequestBody Koi koi ) {
-        Koi newKoi = koiService.createKoi(koi);
+    public ResponseEntity newKoiFish(@Valid @RequestBody KoiRequest koiRequest ) {
+        KoiResponse newKoi = koiService.createKoi(koiRequest);
         return ResponseEntity.ok(newKoi);
     }
 
     @GetMapping("AllKoi")
     public ResponseEntity getAllKoi(){
-        List<Koi> koiList = koiService.getAllKoi();
+        List<KoiResponse> koiList = koiService.getAllKoi();
         return ResponseEntity.ok(koiList);
     }
 

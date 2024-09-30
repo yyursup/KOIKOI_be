@@ -113,10 +113,10 @@ public class AccountService implements UserDetailsService {
 //
 //    }
 
-    public ViewProfileResponse viewProfile(long Accountid){
+    public ViewProfileResponse viewProfile(String token){
 
         try{
-            Account account = accountRepository.findAccountById(Accountid);
+            Account account = tokenService.getAccountByToken(token);
             return modelMapper.map(account,ViewProfileResponse.class);
         }catch (Exception e){
             throw new RuntimeException("Can not found this account");
@@ -126,7 +126,7 @@ public class AccountService implements UserDetailsService {
 
 
 
-    public UpdateAndDeleteProfileResponse accountUpdate(UpdateProfileRequest updateProfileRequest, long AccountId) {
+    public UpdateAndDeleteProfileResponse accountUpdate(UpdateProfileRequest updateProfileRequest, Long AccountId) {
         Account oldAccount = accountRepository.findAccountById(AccountId);
 
         if (oldAccount == null) {
