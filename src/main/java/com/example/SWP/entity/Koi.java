@@ -27,6 +27,8 @@ public class Koi {
 
     int age;
 
+    String img;
+
     @NotBlank(message = "This size can not be empty!")
     String size;
 

@@ -1,15 +1,15 @@
 package com.example.SWP.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.util.Date;
-@Entity
-@Data
+
 public class Consigment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+
+    long AccountID;
 
     Date Start_Date;
 
@@ -20,7 +20,5 @@ public class Consigment {
     @ManyToOne
     @JoinColumn(name = "AccountID")
     Account account;
-
-
 
 }
