@@ -71,12 +71,6 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "account")
     List<KoiOrder> koiOrders;
 
-    @OneToMany(mappedBy = "account")
-    List<Consigment> consigments;
-
-
-
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

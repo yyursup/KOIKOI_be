@@ -16,9 +16,4 @@ public class Consigment {
     Date End_Date;
 
     String Status;
-
-    @ManyToOne
-    @JoinColumn(name = "AccountID")
-    Account account;
-
 }
