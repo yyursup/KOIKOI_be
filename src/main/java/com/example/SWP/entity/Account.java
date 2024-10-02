@@ -1,6 +1,7 @@
 package com.example.SWP.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -66,6 +67,15 @@ public class Account implements UserDetails {
 
     @OneToOne
     ForgotPassword forgotPassword;
+
+    @OneToMany(mappedBy = "account")
+    List<KoiOrder> koiOrders;
+
+    @OneToMany(mappedBy = "account")
+    List<Consigment> consigments;
+
+
+
 
 
     @Override

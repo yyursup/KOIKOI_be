@@ -1,11 +1,14 @@
 package com.example.SWP.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class KoiOrder {
@@ -41,5 +44,18 @@ public class KoiOrder {
     @Email(message = "Email not valid!")
     @Column(unique = true)
     String email;
+
+    @ManyToOne
+    @JoinColumn(name = "AccountID")
+    Account account;
+
+    @ManyToOne
+    @JoinColumn(name = "VoucherID")
+    Voucher voucher;
+
+    @OneToMany(mappedBy = "koiOrder" )
+    @JsonIgnore
+    List<OrderDetails> orderDetails;
+
 
 }

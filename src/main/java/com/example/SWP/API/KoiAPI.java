@@ -34,9 +34,9 @@ public class KoiAPI {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity updateKoi(@Valid @RequestBody Koi koiUpdate, @PathVariable Long id){
+    public ResponseEntity updateKoi(@Valid @RequestBody KoiRequest koiRequest, @PathVariable Long id){
         try{
-            Koi newKoi = koiService.updateKoi(id, koiUpdate);
+            KoiResponse newKoi = koiService.updateKoi(id, koiRequest);
             return ResponseEntity.ok(newKoi);
         }catch (Exception e){
             throw new RuntimeException("Id of koi " + id + " not found ");
@@ -47,7 +47,7 @@ public class KoiAPI {
     @DeleteMapping("{id}")
     public ResponseEntity deleteKoi(@PathVariable Long id){
         try{
-            Koi oldKoi = koiService.deleteKoi(id);
+            KoiResponse oldKoi = koiService.deleteKoi(id);
             return ResponseEntity.ok(oldKoi);
         }catch (Exception e){
             throw new RuntimeException("Id of koi : " + id + " not found");

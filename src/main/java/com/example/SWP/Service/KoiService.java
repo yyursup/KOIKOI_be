@@ -39,28 +39,30 @@ public class KoiService {
         }
     }
 
-    public Koi deleteKoi(Long koi) {
+    public KoiResponse deleteKoi(Long koi) {
         Koi oldKoi = koiRepository.findKoiById(koi);
         if(oldKoi == null) {
             throw new RuntimeException("Koi not found");
         }
         oldKoi.setDeleted(true);
-        return koiRepository.save(oldKoi);
+         koiRepository.save(oldKoi);
+         return modelMapper.map(oldKoi,KoiResponse.class);
     }
 
-    public Koi updateKoi(Long koi, Koi koiUpdate) {
+    public KoiResponse updateKoi(Long koi, KoiRequest koiRequest) {
         try{
-            Koi koiToUpdate = koiRepository.findKoiById(koi);
-            if(koiToUpdate != null) {
-                koiToUpdate.setName(koiUpdate.getName());
-                koiToUpdate.setDescription(koiUpdate.getDescription());
-                koiToUpdate.setPrice(koiUpdate.getPrice());
-                koiToUpdate.setAge(koiUpdate.getAge());
-                koiToUpdate.setSize(koiUpdate.getSize());
-                koiToUpdate.setGender(koiUpdate.getGender());
-                koiToUpdate.setStatus(koiUpdate.getStatus());
-                koiToUpdate.setOrigin(koiUpdate.getOrigin());
-                return koiRepository.save(koiToUpdate);
+            Koi oldKoi = koiRepository.findKoiById(koi);
+            if(oldKoi != null) {
+                oldKoi.setName(koiRequest.getName());
+                oldKoi.setDescription(koiRequest.getDescription());
+                oldKoi.setPrice(koiRequest.getPrice());
+                oldKoi.setAge(koiRequest.getAge());
+                oldKoi.setSize(koiRequest.getSize());
+                oldKoi.setGender(koiRequest.getGender());
+                oldKoi.setStatus(koiRequest.getStatus());
+                oldKoi.setOrigin(koiRequest.getOrigin());
+                 koiRepository.save(oldKoi);
+                 return modelMapper.map(oldKoi,KoiResponse.class);
             } else {
                 throw new RuntimeException("Koi with id " + koi + " not found");
             }
