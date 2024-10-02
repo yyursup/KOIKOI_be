@@ -6,15 +6,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class ConsigmentService {
-
+public class PaymentMethod {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    String Type_Name;
-
-    String Description;
-
-    double Price;
+    String PaymentMethod;
 }
