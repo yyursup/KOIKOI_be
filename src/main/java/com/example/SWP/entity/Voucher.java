@@ -42,8 +42,10 @@ public class Voucher {
 
     String is_active;
 
+
     @OneToMany(mappedBy = "voucher")
-    List<KoiOrder> koiOrderList;
+    List<KoiOrder> koiOrders;
+
 
 
 }

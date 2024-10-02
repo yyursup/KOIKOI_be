@@ -1,11 +1,11 @@
 package com.example.SWP.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -21,4 +21,9 @@ public class KoiType {
     String description;
 
     boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "koiType")
+    @JsonIgnore
+    List<Koi> kois;
+
 }

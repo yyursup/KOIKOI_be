@@ -192,37 +192,7 @@ public class AccountService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return accountRepository.findAccountByUsername(username);
     }
-
-    public ForgotPassword verifyEmail(String email) {
-        Account account = accountRepository.findAccountByEmail(email);
-
-        if (account == null) {
-            throw new RuntimeException("Cannot find this account");
-        } else {
-            int otp = otpGenerator();
-
-            // Create MailBody object using constructor, no builder required
-            MailBody mailBody = new MailBody(
-                    account,  // Pass the Account object
-                    "OTP for forgot password request",  // Subject
-                    "This is the OTP for your Forgot password request: " + otp  // Text
-            );
-
-            // Create ForgotPassword object
-            ForgotPassword fp = ForgotPassword.builder()
-                    .otp(otp)
-                    .expirationTime(new Date(System.currentTimeMillis() + 5 * 60 * 1000))  // 5 minutes expiration
-                    .account(account)
-                    .build();
-
-            emailService.sendSimpleMessage(mailBody);  // Send the email
-            return forgotPasswordRepository.save(fp);  // Save and return ForgotPassword object
-        }
-    }
-
-
-
-    public ForgotPassword verifyOTP(Integer otp, String email) {
+    public ForgotPassword verifyOTPAndChagePassword(String email, Integer otp, ChangePassword changePassword) {
 
         Account account = accountRepository.findAccountByEmail(email);
 
@@ -230,35 +200,50 @@ public class AccountService implements UserDetailsService {
         if (account == null) {
             throw new RuntimeException("Cannot find this account with email: " + email);
         }
+        if (otp == null) {
+            int generatedOtp = otpGenerator();
+
+            MailBody mailBody = new MailBody(
+                    account,  // Pass the Account object
+                    "OTP for forgot password request",  // Subject
+                    "This is the OTP for your Forgot password request: " + generatedOtp  // Email content with OTP
+            );
+
+            ForgotPassword fp = new ForgotPassword(
+                    generatedOtp,
+                    new Date(System.currentTimeMillis() + 5 * 60 * 1000),
+                    account
+            );
+
+            emailService.sendSimpleMessage(mailBody);
+            return forgotPasswordRepository.save(fp);
+        }else {
+
+            ForgotPassword fp = forgotPasswordRepository.findByOtpAndAccount(otp, account);
 
 
-        ForgotPassword fp = forgotPasswordRepository.findByOtpAndAccount(otp,account);
+            if (fp == null) {
+                throw new RuntimeException("Invalid OTP for email: " + email);
+            }
 
 
-        if (fp == null) {
-            throw new RuntimeException("Invalid OTP for email: " + email);
-        }
+            if (fp.getExpirationTime().before(Date.from(Instant.now()))) {
 
-
-        if (fp.getExpirationTime().before(Date.from(Instant.now()))) {
-
+                forgotPasswordRepository.deleteById(fp.getFpid());
+                throw new RuntimeException("OTP has expired for email: " + email);
+            }
+            if (!Objects.equals(changePassword.password(), changePassword.repeatPassword())) {
+                throw new RuntimeException("Password and repeat password not match");
+            }
+            String originPassword = changePassword.password();
+            String encodedPassword = passwordEncoder.encode(originPassword);
+            accountRepository.updatePassword(email, encodedPassword);
             forgotPasswordRepository.deleteById(fp.getFpid());
-            throw new RuntimeException("OTP has expired for email: " + email);
+            return fp;
         }
-
-
-        return forgotPasswordRepository.save(fp);
     }
 
-    public ChangePassword changePassword(ChangePassword changePassword, String email){
-        if(!Objects.equals(changePassword.password(),changePassword.repeatPassword())){
-            throw new RuntimeException("password or repeat password is wrong! ");
-        }
-        String originPassword = changePassword.password();
-        String encodedPassword = passwordEncoder.encode(originPassword);
-        accountRepository.updatePassword(email,encodedPassword);
-        return changePassword;
-    }
+
 
     public Integer otpGenerator(){
         Random random = new Random();

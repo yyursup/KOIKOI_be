@@ -89,24 +89,21 @@ public class AccountAPI {
         }
     }
 
-    @PostMapping("/verifyEmail/{email}")
-    public  ResponseEntity verifyEmail (@PathVariable String email){
-        ForgotPassword forgotPassword = accountService.verifyEmail(email);
-        return ResponseEntity.ok(forgotPassword);
+@PostMapping("/ForgotPassword")
+public ResponseEntity processForgotPassword(@RequestParam String email, @RequestParam(required = false) Integer otp, @RequestBody(required = false) ChangePassword changePassword) {
+
+
+    ForgotPassword forgotPassword = accountService.verifyOTPAndChagePassword(email, otp, changePassword);
+
+    if (otp == null) {
+        return ResponseEntity.ok("OTP has been sent to your email.");
+    }
+    if (changePassword != null) {
+        return ResponseEntity.ok("OTP verified and password changed successfully");
     }
 
-    @PostMapping("/verifyOtp/{otp}/{email}")
-    public  ResponseEntity verifyOTP (@PathVariable Integer otp, @PathVariable String email){
-        ForgotPassword forgotPassword = accountService.verifyOTP(otp,email);
-        return ResponseEntity.ok("OTP verified");
-    }
-
-    @PostMapping("/changePassword/{email}")
-    public ResponseEntity changePasswordHandler(@RequestBody ChangePassword changePassword, @PathVariable String email){
-        ChangePassword changePassword1 = accountService.changePassword(changePassword,email);
-        return ResponseEntity.ok(changePassword1);
-    }
-
-
+    return ResponseEntity.badRequest().body("Invalid request. Please provide OTP or email.");
+}
 
 }
+

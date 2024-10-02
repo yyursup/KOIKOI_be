@@ -1,15 +1,12 @@
 package com.example.SWP.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -65,17 +62,13 @@ public class Account implements UserDetails {
 
     String specific_Address;
 
-    @OneToOne
-    ForgotPassword forgotPassword;
+
 
     @OneToMany(mappedBy = "account")
-    List<KoiOrder> koiOrders;
+    List<KoiOrder> koiOrderList;
 
     @OneToMany(mappedBy = "account")
-    List<Consigment> consigments;
-
-
-
+     List<Consigment> consigments;
 
 
     @Override

@@ -1,18 +1,15 @@
 package com.example.SWP.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Builder
+@Data
+
 
 public class ForgotPassword {
     @Id
@@ -27,4 +24,11 @@ public class ForgotPassword {
 
     @OneToOne
     Account account;
+
+
+    public ForgotPassword(int otp, Date expirationTime, Account account) {
+        this.otp = otp;
+        this.expirationTime = expirationTime;
+        this.account = account;
+    }
 }

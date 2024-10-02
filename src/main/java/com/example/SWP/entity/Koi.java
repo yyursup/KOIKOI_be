@@ -1,9 +1,6 @@
 package com.example.SWP.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
@@ -42,8 +39,11 @@ public class Koi {
     String origin;
 
 
-    String KoitypeID;
+    @ManyToOne
+    @JoinColumn(name = "ConsigmentID")
+    Consigment consigment;
 
-    String ConsigmentID;
-
+    @ManyToOne
+    @JoinColumn(name = "KoiTypeID")
+    KoiType koiType;
 }

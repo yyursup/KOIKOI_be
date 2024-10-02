@@ -12,7 +12,6 @@ public class KoiRequest {
 
     String description;
 
-
     double price;
 
     int age;
@@ -20,12 +19,13 @@ public class KoiRequest {
     @NotBlank(message = "This size can not be empty!")
     String size;
 
-    @NotBlank(message = "This gender can not be empty!")
-    String gender;
-
     @NotBlank(message = "This status can not be empty!")
     String status;
 
     @NotBlank(message = "This origin can not be empty!")
     String origin;
+
+    String gender;
+
+    String image;
 }

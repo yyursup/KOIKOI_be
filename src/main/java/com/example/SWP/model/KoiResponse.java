@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class KoiResponse {
-    long  id;
+    long id;
 
     @NotBlank(message = "This name can not be empty!")
     String name;
@@ -19,12 +19,13 @@ public class KoiResponse {
     @NotBlank(message = "This size can not be empty!")
     String size;
 
-    @NotBlank(message = "This gender can not be empty!")
-    String gender;
-
     @NotBlank(message = "This status can not be empty!")
     String status;
 
     @NotBlank(message = "This origin can not be empty!")
     String origin;
+
+    String gender;
+
+    String image;
 }

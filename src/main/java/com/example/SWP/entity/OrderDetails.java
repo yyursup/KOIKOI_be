@@ -23,7 +23,7 @@ public class OrderDetails {
     int quantity;
 
     @ManyToOne
-            @JoinColumn(name = "KoiOrderID")
+    @JoinColumn(name = "KoiOrderID")
     KoiOrder koiOrder;
 
 

@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/Koi")
-@CrossOrigin(origins = "http://localhost:5175")
+@CrossOrigin("*")
 @SecurityRequirement(name = "api")
 public class KoiAPI {
 

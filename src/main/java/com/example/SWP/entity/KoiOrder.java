@@ -53,9 +53,14 @@ public class KoiOrder {
     @JoinColumn(name = "VoucherID")
     Voucher voucher;
 
-    @OneToMany(mappedBy = "koiOrder" )
+    @OneToMany(mappedBy = "koiOrder")
     @JsonIgnore
     List<OrderDetails> orderDetails;
+
+    @OneToOne
+    Payment payment;
+
+
 
 
 }
