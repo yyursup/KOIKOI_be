@@ -192,59 +192,62 @@ public class AccountService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return accountRepository.findAccountByUsername(username);
     }
-    public ForgotPassword verifyOTPAndChagePassword(String email, Integer otp, ChangePassword changePassword) {
 
+    public ForgotPassword verifyEmail(String email) {
         Account account = accountRepository.findAccountByEmail(email);
 
 
         if (account == null) {
-            throw new RuntimeException("Cannot find this account with email: " + email);
-        }
-        if (otp == null) {
-            int generatedOtp = otpGenerator();
 
+            throw new RuntimeException("Can not found this account");
+
+        } else {
+
+            int otp = otpGenerator();
             MailBody mailBody = new MailBody(
                     account,  // Pass the Account object
                     "OTP for forgot password request",  // Subject
-                    "This is the OTP for your Forgot password request: " + generatedOtp  // Email content with OTP
+                    "This is the OTP for your Forgot password request: " +  otp   // Email content with OTP
             );
 
             ForgotPassword fp = new ForgotPassword(
-                    generatedOtp,
+                    otp,
                     new Date(System.currentTimeMillis() + 5 * 60 * 1000),
                     account
             );
 
+
             emailService.sendSimpleMessage(mailBody);
             return forgotPasswordRepository.save(fp);
-        }else {
-
-            ForgotPassword fp = forgotPasswordRepository.findByOtpAndAccount(otp, account);
-
-
-            if (fp == null) {
-                throw new RuntimeException("Invalid OTP for email: " + email);
-            }
-
-
-            if (fp.getExpirationTime().before(Date.from(Instant.now()))) {
-
-                forgotPasswordRepository.deleteById(fp.getFpid());
-                throw new RuntimeException("OTP has expired for email: " + email);
-            }
-            if (!Objects.equals(changePassword.password(), changePassword.repeatPassword())) {
-                throw new RuntimeException("Password and repeat password not match");
-            }
-            String originPassword = changePassword.password();
-            String encodedPassword = passwordEncoder.encode(originPassword);
-            accountRepository.updatePassword(email, encodedPassword);
-            forgotPasswordRepository.deleteById(fp.getFpid());
-            return fp;
         }
     }
 
+    public ForgotPassword verifyOTPAndChagePassword(Integer otp, ChangePassword changePassword) {
 
+        ForgotPassword fp = forgotPasswordRepository.findByOtp(otp);
 
+        if (fp == null) {
+            throw new RuntimeException("Invalid OTP.");
+        }
+
+        Account account = fp.getAccount(); // dùng để tìm account
+
+        if (fp.getExpirationTime().before(Date.from(Instant.now()))) {
+            forgotPasswordRepository.deleteById(fp.getFpid());
+            throw new RuntimeException("OTP has expired.");
+        }
+
+        if (!Objects.equals(changePassword.password(), changePassword.repeatPassword())) {
+            throw new RuntimeException("Password and repeat password do not match");
+        }
+
+        String originPassword = changePassword.password();
+        String encodedPassword = passwordEncoder.encode(originPassword);
+        accountRepository.updatePassword(account.getEmail(), encodedPassword);
+        forgotPasswordRepository.deleteById(fp.getFpid());
+
+        return fp;
+    }
     public Integer otpGenerator(){
         Random random = new Random();
         return random.nextInt(100_000,999_999);
