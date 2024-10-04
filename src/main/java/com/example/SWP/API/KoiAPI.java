@@ -47,7 +47,7 @@ public class KoiAPI {
     @DeleteMapping("{id}")
     public ResponseEntity deleteKoi(@PathVariable Long id){
         try{
-            KoiResponse oldKoi = koiService.deleteKoi(id);
+            Koi oldKoi = koiService.deleteKoi(id);
             return ResponseEntity.ok(oldKoi);
         }catch (Exception e){
             throw new RuntimeException("Id of koi : " + id + " not found");

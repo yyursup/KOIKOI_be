@@ -2,7 +2,6 @@ package com.example.SWP.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Entity
@@ -24,7 +23,7 @@ public class Koi {
 
     int age;
 
-    String img;
+
 
     @NotBlank(message = "This size can not be empty!")
     String size;
@@ -37,6 +36,8 @@ public class Koi {
 
     @NotBlank(message = "This origin can not be empty!")
     String origin;
+
+    String image;
 
 
     @ManyToOne

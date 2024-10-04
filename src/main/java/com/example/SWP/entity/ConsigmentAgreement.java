@@ -1,7 +1,9 @@
 package com.example.SWP.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 public class ConsigmentAgreement {
 
@@ -14,7 +16,15 @@ public class ConsigmentAgreement {
 
     int Quantity;
 
-    Float Price;
+    double Price;
+
+    @ManyToOne
+    @JoinColumn(name = "Consigment_ID")
+    Consigment consigment;
+
+    @ManyToOne
+    @JoinColumn(name = "ConsigmentService_ID")
+    ConsigmentService consigmentService;
 
 
 }

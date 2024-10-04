@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -30,5 +31,9 @@ public class Consigment {
 
     @OneToOne
     Payment payment;
+
+    @OneToMany(mappedBy = "consigment")
+    @JsonIgnore
+    Set<ConsigmentAgreement> consigmentAgreements;
 
 }

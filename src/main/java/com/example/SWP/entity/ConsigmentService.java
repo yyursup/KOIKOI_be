@@ -1,10 +1,13 @@
 package com.example.SWP.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.Data;
 
+import java.util.List;
+import java.util.Set;
+
+@Data
 @Entity
 public class ConsigmentService {
 
@@ -12,9 +15,14 @@ public class ConsigmentService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    String Type_Name;
+    String ConsignmenType;
 
     String Description;
 
     double Price;
+
+    @OneToMany(mappedBy = "consigmentService")
+    @JsonIgnore
+    Set<ConsigmentAgreement> consigmentAgreements;
+
 }

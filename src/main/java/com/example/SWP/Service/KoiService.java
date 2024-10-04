@@ -39,14 +39,13 @@ public class KoiService {
         }
     }
 
-    public KoiResponse deleteKoi(Long koi) {
+    public Koi deleteKoi(Long koi) {
         Koi oldKoi = koiRepository.findKoiById(koi);
         if(oldKoi == null) {
             throw new RuntimeException("Koi not found");
         }
         oldKoi.setDeleted(true);
-         koiRepository.save(oldKoi);
-         return modelMapper.map(oldKoi,KoiResponse.class);
+        return koiRepository.save(oldKoi);
     }
 
     public KoiResponse updateKoi(Long koi, KoiRequest koiRequest) {
@@ -61,6 +60,8 @@ public class KoiService {
                 oldKoi.setGender(koiRequest.getGender());
                 oldKoi.setStatus(koiRequest.getStatus());
                 oldKoi.setOrigin(koiRequest.getOrigin());
+                oldKoi.setImage(koiRequest.getImage());
+
                  koiRepository.save(oldKoi);
                  return modelMapper.map(oldKoi,KoiResponse.class);
             } else {
