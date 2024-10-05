@@ -1,17 +1,13 @@
 package com.example.SWP.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,29 +19,31 @@ import java.util.UUID;
 public class Voucher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+     long id;
 
-    boolean isDeleted = false;
-
+     boolean isDeleted = false;
 
     @Column(unique = true)
-    UUID code;
+     UUID code;
 
-    String description;
+     String description;
 
     @NotNull(message = "Discount amount can not null")
-    double discount_amount;
+     double discount_amount;
 
-    Date start_date;
+     LocalDateTime start_date;
 
-    Date end_date;
+     LocalDateTime end_date;
 
-    String is_active;
-
+     String is_active;
 
     @OneToMany(mappedBy = "voucher")
-    List<KoiOrder> koiOrders;
+     List<KoiOrder> koiOrders;
 
 
+    public void setStartDate(LocalDateTime start_date) {
+        this.start_date = start_date;
 
+        this.end_date = this.start_date.plusDays(30);
+    }
 }

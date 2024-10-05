@@ -42,7 +42,7 @@ public class Filter extends OncePerRequestFilter {
             "/api/account/verifyEmail/{email}",
             "/api/account/verifyOtp/{otp}/{email}",
             "/api/account/changePassword/{email}"
-            );
+    );
 
     public boolean checkIsPublicAPI(String uri) {
         //uri: /api/register

@@ -1,8 +1,11 @@
 package com.example.SWP.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -38,6 +41,10 @@ public class Koi {
     String origin;
 
     String image;
+
+    @OneToMany(mappedBy = "koi")
+    @JsonIgnore
+    List<OrderDetails> orderDetails;
 
 
     @ManyToOne

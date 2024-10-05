@@ -2,6 +2,7 @@ package com.example.SWP.API;
 
 import com.example.SWP.Service.VoucherService;
 import com.example.SWP.entity.Voucher;
+import com.example.SWP.model.VoucherRequest;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +22,21 @@ public class VoucherAPI {
     VoucherService voucherService;
 
     @PostMapping()
-    public ResponseEntity createVoucher(@Valid @RequestBody Voucher voucher){
-        Voucher newVoucher = voucherService.createVoucher(voucher);
+    public ResponseEntity createVoucher(@Valid @RequestBody VoucherRequest voucherRequest){
+        VoucherRequest newVoucher = voucherService.createVoucher(voucherRequest);
         return ResponseEntity.ok(newVoucher);
     }
 
     @GetMapping()
     public ResponseEntity getAllVoucher(){
-        List<Voucher> voucherList = voucherService.getAllVoucher();
+        List<VoucherRequest> voucherList = voucherService.getAllVoucher();
         return ResponseEntity.ok(voucherList);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity updateVoucher(@Valid @RequestBody Voucher voucher, @PathVariable Long id){
+    public ResponseEntity updateVoucher(@Valid @RequestBody VoucherRequest voucherRequest, @PathVariable Long id){
         try{
-            Voucher newVoucher = voucherService.updateVoucher(voucher,id);
+            VoucherRequest newVoucher = voucherService.updateVoucher(voucherRequest,id);
             return ResponseEntity.ok(newVoucher);
         }catch (Exception e){
             throw new RuntimeException("The voucher id :" + id + " not found ");
@@ -46,7 +47,7 @@ public class VoucherAPI {
     @DeleteMapping("{id}")
     public ResponseEntity deleteVoucher(@PathVariable Long id){
         try{
-            Voucher oldVoucher = voucherService.deleteVoucher(id);
+            VoucherRequest oldVoucher = voucherService.deleteVoucher(id);
             return ResponseEntity.ok(oldVoucher);
         }catch (Exception e){
             throw new RuntimeException("The voucher id :" + id + " not found ");

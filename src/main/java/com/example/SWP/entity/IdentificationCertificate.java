@@ -23,8 +23,6 @@ public class IdentificationCertificate {
 
     Float Size;
 
-    String Link_Certificate;
-
     @OneToOne
     Koi koi;
 

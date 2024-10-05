@@ -2,11 +2,14 @@ package com.example.SWP.Service;
 
 import com.example.SWP.Repository.VoucherRepository;
 import com.example.SWP.entity.Voucher;
+import com.example.SWP.model.VoucherRequest;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -15,43 +18,53 @@ public class VoucherService {
     @Autowired
     VoucherRepository voucherRepository;
 
-    public Voucher createVoucher(Voucher voucher){
+    @Autowired
+    ModelMapper modelMapper;
+
+
+
+    public VoucherRequest createVoucher(VoucherRequest voucherRequest){
+            Voucher voucher = modelMapper.map(voucherRequest,Voucher.class);
         try{
             Voucher newVoucher = voucherRepository.save(voucher);
-            return newVoucher;
+            return modelMapper.map(newVoucher, VoucherRequest.class);
         }catch (Exception e){
             throw new RuntimeException("Duplicate code");
         }
     }
 
-    public List<Voucher> getAllVoucher(){
+    public List<VoucherRequest> getAllVoucher(){
         List<Voucher> vouchers = voucherRepository.findVouchersByIsDeletedFalse();
-        return vouchers;
+        return vouchers.stream().map(voucher ->
+                modelMapper.map(voucher, VoucherRequest.class)).
+                collect(Collectors.toList());
     }
 
-    public Voucher updateVoucher(Voucher voucher, long voucherId){
+    public VoucherRequest updateVoucher(VoucherRequest voucherRequest, Long voucherId){
         Voucher oldVoucher = voucherRepository.findVoucherById(voucherId);
 
         if(oldVoucher == null){
             throw new RuntimeException("can not found this id of voucher");
         }
 
-        oldVoucher.setDescription(voucher.getDescription());
-        oldVoucher.setDiscount_amount(voucher.getDiscount_amount());
-        oldVoucher.setStart_date(voucher.getStart_date());
-        oldVoucher.setEnd_date(voucher.getEnd_date());
-        oldVoucher.setIs_active(voucher.getIs_active());
-        return voucherRepository.save(oldVoucher);
+        oldVoucher.setDescription(voucherRequest.getDescription());
+        oldVoucher.setDiscount_amount(voucherRequest.getDiscount_amount());
+        oldVoucher.setStart_date(voucherRequest.getStart_date());
+        oldVoucher.setEnd_date(voucherRequest.getEnd_date());
+        oldVoucher.setIs_active(voucherRequest.getIs_active());
+        voucherRepository.save(oldVoucher);
+        return modelMapper.map(oldVoucher,VoucherRequest.class);
     }
 
-    public Voucher deleteVoucher(long voucherId){
+    public VoucherRequest deleteVoucher(Long voucherId){
         Voucher oldVoucher = voucherRepository.findVoucherById(voucherId);
 
         if(oldVoucher == null){
             throw new RuntimeException("can not found");
         }
         oldVoucher.setDeleted(true);
-        return voucherRepository.save(oldVoucher);
+         voucherRepository.save(oldVoucher);
+         return modelMapper.map(oldVoucher,VoucherRequest.class);
     }
 
 

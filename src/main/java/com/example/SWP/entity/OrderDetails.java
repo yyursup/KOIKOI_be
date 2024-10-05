@@ -16,15 +16,17 @@ public class OrderDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    String customerId;
-
-    String unitPrice;
+    String Price;
 
     int quantity;
 
     @ManyToOne
     @JoinColumn(name = "KoiOrderID")
     KoiOrder koiOrder;
+
+    @ManyToOne
+    @JoinColumn(name = "KoiID")
+    Koi koi;
 
 
 
