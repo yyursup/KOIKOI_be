@@ -25,14 +25,14 @@ public class Consigment {
     @JoinColumn(name = "AccountID")
     Account account;
 
-    @OneToMany(mappedBy = "consigment")
+    @OneToMany(mappedBy = "consigment", cascade = CascadeType.ALL)
     @JsonIgnore
     List<Koi> kois;
 
     @OneToOne
     Payment payment;
 
-    @OneToMany(mappedBy = "consigment")
+    @OneToMany(mappedBy = "consigment", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<ConsigmentAgreement> consigmentAgreements;
 

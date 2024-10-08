@@ -22,7 +22,7 @@ public class KoiType {
 
     boolean isDeleted = false;
 
-    @OneToMany(mappedBy = "koiType")
+    @OneToMany(mappedBy = "koiType", cascade = CascadeType.ALL)
     @JsonIgnore
     List<Koi> kois;
 

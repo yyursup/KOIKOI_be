@@ -21,7 +21,7 @@ public class ConsigmentService {
 
     double Price;
 
-    @OneToMany(mappedBy = "consigmentService")
+    @OneToMany(mappedBy = "consigmentService", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<ConsigmentAgreement> consigmentAgreements;
 

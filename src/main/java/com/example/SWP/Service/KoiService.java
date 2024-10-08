@@ -23,6 +23,9 @@ public class KoiService {
     @Autowired
     ModelMapper modelMapper;
 
+    @Autowired
+    TokenService tokenService;
+
     public List<KoiResponse> getAllKoi() {
         List<Koi> koiList = koiRepository.findKoisByIsDeletedFalse();
         return koiList.stream().map(koi ->
@@ -33,7 +36,9 @@ public class KoiService {
         Koi koi = modelMapper.map(koiRequest,Koi.class);
         try {
             Koi newKoi = koiRepository.save(koi);
+
             return modelMapper.map(newKoi,KoiResponse.class);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -57,9 +62,10 @@ public class KoiService {
                 oldKoi.setPrice(koiRequest.getPrice());
                 oldKoi.setAge(koiRequest.getAge());
                 oldKoi.setSize(koiRequest.getSize());
-                oldKoi.setGender(koiRequest.getGender());
                 oldKoi.setStatus(koiRequest.getStatus());
                 oldKoi.setOrigin(koiRequest.getOrigin());
+                oldKoi.setQuantity(koiRequest.getQuantity());
+                oldKoi.setGender(koiRequest.getGender());
                 oldKoi.setImage(koiRequest.getImage());
 
                  koiRepository.save(oldKoi);

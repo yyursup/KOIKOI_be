@@ -25,7 +25,10 @@ public class KoiResponse {
     @NotBlank(message = "This origin can not be empty!")
     String origin;
 
+    int quantity;
+
     String gender;
 
     String image;
+
 }

@@ -27,7 +27,6 @@ public class Koi {
     int age;
 
 
-
     @NotBlank(message = "This size can not be empty!")
     String size;
 
@@ -40,12 +39,14 @@ public class Koi {
     @NotBlank(message = "This origin can not be empty!")
     String origin;
 
+    int quantity;
+
     String image;
 
-    @OneToMany(mappedBy = "koi")
+
+    @OneToMany(mappedBy = "koi", cascade = CascadeType.ALL)
     @JsonIgnore
     List<OrderDetails> orderDetails;
-
 
     @ManyToOne
     @JoinColumn(name = "ConsigmentID")
@@ -54,4 +55,8 @@ public class Koi {
     @ManyToOne
     @JoinColumn(name = "KoiTypeID")
     KoiType koiType;
+
+    @OneToMany(mappedBy = "koi", cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<CartDetails> cartDetails;
 }

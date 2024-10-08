@@ -3,8 +3,10 @@ package com.example.SWP.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -18,23 +20,36 @@ public class KoiOrder {
 
     double shippingPee;
 
+    String fullname;
+
+    String phone;
+
+    @CreationTimestamp
+    LocalDateTime orderDate;
+
+    String note;
+
+    String address;
+
     double totalAmount;
 
-    boolean isDeleted = false;
+    Date confirmDate;
+
+    Date processingDate;
+
+    Date shippingDate;
+
+    Date deliveryDate;
+
+    String image;
 
     String status;
-
-    LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "AccountID")
     Account account;
 
-    @ManyToOne
-    @JoinColumn(name = "VoucherID")
-    Voucher voucher;
-
-    @OneToMany(mappedBy = "koiOrder")
+    @OneToMany(mappedBy = "koiOrder", cascade = CascadeType.ALL)
     @JsonIgnore
     List<OrderDetails> orderDetails;
 

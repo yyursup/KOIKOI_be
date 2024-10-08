@@ -4,7 +4,9 @@ import com.example.SWP.entity.Account;
 import com.example.SWP.entity.ForgotPassword;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ForgotPasswordRepository extends JpaRepository<ForgotPassword, Long> {
 
 
