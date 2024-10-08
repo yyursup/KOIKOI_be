@@ -64,11 +64,16 @@ public class Account implements UserDetails {
 
 
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     List<KoiOrder> koiOrderList;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
      List<Consigment> consigments;
+
+    @OneToOne
+    @JoinColumn(name = "cart_id")
+    Cart cart;
+
 
 
 

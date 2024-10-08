@@ -37,8 +37,8 @@ public class Voucher {
 
      String is_active;
 
-    @OneToMany(mappedBy = "voucher")
-     List<KoiOrder> koiOrders;
+    @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL)
+     List<Cart> carts;
 
 
     public void setStartDate(LocalDateTime start_date) {
