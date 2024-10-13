@@ -19,9 +19,6 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     Account findAccountByEmail(String email);
 
-
-
-
     @Transactional
     @Modifying
     @Query("update Account a set a.password = ?2 where a.email = ?1")

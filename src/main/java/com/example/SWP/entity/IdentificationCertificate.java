@@ -1,9 +1,10 @@
 package com.example.SWP.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Date;
-
+@Data
 @Entity
 public class IdentificationCertificate {
 

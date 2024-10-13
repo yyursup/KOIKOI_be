@@ -1,8 +1,7 @@
-package com.example.SWP.entity;
+package com.example.SWP.Enums;
 
 public enum Role {
     MANAGER,
     STAFF,
-    GUEST,
     CUSTOMER
 }

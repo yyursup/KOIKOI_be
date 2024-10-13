@@ -2,7 +2,12 @@ package com.example.SWP.API;
 
 
 import com.example.SWP.Service.KoiTypeService;
+import com.example.SWP.entity.Koi;
 import com.example.SWP.entity.KoiType;
+import com.example.SWP.model.KoiRequest;
+import com.example.SWP.model.KoiResponse;
+import com.example.SWP.model.KoiTypeRequest;
+import com.example.SWP.model.KoiTypeResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,35 +25,35 @@ public class KoiTypeAPI {
     KoiTypeService koiTypeService;
 
     @PostMapping()
-    public ResponseEntity newKoiType(@Valid @RequestBody KoiType koiType ) {
-        KoiType newKoiType = koiTypeService.createKoiTypes(koiType);
-        return ResponseEntity.ok(newKoiType);
+    public ResponseEntity newKoiType(@Valid @RequestBody KoiTypeRequest koiTypeRequest ) {
+        KoiTypeResponse koiTypeResponse = koiTypeService.createKoiTypes(koiTypeRequest);
+        return ResponseEntity.ok(koiTypeResponse);
     }
 
     @GetMapping()
-    public ResponseEntity getAllKoiType(){
-        List<KoiType> koiTypeList = koiTypeService.getAllKoiTypes();
+    public ResponseEntity getAllKoiTypes(){
+        List<KoiTypeResponse> koiTypeList = koiTypeService.getAllKoiTypes();
         return ResponseEntity.ok(koiTypeList);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity updateKoiType(@Valid @RequestBody KoiType koiIsUpdate, @PathVariable Long id){
+    public ResponseEntity updateKoiTypes(@Valid @RequestBody KoiTypeRequest koiTypeRequest, @PathVariable Long id){
         try{
-            KoiType newKoiType = koiTypeService.updateKoiTypes(id, koiIsUpdate);
-            return ResponseEntity.ok(newKoiType);
+            KoiTypeResponse newKoiTypes = koiTypeService.updateKoiTypes(id, koiTypeRequest);
+            return ResponseEntity.ok(newKoiTypes);
         }catch (Exception e){
-            throw new RuntimeException("Id of koiType " + id + " not found ");
+            throw new RuntimeException("Id of koi " + id + " not found ");
         }
 
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity deleteKoiType(@PathVariable Long id){
+    public ResponseEntity deleteKoiTypes(@PathVariable Long id){
         try{
             KoiType oldKoiType = koiTypeService.deleteKoiTypes(id);
             return ResponseEntity.ok(oldKoiType);
         }catch (Exception e){
-            throw new RuntimeException("Id of koiType : " + id + " not found");
+            throw new RuntimeException("Id of koi : " + id + " not found");
         }
     }
 }
