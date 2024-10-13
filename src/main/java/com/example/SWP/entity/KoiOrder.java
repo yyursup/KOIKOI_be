@@ -1,5 +1,6 @@
 package com.example.SWP.entity;
 
+import com.example.SWP.Enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -15,8 +17,6 @@ public class KoiOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-
-    double subTotal;
 
     double shippingPee;
 
@@ -43,7 +43,8 @@ public class KoiOrder {
 
     String image;
 
-    String status;
+    @Enumerated(EnumType.STRING)
+    OrderStatus orderStatus;
 
     @ManyToOne
     @JoinColumn(name = "AccountID")
@@ -51,7 +52,11 @@ public class KoiOrder {
 
     @OneToMany(mappedBy = "koiOrder", cascade = CascadeType.ALL)
     @JsonIgnore
-    List<OrderDetails> orderDetails;
+    Set<OrderDetails> orderDetails;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "koiOrder", cascade = CascadeType.ALL)
+    CanceledOrder canceledOrder;
 
     @OneToOne
     Payment payment;

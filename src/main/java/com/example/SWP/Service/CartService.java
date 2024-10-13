@@ -2,6 +2,7 @@ package com.example.SWP.Service;
 
 import com.example.SWP.Repository.*;
 import com.example.SWP.entity.*;
+import com.example.SWP.model.CartRequest;
 import com.example.SWP.model.CartResponse;
 import com.example.SWP.utils.AccountUtils;
 import org.modelmapper.ModelMapper;
@@ -34,76 +35,48 @@ public class CartService {
     KoiRepository koiRepository;
 
 
-
-
-
-//    public CartResponse addToCart(long id, UUID voucherCode)
-    public String addToCart(long id){
+    public Cart addToCart(long id){
         Account account = accountUtils.getCurrentAccount();
         Cart cart = account.getCart();
         Koi koi = koiRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-        Set<CartDetails> cartDetails = cart.getCartDetails();
-        if(cartDetails.isEmpty()){
-            CartDetails cartDetails1 = new CartDetails();
-            cartDetails1.setImage(koi.getImage());
-            cartDetails1.setPrice(koi.getPrice());
-            cartDetails1.setQuantity(1);
-            cartDetails1.setKoi(koi);
-            cartDetails1.setCart(cart);
-            cartDetailsRepository.save(cartDetails1);
+        Set<CartDetails> cartDetail = cart.getCartDetails();
+        if(cartDetail.isEmpty()){
+            CartDetails cartDetails = new CartDetails();
+            cartDetails.setImage(koi.getImage());
+            cartDetails.setDescription(koi.getDescription());
+            cartDetails.setName(koi.getName());
+            cartDetails.setPrice(koi.getPrice());
+            cartDetails.setQuantity(1);
+            cartDetails.setKoi(koi);
+            cartDetails.setCart(cart);
+            cart.getCartDetails().add(cartDetails);
+            return cartRepository.save(cart);
         } else {
-          for (CartDetails details : cartDetails){
+          for (CartDetails details : cartDetail){
               if(details.getKoi().getId() == id){
-                  if(details.getQuantity() >= details.getQuantity()){
+                  if(details.getQuantity() >= koi.getQuantity()){
                       throw new RuntimeException("The quantity in stock is not enough");
                   }
                   details.setQuantity(details.getQuantity() + 1);
                   cartDetailsRepository.save(details);
-                  return "Update quantity this product this cart";
+                  return cartRepository.findById(cart.getId()).get();
               }
           }
 
-          CartDetails cartDetails1 = new CartDetails();
-          cartDetails1.setImage(koi.getImage());
-          cartDetails1.setName(koi.getName());
-          cartDetails1.setQuantity(1);
-          cartDetails1.setPrice(koi.getPrice());
-          cartDetails1.setKoi(koi);
-          cartDetails1.setCart(cart);
-          cartDetailsRepository.save(cartDetails1);
+            CartDetails cartDetails = new CartDetails();
+            cartDetails.setImage(koi.getImage());
+            cartDetails.setDescription(koi.getDescription());
+            cartDetails.setName(koi.getName());
+            cartDetails.setPrice(koi.getPrice());
+            cartDetails.setQuantity(1);
+            cartDetails.setKoi(koi);
+            cartDetails.setCart(cart);
+            cart.getCartDetails().add(cartDetails);
+            return cartRepository.save(cart);
         }
-
-        return "Add to cart successfully";
-
-//        double subTotal = calculateCartSubTotal(cart);
-//        double discount = 0;
-//
-//
-//        if (voucherCode != null) {
-//            Voucher voucher = voucherRepository.findByCode(voucherCode)
-//                    .orElseThrow(() -> new RuntimeException("Voucher không hợp lệ"));
-//            if (voucher.getIs_active().equals("limited") &&
-//                    voucher.getStart_date().isBefore(LocalDateTime.now()) &&
-//                    voucher.getEnd_date().isAfter(LocalDateTime.now())) {
-//                    discount = subTotal * voucher.getDiscount_amount();
-//            }
-//        }
-//
-//        double shippingFee = 100000;
-//        double totalAmount = subTotal - discount + shippingFee;
-//
-//        // Trả về kết quả giỏ hàng và tổng tiền
-//        CartResponse response = new CartResponse();
-//        response.setSubTotal(subTotal);
-//        response.setDiscount(discount);
-//        response.setShippingFee(shippingFee);
-//        response.setTotalAmount(totalAmount);
-//
-//        return response;
-
     }
 
-    public CartResponse getCartTotal(Long id, UUID voucherCode) {
+    public Cart getCartTotal(Long id, UUID voucherCode) {
         Account account = accountUtils.getCurrentAccount(); // phiên đang đăng nhập
         Cart cart = account.getCart();
         // lấy giỏ hàng từ tài khoản vì mỗi tài khoản có 1 giỏ hàng khác nhau
@@ -113,8 +86,9 @@ public class CartService {
 
 
         double discount = 0;
+        Voucher voucher = voucherRepository.findVoucherById(id);
         if (voucherCode != null) {
-            Voucher voucher = voucherRepository.findByCode(voucherCode)
+             voucher = voucherRepository.findByCode(voucherCode)
                     .orElseThrow(() -> new RuntimeException("Voucher cannot be found"));
 
 
@@ -130,14 +104,14 @@ public class CartService {
         double totalAmount = subTotal - discount + shippingFee;
 
 
-        CartResponse response = new CartResponse();
-        response.setSubTotal(subTotal);
-        response.setDisCount(discount);
-        response.setShippingPee(shippingFee);
-        response.setTotalAmount(totalAmount);
+
+        cart.setSubTotal(subTotal);
+        cart.setShippingPee(shippingFee);
+        cart.setTotalAmount(totalAmount);
+        cart.setVoucher(voucher);
+        return cartRepository.save(cart);
 
 
-        return response;
     }
 
     public Cart getCart() {
@@ -146,7 +120,7 @@ public class CartService {
     }
 
     public void delete(long id){
-        cartDetailsRepository.deleteById(id);
+        cartDetailsRepository.deleteCartItem(id);
     }
 
 

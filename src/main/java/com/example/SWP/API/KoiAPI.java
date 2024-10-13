@@ -21,9 +21,9 @@ public class KoiAPI {
     @Autowired
     KoiService koiService;
 
-    @PostMapping()
-    public ResponseEntity newKoiFish(@Valid @RequestBody KoiRequest koiRequest ) {
-        KoiResponse newKoi = koiService.createKoi(koiRequest);
+    @PostMapping("{id}")
+    public ResponseEntity newKoiFish(@Valid @RequestBody KoiRequest koiRequest, @PathVariable Long id ) {
+        KoiResponse newKoi = koiService.createKoi(koiRequest,id);
         return ResponseEntity.ok(newKoi);
     }
 

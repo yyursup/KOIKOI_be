@@ -1,6 +1,8 @@
 package com.example.SWP.Service;
 
-import com.example.SWP.entity.Role;
+import com.example.SWP.Enums.Role;
+import com.example.SWP.entity.Cart;
+import com.example.SWP.entity.Consigment;
 import com.example.SWP.model.MailBody;
 import com.example.SWP.Repository.AccountRepository;
 import com.example.SWP.Repository.ForgotPasswordRepository;
@@ -45,8 +47,6 @@ public class AccountService implements UserDetailsService {
     @Autowired
     EmailService emailService;
 
-    @Autowired
-    ForgotPasswordRepository forgotPasswordRepository;
 
     @Autowired
     TokenService tokenService;
@@ -55,19 +55,30 @@ public class AccountService implements UserDetailsService {
     AccountUtils accountUtils;
 
     public RegisterResponse register(RegisterRequest registerRequest) {
+
         Account account = modelMapper.map(registerRequest, Account.class);
         account.setRole(Role.CUSTOMER);
         try {
             String originpassword = account.getPassword();
             account.setPassword(passwordEncoder.encode(originpassword));
+            Cart cart = new Cart();
+            cart.setAccount(account);
+            account.setCart(cart);
+            Consigment consigment = new Consigment();
+            consigment.setAccount(account);
+            account.setConsigment(consigment);
             Account newAccount = accountRepository.save(account);
+
             MailBody mailBody = new MailBody();
             mailBody.setTo(newAccount);
             mailBody.setSubject("WELCOME TO MY KOI FISH SHOP");
             mailBody.setLink("http://koifish.store/");
             emailService.sendSimpleMessage2(mailBody);
-            return modelMapper.map(newAccount, RegisterResponse.class);
+            RegisterResponse registerResponse = modelMapper.map(newAccount, RegisterResponse.class);
+            return registerResponse;
+
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             if (e.getMessage().contains(account.getUsername())) {
                 throw new RuntimeException("Duplicate username");
             } else if (e.getMessage().contains(account.getPhone_number())) {
@@ -78,30 +89,7 @@ public class AccountService implements UserDetailsService {
 
         }
     }
-    public RegisterResponse registerForManager(RegisterRequest registerRequest) {
-        Account account = modelMapper.map(registerRequest, Account.class);
-        account.setRole(Role.MANAGER);
-        try {
-            String originpassword = account.getPassword();
-            account.setPassword(passwordEncoder.encode(originpassword));
-            Account newAccount = accountRepository.save(account);
-            MailBody mailBody = new MailBody();
-            mailBody.setTo(newAccount);
-            mailBody.setSubject("WELCOME TO MY KOI FISH SHOP");
-            mailBody.setLink("http://koifish.store/");
-            emailService.sendSimpleMessage2(mailBody);
-            return modelMapper.map(newAccount, RegisterResponse.class);
-        } catch (Exception e) {
-            if (e.getMessage().contains(account.getUsername())) {
-                throw new RuntimeException("Duplicate username");
-            } else if (e.getMessage().contains(account.getPhone_number())) {
-                throw new RuntimeException("Duplicate phone");
-            } else {
-                throw new RuntimeException("Duplicate email");
-            }
 
-        }
-    }
 
 
     public LoginResponse loginWithUserName(LoginRequest loginRequest){
@@ -193,75 +181,5 @@ public class AccountService implements UserDetailsService {
         return accountRepository.findAccountByUsername(username);
     }
 
-    public ForgotPassword verifyEmail(String email){
-        Account account = accountRepository.findAccountByEmail(email);
 
-
-        if(account == null){
-
-            throw new RuntimeException("Can not found this account");
-
-        }else{
-
-            int otp = otpGenerator();
-            MailBody mailBody = MailBody.builder()
-                    .to(account)
-                    .subject("OTP")
-                    .otp(otp)
-                    .build();
-
-            ForgotPassword fp = new ForgotPassword(
-                    otp,
-                    new Date(System.currentTimeMillis() + 5 * 60 * 1000),
-                    account
-            );
-
-            emailService.sendSimpleMessage(mailBody);
-            return forgotPasswordRepository.save(fp);
-        }
-    }
-
-
-    public ForgotPassword verifyOTP(Integer otp, String email) {
-
-        Account account = accountRepository.findAccountByEmail(email);
-
-
-        if (account == null) {
-            throw new RuntimeException("Cannot find this account with email: " + email);
-        }
-
-
-        ForgotPassword fp = forgotPasswordRepository.findByOtpAndAccount(otp,account);
-
-
-        if (fp == null) {
-            throw new RuntimeException("Invalid OTP for email: " + email);
-        }
-
-
-        if (fp.getExpirationTime().before(Date.from(Instant.now()))) {
-
-            forgotPasswordRepository.deleteById(fp.getFpid());
-            throw new RuntimeException("OTP has expired for email: " + email);
-        }
-
-
-        return forgotPasswordRepository.save(fp);
-    }
-
-    public ChangePassword changePassword(ChangePassword changePassword, String email){
-        if(!Objects.equals(changePassword.password(),changePassword.repeatPassword())){
-            throw new RuntimeException("password or repeat password is wrong! ");
-        }
-        String originPassword = changePassword.password();
-        String encodedPassword = passwordEncoder.encode(originPassword);
-        accountRepository.updatePassword(email,encodedPassword);
-        return changePassword;
-    }
-
-    public Integer otpGenerator(){
-        Random random = new Random();
-        return random.nextInt(100_000,999_999);
-    }
 }

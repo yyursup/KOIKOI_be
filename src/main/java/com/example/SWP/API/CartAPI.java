@@ -3,6 +3,7 @@ package com.example.SWP.API;
 
 import com.example.SWP.Service.CartService;
 
+import com.example.SWP.entity.Cart;
 import com.example.SWP.model.CartRequest;
 import com.example.SWP.model.OrderRequest;
 import com.example.SWP.model.CartResponse;
@@ -26,16 +27,16 @@ public class CartAPI {
 
 
     @PostMapping("{id}")
-    public ResponseEntity addToCart(@PathVariable Long id) {
+    public ResponseEntity addToCart(@PathVariable long id) {
 
         return ResponseEntity.ok(cartService.addToCart(id));
     }
 
 
     @GetMapping("/total")
-    public ResponseEntity<CartResponse> getCartTotal(@RequestParam Long accountId,
-                @RequestParam(required = false) UUID voucherCode) {
-        CartResponse cartTotal = cartService.getCartTotal(accountId, voucherCode);
+    public ResponseEntity<Cart> getCartTotal(@RequestParam Long accountId,
+                                             @RequestParam(required = false) UUID voucherCode) {
+        Cart cartTotal = cartService.getCartTotal(accountId, voucherCode);
         return ResponseEntity.ok(cartTotal);
         }
 
