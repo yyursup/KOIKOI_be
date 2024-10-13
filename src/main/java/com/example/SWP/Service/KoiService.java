@@ -1,14 +1,13 @@
 package com.example.SWP.Service;
 
 import com.example.SWP.Repository.KoiRepository;
-import com.example.SWP.entity.Account;
+import com.example.SWP.Repository.KoiTypeRepository;
 import com.example.SWP.entity.Koi;
+import com.example.SWP.entity.KoiType;
 import com.example.SWP.model.KoiRequest;
 import com.example.SWP.model.KoiResponse;
-import com.example.SWP.model.ViewProfileResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,19 +25,28 @@ public class KoiService {
     @Autowired
     TokenService tokenService;
 
+    @Autowired
+    KoiTypeRepository koiTypeRepository;
+
     public List<KoiResponse> getAllKoi() {
         List<Koi> koiList = koiRepository.findKoisByIsDeletedFalse();
         return koiList.stream().map(koi ->
                 modelMapper.map(koi, KoiResponse.class)).collect(Collectors.toList());
     }
 
-    public KoiResponse createKoi(KoiRequest koiRequest) {
-        Koi koi = modelMapper.map(koiRequest,Koi.class);
+    public KoiResponse createKoi(KoiRequest koiRequest, Long koiTypeId) {
+        Koi koi = modelMapper.map(koiRequest, Koi.class);
+
+        // Fetch the KoiType using koiTypeId
+        KoiType koiType = koiTypeRepository.findById(koiTypeId)
+                .orElseThrow(() -> new RuntimeException("KoiType not found"));
+
+        // Set the KoiType to the Koi entity
+        koi.setKoiType(koiType);
+        koi.setCategory(koiType.getCategory());
         try {
             Koi newKoi = koiRepository.save(koi);
-
-            return modelMapper.map(newKoi,KoiResponse.class);
-
+            return modelMapper.map(newKoi, KoiResponse.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

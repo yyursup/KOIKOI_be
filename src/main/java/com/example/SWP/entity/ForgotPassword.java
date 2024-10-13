@@ -1,5 +1,6 @@
 package com.example.SWP.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,7 @@ public class ForgotPassword {
     Date expirationTime;
 
     @OneToOne
+    @JsonIgnore
     Account account;
 
 
