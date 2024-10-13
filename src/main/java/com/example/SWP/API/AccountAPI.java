@@ -2,7 +2,6 @@ package com.example.SWP.API;
 
 import com.example.SWP.Repository.ForgotPasswordRepository;
 import com.example.SWP.Service.AccountService;
-import com.example.SWP.Service.ForgotPasswordService;
 import com.example.SWP.entity.ForgotPassword;
 import com.example.SWP.model.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -20,6 +19,8 @@ public class AccountAPI {
     @Autowired
     AccountService accountService;
 
+
+
     @Autowired
     ForgotPasswordRepository forgotPasswordRepository;
 
@@ -29,6 +30,14 @@ public class AccountAPI {
     public ResponseEntity register(@Valid @RequestBody RegisterRequest registerRequest){
         RegisterResponse newAccount = accountService.register(registerRequest);
             return ResponseEntity.ok(newAccount);
+
+
+    }
+
+    @PostMapping("registerForManager")
+    public ResponseEntity registerManager(@Valid @RequestBody RegisterRequest registerRequest){
+        RegisterResponse newAccount = accountService.registerForManager(registerRequest);
+        return ResponseEntity.ok(newAccount);
 
 
     }
@@ -80,7 +89,23 @@ public class AccountAPI {
         }
     }
 
+    @PostMapping("/verifyEmail/{email}")
+    public  ResponseEntity verifyEmail (@PathVariable String email){
+        ForgotPassword forgotPassword = accountService.verifyEmail(email);
+        return ResponseEntity.ok(forgotPassword);
+    }
 
+    @PostMapping("/verifyOtp/{otp}/{email}")
+    public  ResponseEntity verifyOTP (@PathVariable Integer otp, @PathVariable String email){
+        ForgotPassword forgotPassword = accountService.verifyOTP(otp,email);
+        return ResponseEntity.ok("OTP verified");
+    }
+
+    @PostMapping("/changePassword/{email}")
+    public ResponseEntity changePasswordHandler(@RequestBody ChangePassword changePassword, @PathVariable String email){
+        ChangePassword changePassword1 = accountService.changePassword(changePassword,email);
+        return ResponseEntity.ok(changePassword1);
+    }
 
 }
 

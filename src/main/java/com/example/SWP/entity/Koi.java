@@ -43,8 +43,6 @@ public class Koi {
 
     String image;
 
-    String category;
-
 
     @OneToMany(mappedBy = "koi", cascade = CascadeType.ALL)
     @JsonIgnore

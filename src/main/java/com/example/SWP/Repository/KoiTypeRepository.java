@@ -11,7 +11,4 @@ public interface KoiTypeRepository extends JpaRepository<KoiType, Long> {
     KoiType findKoiById(long id);
 
     List<KoiType> findKoiTypesByIsDeletedFalse();
-
-    KoiType findCategoryById(long id);
-
 }

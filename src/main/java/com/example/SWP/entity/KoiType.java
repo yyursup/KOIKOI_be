@@ -14,7 +14,11 @@ public class KoiType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    String category;
+    @NotBlank(message = "This name can not be empty!")
+    String name;
+
+    @NotBlank(message = "This description can not be empty!")
+    String description;
 
     boolean isDeleted = false;
 

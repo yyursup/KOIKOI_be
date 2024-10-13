@@ -21,7 +21,9 @@ public class Consigment {
 
     String Status;
 
-
+    @ManyToOne
+    @JoinColumn(name = "AccountID")
+    Account account;
 
     @OneToMany(mappedBy = "consigment", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -30,8 +32,8 @@ public class Consigment {
     @OneToOne
     Payment payment;
 
-    @OneToOne(mappedBy = "consigment",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "consigment", cascade = CascadeType.ALL)
     @JsonIgnore
-    Account account;
+    Set<ConsigmentAgreement> consigmentAgreements;
 
 }

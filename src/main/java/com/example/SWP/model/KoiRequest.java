@@ -30,5 +30,4 @@ public class KoiRequest {
     String gender;
 
     String image;
-
 }

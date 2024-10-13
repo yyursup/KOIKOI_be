@@ -2,17 +2,13 @@ package com.example.SWP.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,11 +23,11 @@ public class Cart {
     String status;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
-    Set<CartDetails> cartDetails = new HashSet<>();
+    @JsonIgnore
+    Set<CartDetails> cartDetails;
 
     @ManyToOne
-    @JoinColumn(name = "voucher_id")
-    @JsonIgnore
+    @JoinColumn(name = "VoucherID")
     Voucher voucher;
 
     @OneToOne(mappedBy = "cart",cascade = CascadeType.ALL)

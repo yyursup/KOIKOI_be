@@ -1,8 +1,6 @@
 package com.example.SWP.entity;
 
 
-import com.example.SWP.Enums.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Setter
 @Getter
@@ -65,24 +62,19 @@ public class Account implements UserDetails {
 
     String specific_Address;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "account")
-    Set<CanceledOrder> canceledOrders;
+
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @JsonIgnore
     List<KoiOrder> koiOrderList;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "consigment_id")
-    Consigment consigment;
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+     List<Consigment> consigments;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "cart_id")
     Cart cart;
 
-    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
-    List<FeedBack> feedBacks;
+
 
 
     @Override

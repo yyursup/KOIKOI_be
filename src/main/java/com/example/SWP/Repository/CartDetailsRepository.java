@@ -10,10 +10,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CartDetailsRepository extends JpaRepository<CartDetails, Long> {
-    @Modifying
     @Transactional
-    @Query("DELETE FROM CartDetails c WHERE c.id = :id")
+    @Modifying
+    @Query(value = "delete from cart_details where id = :id", nativeQuery = true)
     void deleteCartItem(@Param("id") long id);
-
 
 }

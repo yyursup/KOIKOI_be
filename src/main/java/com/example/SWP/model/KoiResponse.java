@@ -31,6 +31,4 @@ public class KoiResponse {
 
     String image;
 
-    String category;
-
 }
