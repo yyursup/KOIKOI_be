@@ -1,4 +1,4 @@
-package com.example.SWP.model;
+package com.example.SWP.model.Request;
 
 import jakarta.validation.constraints.Email;
 import lombok.Data;

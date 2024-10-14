@@ -23,10 +23,6 @@ public class AccountAPI {
     @Autowired
     AccountService accountService;
 
-    @Autowired
-    ForgotPasswordRepository forgotPasswordRepository;
-
-
 
     @PostMapping("register")
     public ResponseEntity register(@Valid @RequestBody RegisterRequest registerRequest){

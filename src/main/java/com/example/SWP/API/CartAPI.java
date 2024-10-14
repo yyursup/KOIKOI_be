@@ -56,10 +56,6 @@ public class CartAPI {
         return ResponseEntity.ok(cartService.removeOneProduct(id));
     }
 
-
-
-
-
 }
 
 

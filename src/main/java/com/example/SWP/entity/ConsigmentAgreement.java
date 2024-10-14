@@ -20,7 +20,7 @@ public class ConsigmentAgreement {
 
     @ManyToOne
     @JoinColumn(name = "Consigment_ID")
-    Consigment consigment;
+    Consignment consigment;
 
     @ManyToOne
     @JoinColumn(name = "ConsigmentService_ID")
