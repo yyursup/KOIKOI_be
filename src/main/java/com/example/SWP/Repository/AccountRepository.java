@@ -1,6 +1,5 @@
 package com.example.SWP.Repository;
 
-import com.example.SWP.Enums.Role;
 import com.example.SWP.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -16,5 +15,4 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     Account findAccountByEmail(String email);
 
-    Account findAccountByRole(Role role);
 }
