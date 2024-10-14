@@ -6,11 +6,10 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
-public class Consigment {
+public class Consignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
@@ -23,14 +22,14 @@ public class Consigment {
 
 
 
-    @OneToMany(mappedBy = "consigment", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "consignment", cascade = CascadeType.ALL)
     @JsonIgnore
     List<Koi> kois;
 
     @OneToOne
     Payment payment;
 
-    @OneToOne(mappedBy = "consigment",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "consignment",cascade = CascadeType.ALL)
     @JsonIgnore
     Account account;
 

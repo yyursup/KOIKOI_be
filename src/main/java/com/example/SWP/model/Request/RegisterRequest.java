@@ -1,4 +1,4 @@
-package com.example.SWP.model;
+package com.example.SWP.model.Request;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
@@ -16,7 +16,7 @@ public class RegisterRequest {
     String username;
 
     @NotBlank(message = "This full name can not be empty!")
-    String Fullname;
+    String fullName;
 
     @NotBlank(message = "Password can not blank!")
     @Size(min = 6, message = "Password must be at least 6 characters")
@@ -30,14 +30,4 @@ public class RegisterRequest {
     @Email(message = "Email not valid!")
     @Column(unique = true)
     String email;
-
-
-
-
-
-
-
-
-
-
 }

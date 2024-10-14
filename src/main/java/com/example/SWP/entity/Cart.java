@@ -24,7 +24,6 @@ public class Cart {
 
     double totalAmount;
 
-    String status;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     Set<CartDetails> cartDetails = new HashSet<>();

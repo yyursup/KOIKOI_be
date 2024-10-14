@@ -11,4 +11,6 @@ public interface OrderRepository extends JpaRepository<KoiOrder, Long> {
     List<KoiOrder> findAccountById(long id);
 
     List<KoiOrder> findByOrderStatus(OrderStatus orderStatus);
+
+    KoiOrder findKoiOrderById(long id);
 }

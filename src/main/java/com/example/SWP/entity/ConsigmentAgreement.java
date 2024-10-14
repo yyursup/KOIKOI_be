@@ -19,8 +19,8 @@ public class ConsigmentAgreement {
     double Price;
 
     @ManyToOne
-    @JoinColumn(name = "Consigment_ID")
-    Consigment consigment;
+    @JoinColumn(name = "Consignment_ID")
+    Consignment consignment;
 
     @ManyToOne
     @JoinColumn(name = "ConsigmentService_ID")

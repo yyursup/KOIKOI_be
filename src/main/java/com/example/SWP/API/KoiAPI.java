@@ -2,8 +2,8 @@ package com.example.SWP.API;
 
 import com.example.SWP.Service.KoiService;
 import com.example.SWP.entity.Koi;
-import com.example.SWP.model.KoiRequest;
-import com.example.SWP.model.KoiResponse;
+import com.example.SWP.model.Request.KoiRequest;
+import com.example.SWP.model.Response.KoiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

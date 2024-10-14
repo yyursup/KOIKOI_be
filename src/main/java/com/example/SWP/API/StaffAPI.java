@@ -1,7 +1,11 @@
 package com.example.SWP.API;
 
 import com.example.SWP.Service.StaffService;
-import com.example.SWP.model.*;
+import com.example.SWP.model.Request.RegisterRequest;
+import com.example.SWP.model.Request.UpdateProfileRequest;
+import com.example.SWP.model.Response.RegisterResponse;
+import com.example.SWP.model.Response.UpdateAndDeleteProfileResponse;
+import com.example.SWP.model.Response.ViewProfileResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

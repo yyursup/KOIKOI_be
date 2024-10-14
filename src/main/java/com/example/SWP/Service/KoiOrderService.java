@@ -2,10 +2,11 @@ package com.example.SWP.Service;
 
 import com.example.SWP.Enums.CancelOrderStatus;
 import com.example.SWP.Enums.OrderStatus;
+import com.example.SWP.Enums.Type;
 import com.example.SWP.Repository.*;
 import com.example.SWP.entity.*;
-import com.example.SWP.model.OrderCancelRequest;
-import com.example.SWP.model.OrderCreationRequest;
+import com.example.SWP.model.Request.OrderCancelRequest;
+import com.example.SWP.model.Request.OrderCreationRequest;
 import com.example.SWP.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class KoiOrderService {
         }
         KoiOrder koiOrder = new KoiOrder();
         koiOrder.setAccount(account);
-        koiOrder.setFullname(account.getFullname());
+        koiOrder.setFullName(account.getFullName());
         koiOrder.setPhone(account.getPhone_number());
         koiOrder.setOrderDate(LocalDateTime.now());
         koiOrder.setOrderStatus(OrderStatus.PENDING);
@@ -61,6 +62,7 @@ public class KoiOrderService {
         koiOrder.setNote(request.getNote());
         koiOrder.setTotalAmount(cart.getTotalAmount());
         koiOrder.setShippingPee(cart.getShippingPee());
+        koiOrder.setType(Type.BUY);
         koiOrder = orderRepository.save(koiOrder);
 
 

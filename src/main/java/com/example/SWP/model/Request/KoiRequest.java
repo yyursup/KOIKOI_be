@@ -1,4 +1,4 @@
-package com.example.SWP.model;
+package com.example.SWP.model.Request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -30,5 +30,7 @@ public class KoiRequest {
     String gender;
 
     String image;
+
+    String category;
 
 }

@@ -2,13 +2,18 @@ package com.example.SWP.Service;
 
 import com.example.SWP.Enums.Role;
 import com.example.SWP.entity.Cart;
-import com.example.SWP.entity.Consigment;
+
+import com.example.SWP.entity.Consignment;
 import com.example.SWP.model.MailBody;
 import com.example.SWP.Repository.AccountRepository;
-import com.example.SWP.Repository.ForgotPasswordRepository;
 import com.example.SWP.entity.Account;
-import com.example.SWP.entity.ForgotPassword;
-import com.example.SWP.model.*;
+import com.example.SWP.model.Request.LoginRequest;
+import com.example.SWP.model.Request.RegisterRequest;
+import com.example.SWP.model.Request.UpdateProfileRequest;
+import com.example.SWP.model.Response.LoginResponse;
+import com.example.SWP.model.Response.RegisterResponse;
+import com.example.SWP.model.Response.UpdateAndDeleteProfileResponse;
+import com.example.SWP.model.Response.ViewProfileResponse;
 import com.example.SWP.utils.AccountUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +28,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,11 +65,10 @@ public class AccountService implements UserDetailsService {
             Cart cart = new Cart();
             cart.setAccount(account);
             account.setCart(cart);
-            Consigment consigment = new Consigment();
-            consigment.setAccount(account);
-            account.setConsigment(consigment);
+            Consignment consignment = new Consignment();
+            consignment.setAccount(account);
+            account.setConsignment(consignment);
             Account newAccount = accountRepository.save(account);
-
             MailBody mailBody = new MailBody();
             mailBody.setTo(newAccount);
             mailBody.setSubject("WELCOME TO MY KOI FISH SHOP");
@@ -151,7 +151,7 @@ public class AccountService implements UserDetailsService {
             throw new RuntimeException("Can not find this id" + AccountId);
         }
         oldAccount.setUsername(updateProfileRequest.getUsername());
-        oldAccount.setFullname(updateProfileRequest.getFullname());
+        oldAccount.setFullName(updateProfileRequest.getFullname());
         oldAccount.setPhone_number(updateProfileRequest.getPhone_number());
         oldAccount.setEmail(updateProfileRequest.getEmail());
         oldAccount.setCity(updateProfileRequest.getCity());

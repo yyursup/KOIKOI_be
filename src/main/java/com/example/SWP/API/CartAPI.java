@@ -4,12 +4,7 @@ package com.example.SWP.API;
 import com.example.SWP.Service.CartService;
 
 import com.example.SWP.entity.Cart;
-import com.example.SWP.model.CartRequest;
-import com.example.SWP.model.OrderRequest;
-import com.example.SWP.model.CartResponse;
-import com.example.SWP.model.VoucherRequestForDiscount;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,9 +29,9 @@ public class CartAPI {
 
 
     @GetMapping("/total")
-    public ResponseEntity<Cart> getCartTotal(@RequestParam Long accountId,
+    public ResponseEntity<Cart> getCartTotal(@RequestParam Long cartId,
                                              @RequestParam(required = false) UUID voucherCode) {
-        Cart cartTotal = cartService.getCartTotal(accountId, voucherCode);
+        Cart cartTotal = cartService.getCartTotal(cartId, voucherCode);
         return ResponseEntity.ok(cartTotal);
         }
 

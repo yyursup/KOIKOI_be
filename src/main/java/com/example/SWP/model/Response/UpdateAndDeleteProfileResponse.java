@@ -1,4 +1,4 @@
-package com.example.SWP.model;
+package com.example.SWP.model.Response;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;

@@ -1,4 +1,4 @@
-package com.example.SWP.model;
+package com.example.SWP.model.Request;
 
 import com.example.SWP.Enums.OrderStatus;
 import lombok.Data;
@@ -11,7 +11,7 @@ public class OrderCreationRequest {
 
     String phone;
 
-    String fullname;
+    String fullName;
 
     LocalDate orderDate;
 
@@ -22,4 +22,5 @@ public class OrderCreationRequest {
     UUID voucher;
 
     OrderStatus orderStatus = OrderStatus.PENDING;
+
 }

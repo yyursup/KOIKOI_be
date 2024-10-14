@@ -4,8 +4,9 @@ import com.example.SWP.Repository.KoiRepository;
 import com.example.SWP.Repository.KoiTypeRepository;
 import com.example.SWP.entity.Koi;
 import com.example.SWP.entity.KoiType;
-import com.example.SWP.model.KoiRequest;
-import com.example.SWP.model.KoiResponse;
+import com.example.SWP.model.Request.KoiRequest;
+import com.example.SWP.model.Response.KoiResponse;
+import com.example.SWP.utils.AccountUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,8 @@ public class KoiService {
     ModelMapper modelMapper;
 
     @Autowired
-    TokenService tokenService;
+    AccountUtils accountUtils;
+
 
     @Autowired
     KoiTypeRepository koiTypeRepository;
@@ -36,6 +38,7 @@ public class KoiService {
 
     public KoiResponse createKoi(KoiRequest koiRequest, Long koiTypeId) {
         Koi koi = modelMapper.map(koiRequest, Koi.class);
+        koi.setAccount(accountUtils.getCurrentAccount());
 
         // Fetch the KoiType using koiTypeId
         KoiType koiType = koiTypeRepository.findById(koiTypeId)

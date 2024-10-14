@@ -2,8 +2,8 @@ package com.example.SWP.Service;
 
 import com.example.SWP.Repository.KoiTypeRepository;
 import com.example.SWP.entity.KoiType;
-import com.example.SWP.model.KoiTypeRequest;
-import com.example.SWP.model.KoiTypeResponse;
+import com.example.SWP.model.Request.KoiTypeRequest;
+import com.example.SWP.model.Response.KoiTypeResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

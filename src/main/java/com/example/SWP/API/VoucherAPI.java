@@ -1,8 +1,7 @@
 package com.example.SWP.API;
 
 import com.example.SWP.Service.VoucherService;
-import com.example.SWP.entity.Voucher;
-import com.example.SWP.model.VoucherRequest;
+import com.example.SWP.model.Request.VoucherRequest;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RequestMapping("api/voucher")
 @RestController

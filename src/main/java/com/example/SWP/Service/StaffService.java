@@ -4,6 +4,11 @@ import com.example.SWP.Enums.Role;
 import com.example.SWP.Repository.AccountRepository;
 import com.example.SWP.entity.Account;
 import com.example.SWP.model.*;
+import com.example.SWP.model.Request.RegisterRequest;
+import com.example.SWP.model.Request.UpdateProfileRequest;
+import com.example.SWP.model.Response.RegisterResponse;
+import com.example.SWP.model.Response.UpdateAndDeleteProfileResponse;
+import com.example.SWP.model.Response.ViewProfileResponse;
 import com.example.SWP.utils.AccountUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +64,7 @@ public class StaffService {
             throw new RuntimeException("Can not find this id" + AccountId);
         }
         oldAccount.setUsername(updateProfileRequest.getUsername());
-        oldAccount.setFullname(updateProfileRequest.getFullname());
+        oldAccount.setFullName(updateProfileRequest.getFullname());
         oldAccount.setPhone_number(updateProfileRequest.getPhone_number());
         oldAccount.setEmail(updateProfileRequest.getEmail());
         oldAccount.setCity(updateProfileRequest.getCity());

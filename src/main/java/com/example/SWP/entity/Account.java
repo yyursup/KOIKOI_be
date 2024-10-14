@@ -13,10 +13,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Setter
 @Getter
@@ -37,7 +34,7 @@ public class Account implements UserDetails {
     String username;
 
     @NotBlank(message = "This full name can not be empty!")
-    String Fullname;
+    String fullName;
 
 
     @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})", message = "Phone invalid!")
@@ -56,7 +53,6 @@ public class Account implements UserDetails {
     @Size(min = 6, message = "Password must be at least 6 characters")
     String password;
 
-
     String city;
 
     String state;
@@ -65,24 +61,35 @@ public class Account implements UserDetails {
 
     String specific_Address;
 
+    double balance = 0;
+
     @JsonIgnore
     @OneToMany(mappedBy = "account")
     Set<CanceledOrder> canceledOrders;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonIgnore
-    List<KoiOrder> koiOrderList;
+    Set<KoiOrder> koiOrderList;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "consigment_id")
-    Consigment consigment;
+    @JoinColumn(name = "consignment_id")
+    Consignment consignment;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_id")
     Cart cart;
 
     @OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
-    List<FeedBack> feedBacks;
+    Set<FeedBack> feedBacks;
+
+    @OneToMany(mappedBy = "from", cascade = CascadeType.ALL)
+    Set<Transactions> transactionsForm;
+
+    @OneToMany(mappedBy = "to", cascade = CascadeType.ALL)
+    Set<Transactions> transactionsTo;
+
+    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
+    Set<Koi> kois;
 
 
     @Override

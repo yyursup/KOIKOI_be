@@ -51,8 +51,8 @@ public class Koi {
     List<OrderDetails> orderDetails;
 
     @ManyToOne
-    @JoinColumn(name = "ConsigmentID")
-    Consigment consigment;
+    @JoinColumn(name = "ConsignmentID")
+    Consignment consignment;
 
     @ManyToOne
     @JoinColumn(name = "KoiTypeID")
@@ -61,4 +61,8 @@ public class Koi {
     @OneToMany(mappedBy = "koi", cascade = CascadeType.ALL)
     @JsonIgnore
     List<CartDetails> cartDetails;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    Account account;
 }

@@ -1,4 +1,4 @@
-package com.example.SWP.model;
+package com.example.SWP.model.Response;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import lombok.Data;
 public class RegisterResponse {
     long id;
     String username;
-    String Fullname;
+    String fullName;
     String Phone_number;
     String email;
 

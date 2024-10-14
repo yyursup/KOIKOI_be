@@ -1,4 +1,4 @@
-package com.example.SWP.model;
+package com.example.SWP.model.Response;
 
 import lombok.Data;
 

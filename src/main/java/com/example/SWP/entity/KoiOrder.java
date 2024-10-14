@@ -1,15 +1,14 @@
 package com.example.SWP.entity;
 
 import com.example.SWP.Enums.OrderStatus;
+import com.example.SWP.Enums.Type;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Entity
@@ -20,7 +19,7 @@ public class KoiOrder {
 
     double shippingPee;
 
-    String fullname;
+    String fullName;
 
     String phone;
 
@@ -46,19 +45,25 @@ public class KoiOrder {
     @Enumerated(EnumType.STRING)
     OrderStatus orderStatus;
 
+    @Enumerated(EnumType.STRING)
+    Type type;
+
     @ManyToOne
     @JoinColumn(name = "AccountID")
     Account account;
 
     @OneToMany(mappedBy = "koiOrder", cascade = CascadeType.ALL)
     @JsonIgnore
-    Set<OrderDetails> orderDetails;
+    Set<OrderDetails> orderDetails = new HashSet<>();
+    public List<OrderDetails> orderDetailsList() {
+        return new ArrayList<>(orderDetails);
+    }
 
     @JsonIgnore
     @OneToOne(mappedBy = "koiOrder", cascade = CascadeType.ALL)
     CanceledOrder canceledOrder;
 
-    @OneToOne
+    @OneToOne(mappedBy = "koiOrder")
     Payment payment;
 
 
