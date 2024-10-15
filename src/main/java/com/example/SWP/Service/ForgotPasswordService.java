@@ -2,9 +2,9 @@ package com.example.SWP.Service;
 
 import com.example.SWP.Repository.AccountRepository;
 import com.example.SWP.entity.Account;
-import com.example.SWP.model.Request.ForgotPasswordRequest;
+import com.example.SWP.model.request.ForgotPasswordRequest;
 import com.example.SWP.model.MailBody;
-import com.example.SWP.model.Request.ResetPasswordRequest;
+import com.example.SWP.model.request.ResetPasswordRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;

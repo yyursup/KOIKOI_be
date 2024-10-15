@@ -52,16 +52,16 @@ public class CartService {
             cart.getCartDetails().add(cartDetails);
             return cartRepository.save(cart);
         } else {
-          for (CartDetails details : cartDetail){
-              if(details.getKoi().getId() == id){
-                  if(details.getQuantity() >= koi.getQuantity()){
-                      throw new RuntimeException("The quantity in stock is not enough");
-                  }
-                  details.setQuantity(details.getQuantity() + 1);
-                  cartDetailsRepository.save(details);
-                  return cartRepository.findById(cart.getId()).get();
-              }
-          }
+            for (CartDetails details : cartDetail){
+                if(details.getKoi().getId() == id){
+                    if(details.getQuantity() >= koi.getQuantity()){
+                        throw new RuntimeException("The quantity in stock is not enough");
+                    }
+                    details.setQuantity(details.getQuantity() + 1);
+                    cartDetailsRepository.save(details);
+                    return cartRepository.findById(cart.getId()).get();
+                }
+            }
 
             CartDetails cartDetails = new CartDetails();
             cartDetails.setImage(koi.getImage());
@@ -88,7 +88,7 @@ public class CartService {
         double discount = 0;
         Voucher voucher = voucherRepository.findVoucherById(id);
         if (voucherCode != null) {
-             voucher = voucherRepository.findByCode(voucherCode)
+            voucher = voucherRepository.findByCode(voucherCode)
                     .orElseThrow(() -> new RuntimeException("Voucher cannot be found"));
 
 

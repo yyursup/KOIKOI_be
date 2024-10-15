@@ -1,4 +1,4 @@
-package com.example.SWP.model.Response;
+package com.example.SWP.model.request;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
@@ -7,7 +7,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class UpdateAndDeleteProfileResponse {
+public class UpdateProfileRequest {
+
     @NotBlank(message = "This username can not be empty!")
     @Column(unique = true)
     String username;

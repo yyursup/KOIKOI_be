@@ -2,8 +2,8 @@ package com.example.SWP.API;
 
 import com.example.SWP.Service.FeedbackService;
 import com.example.SWP.entity.FeedBack;
-import com.example.SWP.model.Request.FeedBackRequest;
-import com.example.SWP.model.Response.FeedBackResponse;
+import com.example.SWP.model.request.FeedBackRequest;
+import com.example.SWP.model.response.FeedBackResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,7 @@
 package com.example.SWP.entity;
 
 import com.example.SWP.Enums.PaymentType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 

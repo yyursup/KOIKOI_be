@@ -4,8 +4,9 @@ import com.example.SWP.Repository.KoiRepository;
 import com.example.SWP.Repository.KoiTypeRepository;
 import com.example.SWP.entity.Koi;
 import com.example.SWP.entity.KoiType;
-import com.example.SWP.model.Request.KoiRequest;
-import com.example.SWP.model.Response.KoiResponse;
+
+import com.example.SWP.model.request.KoiRequest;
+import com.example.SWP.model.response.KoiResponse;
 import com.example.SWP.utils.AccountUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

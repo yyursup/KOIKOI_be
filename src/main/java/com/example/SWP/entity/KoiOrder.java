@@ -36,9 +36,6 @@ public class KoiOrder {
 
     Date processingDate;
 
-    Date shippingDate;
-
-    Date deliveryDate;
 
     String image;
 
@@ -50,14 +47,12 @@ public class KoiOrder {
 
     @ManyToOne
     @JoinColumn(name = "AccountID")
+    @JsonIgnore
     Account account;
 
     @OneToMany(mappedBy = "koiOrder", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<OrderDetails> orderDetails = new HashSet<>();
-    public List<OrderDetails> orderDetailsList() {
-        return new ArrayList<>(orderDetails);
-    }
 
     @JsonIgnore
     @OneToOne(mappedBy = "koiOrder", cascade = CascadeType.ALL)

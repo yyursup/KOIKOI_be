@@ -1,4 +1,4 @@
-package com.example.SWP.model.Request;
+package com.example.SWP.model.request;
 
 
 import jakarta.validation.constraints.Size;

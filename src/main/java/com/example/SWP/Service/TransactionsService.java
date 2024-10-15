@@ -1,5 +1,6 @@
 package com.example.SWP.Service;
 
+import com.example.SWP.Enums.OrderStatus;
 import com.example.SWP.Enums.PaymentType;
 import com.example.SWP.Enums.Role;
 import com.example.SWP.Enums.TransactionsEnum;
@@ -62,10 +63,14 @@ public class TransactionsService {
         transactions2.setPayment(payment);
         transactions2.setDescription("CUSTOMER TO MANAGER");
         transactions2.setStatus(TransactionsEnum.SUCCESS);
+        koiOrder.setOrderStatus(OrderStatus.PAID);
+        koiOrder.setConfirmDate(new Date());
+        payment.setKoiOrder(koiOrder);
 
         double newBalance = manager.getBalance() + koiOrder.getTotalAmount();
         manager.setBalance(newBalance);
         setTransactions.add(transactions2);
+
 
         payment.setTransactions(setTransactions);
 

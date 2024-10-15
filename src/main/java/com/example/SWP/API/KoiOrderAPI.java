@@ -2,8 +2,8 @@ package com.example.SWP.API;
 
 import com.example.SWP.Service.KoiOrderService;
 import com.example.SWP.entity.KoiOrder;
-import com.example.SWP.model.Request.OrderCancelRequest;
-import com.example.SWP.model.Request.OrderCreationRequest;
+import com.example.SWP.model.request.OrderCancelRequest;
+import com.example.SWP.model.request.OrderCreationRequest;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -15,7 +15,7 @@ public class PaymentAPI {
     @Autowired
     PaymentService paymentService;
 
-    @PostMapping("{id}")
+    @PostMapping("/VNPay/{id}")
     public ResponseEntity create(@RequestParam Long koiOrderId) throws Exception {
 
         String vnPayURL = paymentService.createUrl(koiOrderId);

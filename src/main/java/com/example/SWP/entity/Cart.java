@@ -26,11 +26,11 @@ public class Cart {
 
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    @JsonIgnore
     Set<CartDetails> cartDetails = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "voucher_id")
-    @JsonIgnore
     Voucher voucher;
 
     @OneToOne(mappedBy = "cart",cascade = CascadeType.ALL)

@@ -2,7 +2,7 @@ package com.example.SWP.Service;
 
 import com.example.SWP.Repository.VoucherRepository;
 import com.example.SWP.entity.Voucher;
-import com.example.SWP.model.Request.VoucherRequest;
+import com.example.SWP.model.request.VoucherRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

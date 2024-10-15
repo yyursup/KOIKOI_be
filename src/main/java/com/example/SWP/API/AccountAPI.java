@@ -1,13 +1,13 @@
 package com.example.SWP.API;
 
 import com.example.SWP.Service.AccountService;
-import com.example.SWP.model.Request.LoginRequest;
-import com.example.SWP.model.Request.RegisterRequest;
-import com.example.SWP.model.Request.UpdateProfileRequest;
-import com.example.SWP.model.Response.LoginResponse;
-import com.example.SWP.model.Response.RegisterResponse;
-import com.example.SWP.model.Response.UpdateAndDeleteProfileResponse;
-import com.example.SWP.model.Response.ViewProfileResponse;
+import com.example.SWP.model.request.LoginRequest;
+import com.example.SWP.model.request.RegisterRequest;
+import com.example.SWP.model.request.UpdateProfileRequest;
+import com.example.SWP.model.response.LoginResponse;
+import com.example.SWP.model.response.RegisterResponse;
+import com.example.SWP.model.response.UpdateAndDeleteProfileResponse;
+import com.example.SWP.model.response.ViewProfileResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

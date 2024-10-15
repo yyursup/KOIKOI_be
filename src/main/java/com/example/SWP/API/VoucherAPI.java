@@ -1,7 +1,7 @@
 package com.example.SWP.API;
 
 import com.example.SWP.Service.VoucherService;
-import com.example.SWP.model.Request.VoucherRequest;
+import com.example.SWP.model.request.VoucherRequest;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

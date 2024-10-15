@@ -2,6 +2,7 @@ package com.example.SWP.entity;
 
 import com.example.SWP.Enums.CancelOrderStatus;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.Order;
 import lombok.Data;
@@ -20,7 +21,6 @@ public class CanceledOrder {
     @OneToOne
     @JoinColumn(name = "KoiOrder_id")
     KoiOrder koiOrder;
-
 
     @ManyToOne
     @JoinColumn(name = "account_id")

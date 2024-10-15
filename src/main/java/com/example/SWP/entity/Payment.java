@@ -26,8 +26,6 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     PaymentType paymentType;
 
-
-
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<PaymentMethod> paymentMethods;

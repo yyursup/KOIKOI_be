@@ -1,5 +1,6 @@
 package com.example.SWP.entity;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -24,7 +25,6 @@ public class CartDetails {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CartID")
-    @JsonIgnore
     Cart cart;
 
     @ManyToOne

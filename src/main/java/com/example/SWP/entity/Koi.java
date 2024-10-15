@@ -52,10 +52,12 @@ public class Koi {
 
     @ManyToOne
     @JoinColumn(name = "ConsignmentID")
+
     Consignment consignment;
 
     @ManyToOne
     @JoinColumn(name = "KoiTypeID")
+
     KoiType koiType;
 
     @OneToMany(mappedBy = "koi", cascade = CascadeType.ALL)

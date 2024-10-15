@@ -1,6 +1,7 @@
 package com.example.SWP.entity;
 
 import com.example.SWP.Enums.TransactionsEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;

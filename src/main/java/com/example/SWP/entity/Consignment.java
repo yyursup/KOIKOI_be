@@ -20,8 +20,6 @@ public class Consignment {
 
     String Status;
 
-
-
     @OneToMany(mappedBy = "consignment", cascade = CascadeType.ALL)
     @JsonIgnore
     List<Koi> kois;
@@ -30,7 +28,6 @@ public class Consignment {
     Payment payment;
 
     @OneToOne(mappedBy = "consignment",cascade = CascadeType.ALL)
-    @JsonIgnore
     Account account;
 
 }

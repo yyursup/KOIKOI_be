@@ -1,5 +1,6 @@
 package com.example.SWP.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,26 +20,27 @@ import java.util.UUID;
 public class Voucher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-     long id;
+    long id;
 
-     boolean isDeleted = false;
+    boolean isDeleted = false;
 
     @Column(unique = true)
-     UUID code;
+    UUID code;
 
-     String description;
+    String description;
 
     @NotNull(message = "Discount amount can not null")
-     double discount_amount;
+    double discount_amount;
 
-     LocalDateTime start_date;
+    LocalDateTime start_date;
 
-     LocalDateTime end_date;
+    LocalDateTime end_date;
 
-     String is_active;
+    String is_active;
 
     @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL)
-     List<Cart> carts;
+    @JsonIgnore
+    List<Cart> carts;
 
 
     public void setStartDate(LocalDateTime start_date) {

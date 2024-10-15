@@ -63,12 +63,12 @@ public class Account implements UserDetails {
 
     double balance = 0;
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "account")
+    @JsonIgnore
     Set<CanceledOrder> canceledOrders;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @JsonIgnore
     Set<KoiOrder> koiOrderList;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -80,15 +80,19 @@ public class Account implements UserDetails {
     Cart cart;
 
     @OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
+    @JsonIgnore
     Set<FeedBack> feedBacks;
 
     @OneToMany(mappedBy = "from", cascade = CascadeType.ALL)
+    @JsonIgnore
     Set<Transactions> transactionsForm;
 
     @OneToMany(mappedBy = "to", cascade = CascadeType.ALL)
+    @JsonIgnore
     Set<Transactions> transactionsTo;
 
     @OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
+    @JsonIgnore
     Set<Koi> kois;
 
 

@@ -22,7 +22,6 @@ public class FeedBack {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    @JsonIgnore
     Account account;
 
     @OneToOne(cascade = CascadeType.ALL)
