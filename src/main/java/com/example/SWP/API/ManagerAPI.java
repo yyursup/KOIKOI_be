@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/Manager")
 @CrossOrigin("*")
 @SecurityRequirement(name = "api")
+
 public class ManagerAPI {
 
     @Autowired
     ManagerService managerService;
+
+
 
     @PostMapping("registerForManager")
     public ResponseEntity registerManager(@Valid @RequestBody RegisterRequest registerRequest){
@@ -43,6 +46,18 @@ public class ManagerAPI {
             throw new RuntimeException("Id of account " + id + " not found ");
         }
 
+    }
+
+    @GetMapping
+    public ResponseEntity calculateProfit(@RequestParam int month, @RequestParam int year) {
+            double profit = managerService.systemProfit(month, year);
+            return ResponseEntity.ok(profit);
+    }
+
+    @GetMapping("/totalProfit")
+    public ResponseEntity getTotalSystemProfit() {
+        Double totalProfit = managerService.getTotalSystemProfit();
+        return ResponseEntity.ok(totalProfit);
     }
 
 

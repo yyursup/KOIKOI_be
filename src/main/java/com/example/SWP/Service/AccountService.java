@@ -3,7 +3,6 @@ package com.example.SWP.Service;
 import com.example.SWP.Enums.Role;
 import com.example.SWP.entity.Cart;
 
-import com.example.SWP.entity.Consignment;
 import com.example.SWP.model.MailBody;
 import com.example.SWP.Repository.AccountRepository;
 import com.example.SWP.entity.Account;
@@ -28,6 +27,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,8 +55,8 @@ public class AccountService implements UserDetailsService {
     @Autowired
     AccountUtils accountUtils;
 
-    public RegisterResponse register(RegisterRequest registerRequest) {
 
+    public RegisterResponse register(RegisterRequest registerRequest) {
         Account account = modelMapper.map(registerRequest, Account.class);
         account.setRole(Role.CUSTOMER);
         try {
@@ -65,9 +65,7 @@ public class AccountService implements UserDetailsService {
             Cart cart = new Cart();
             cart.setAccount(account);
             account.setCart(cart);
-            Consignment consignment = new Consignment();
-            consignment.setAccount(account);
-            account.setConsignment(consignment);
+            account.setCreate_date(new Date());
             Account newAccount = accountRepository.save(account);
             MailBody mailBody = new MailBody();
             mailBody.setTo(newAccount);
@@ -157,7 +155,7 @@ public class AccountService implements UserDetailsService {
         oldAccount.setCity(updateProfileRequest.getCity());
         oldAccount.setState(updateProfileRequest.getState());
         oldAccount.setCountry(updateProfileRequest.getCountry());
-        oldAccount.setSpecific_Address(updateProfileRequest.getSpecific_Address());
+        oldAccount.setSpecific_address(updateProfileRequest.getSpecific_Address());
 //        oldAccount.setDeleted(account.isDeleted());
 
        accountRepository.save(oldAccount);

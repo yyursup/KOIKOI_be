@@ -7,25 +7,25 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 
 
 @Entity
 @Getter
 @Setter
-
 public class Transactions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
+    double totalAmount;
+
+    Date transactionsDate;
+
     @Enumerated(EnumType.STRING)
     TransactionsEnum status;
 
     String description;
-
-    @ManyToOne
-    @JoinColumn(name = "payment_id")
-    Payment payment;
 
     @ManyToOne
     @JoinColumn(name = "form_id")
@@ -35,4 +35,12 @@ public class Transactions {
     @JoinColumn(name = "to_id")
     Account to;
 
+    @ManyToOne
+    @JoinColumn(name = "payment_id")
+    Payment payment;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "transactions", cascade = CascadeType.ALL)
+    SystemProfit systemProfit;
 }
+

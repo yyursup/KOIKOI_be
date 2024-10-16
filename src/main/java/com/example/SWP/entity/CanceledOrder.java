@@ -6,12 +6,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.Order;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 @Entity
+@Getter
+@Setter
 public class CanceledOrder {
 
     @Id
@@ -26,7 +31,7 @@ public class CanceledOrder {
     @JoinColumn(name = "account_id")
     Account account;
 
-    LocalDate cancelDate;
+    Date cancelDate;
 
     String reason;
 

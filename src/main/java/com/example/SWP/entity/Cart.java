@@ -1,5 +1,6 @@
 package com.example.SWP.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,7 +25,6 @@ public class Cart {
 
     double totalAmount;
 
-
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<CartDetails> cartDetails = new HashSet<>();
@@ -33,8 +33,7 @@ public class Cart {
     @JoinColumn(name = "voucher_id")
     Voucher voucher;
 
-    @OneToOne(mappedBy = "cart",cascade = CascadeType.ALL)
-    @JsonIgnore
+    @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL)
+    @JsonBackReference
     Account account;
-
 }

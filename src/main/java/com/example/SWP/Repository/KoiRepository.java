@@ -14,8 +14,6 @@ public interface KoiRepository extends JpaRepository<Koi, Long> {
 
     List<Koi> findKoisByIsDeletedFalse();
 
-    @Query("SELECT k.price FROM Koi k WHERE k.id = :id")
-    double findKoiPriceById(@Param("id") long id);
 
 
 }

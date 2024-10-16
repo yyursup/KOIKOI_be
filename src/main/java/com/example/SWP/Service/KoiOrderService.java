@@ -8,14 +8,19 @@ import com.example.SWP.entity.*;
 
 import com.example.SWP.model.request.OrderCancelRequest;
 import com.example.SWP.model.request.OrderCreationRequest;
+import com.example.SWP.model.response.OrderDetailsResponse;
 import com.example.SWP.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 public class KoiOrderService {
 
@@ -70,9 +75,11 @@ public class KoiOrderService {
 
         for (CartDetails cartDetailsItem : cartDetails) {
             OrderDetails orderDetail = new OrderDetails();
+            orderDetail.setName(cartDetailsItem.getName());
             orderDetail.setKoi(cartDetailsItem.getKoi());
             orderDetail.setQuantity(cartDetailsItem.getQuantity());
             orderDetail.setPrice(cartDetailsItem.getPrice());
+            orderDetail.setImage(cartDetailsItem.getImage());
             orderDetail.setKoiOrder(koiOrder);
             orderDetails.add(orderDetail);
         }
@@ -83,7 +90,32 @@ public class KoiOrderService {
 
             cartRepository.save(cart);
             return koiOrder;
+    }
+
+    public Set<OrderDetailsResponse> viewOrderDetails(Long orderId) {
+
+        KoiOrder koiOrder = orderRepository.findKoiOrderById(orderId);
+        if (koiOrder == null) {
+            throw new RuntimeException("Order not found with id " + orderId);
         }
+
+        Set<OrderDetails> orderDetailsSet = koiOrder.getOrderDetails();
+
+        if (orderDetailsSet.isEmpty()) {
+            throw new RuntimeException("No order details found for order id " + orderId);
+        }
+        Set<OrderDetailsResponse> orderDetailsResponseSet = orderDetailsSet.stream()
+                .map(orderDetails -> new OrderDetailsResponse(
+                        orderDetails.getId(),
+                        orderDetails.getName(),
+                        orderDetails.getPrice(),
+                        orderDetails.getQuantity(),
+                        orderDetails.getImage()))
+                .collect(Collectors.toSet());
+
+        return orderDetailsResponseSet;
+    }
+
 
 
 
@@ -123,26 +155,49 @@ public class KoiOrderService {
 
     public KoiOrder cancelOrder(long orderId, OrderCancelRequest request){
         Account account = accountUtils.getCurrentAccount();
-
         KoiOrder order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Đơn hàng ko tồn tại"));
-        CanceledOrder canceledOrder = new CanceledOrder();
         order.setOrderStatus(OrderStatus.CANCELED);
-        Set<OrderDetails> orderDetails = order.getOrderDetails();
-
-        for(OrderDetails item : orderDetails){
-            Koi koi = item.getKoi();
-        }
-
-        canceledOrder.setCancelOrderStatus(CancelOrderStatus.PENDING);
+        CanceledOrder canceledOrder = new CanceledOrder();
+        canceledOrder.setCancelOrderStatus(CancelOrderStatus.FINISHED);
         canceledOrder.setTotalAmount(order.getTotalAmount());
         canceledOrder.setAccount(order.getAccount());
-        canceledOrder.setReason(request.getCanceledNote());
-        canceledOrder.setCancelDate(LocalDate.now());
+        canceledOrder.setReason(request.getNote());
+        canceledOrder.setCancelDate(new Date());
         canceledOrder.setKoiOrder(order);
         accountRepository.save(account);
         cancelOrderRepository.save(canceledOrder);
         return orderRepository.save(order);
     }
+
+    @Scheduled(fixedRate = 60000) // Chạy mỗi phút
+    @Transactional // Đảm bảo phiên Hibernate mở trong quá trình xử lý
+    public void autoCancelUnpaidOrders() {
+        // Tìm các đơn hàng có trạng thái PENDING và quá hạn 1 phút
+        List<KoiOrder> unpaidOrders = orderRepository.findAllByOrderStatusAndProcessingDateLessThan(OrderStatus.PENDING, new Date(System.currentTimeMillis() + 300000));
+
+        for (KoiOrder order : unpaidOrders) {
+            // Kiểm tra xem đơn hàng đã thanh toán hay chưa
+            if (!OrderStatus.PAID.equals(order.getOrderStatus())) {
+                // Cập nhật trạng thái đơn hàng thành CANCELED
+                order.setOrderStatus(OrderStatus.CANCELED);
+
+                // Tạo yêu cầu hủy đơn hàng và đặt lý do
+                CanceledOrder canceledOrder = new CanceledOrder();
+                canceledOrder.setReason("PAYMENT EXPIRED");
+                canceledOrder.setAccount(order.getAccount());
+                canceledOrder.setTotalAmount(order.getTotalAmount());
+                canceledOrder.setCancelDate(new Date());
+                canceledOrder.setCancelOrderStatus(CancelOrderStatus.FINISHED);
+                canceledOrder.setKoiOrder(order);
+
+                // Lưu trạng thái mới của đơn hàng vào cơ sở dữ liệu
+                orderRepository.save(order);
+                cancelOrderRepository.save(canceledOrder);
+            }
+        }
+    }
+
+
 
     public CanceledOrder refund(long id) {
         CanceledOrder canceledOrder = cancelOrderRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
@@ -153,14 +208,6 @@ public class KoiOrderService {
     public List<CanceledOrder> getListCancelOrders(){
         return cancelOrderRepository.findAll();
     }
-
-
-
-
-
-
-
-
 
 
 

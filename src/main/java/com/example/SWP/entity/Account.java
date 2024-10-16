@@ -3,6 +3,7 @@ package com.example.SWP.entity;
 
 import com.example.SWP.Enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -36,10 +37,9 @@ public class Account implements UserDetails {
     @NotBlank(message = "This full name can not be empty!")
     String fullName;
 
-
     @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})", message = "Phone invalid!")
     @Column(unique = true)
-    String Phone_number;
+    String phone_number;
 
     @Email(message = "Email not valid!")
     @Column(unique = true)
@@ -59,27 +59,25 @@ public class Account implements UserDetails {
 
     String country;
 
-    String specific_Address;
+    String specific_address;
 
     double balance = 0;
-
 
     @OneToMany(mappedBy = "account")
     @JsonIgnore
     Set<CanceledOrder> canceledOrders;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonManagedReference
     Set<KoiOrder> koiOrderList;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "consignment_id")
-    Consignment consignment;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_id")
+    @JsonManagedReference
     Cart cart;
 
-    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<FeedBack> feedBacks;
 
@@ -91,10 +89,9 @@ public class Account implements UserDetails {
     @JsonIgnore
     Set<Transactions> transactionsTo;
 
-    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<Koi> kois;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -126,3 +123,4 @@ public class Account implements UserDetails {
         return true;
     }
 }
+

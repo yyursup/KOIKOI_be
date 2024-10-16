@@ -19,9 +19,13 @@ public class OrderDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
+    String name;
+
     double price;
 
     int quantity;
+
+    String image;
 
     @ManyToOne
     @JoinColumn(name = "KoiOrderID")

@@ -50,10 +50,6 @@ public class Koi {
     @JsonIgnore
     List<OrderDetails> orderDetails;
 
-    @ManyToOne
-    @JoinColumn(name = "ConsignmentID")
-
-    Consignment consignment;
 
     @ManyToOne
     @JoinColumn(name = "KoiTypeID")

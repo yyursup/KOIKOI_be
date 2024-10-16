@@ -13,6 +13,7 @@ public class CartDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
+
     String image;
 
     String description;

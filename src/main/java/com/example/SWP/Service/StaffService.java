@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class StaffService {
 
@@ -38,6 +40,7 @@ public class StaffService {
         try {
             String originpassword = account.getPassword();
             account.setPassword(passwordEncoder.encode(originpassword));
+            account.setCreate_date(new Date());
             Account newAccount = accountRepository.save(account);
             MailBody mailBody = new MailBody();
             mailBody.setTo(newAccount);
@@ -70,7 +73,7 @@ public class StaffService {
         oldAccount.setCity(updateProfileRequest.getCity());
         oldAccount.setState(updateProfileRequest.getState());
         oldAccount.setCountry(updateProfileRequest.getCountry());
-        oldAccount.setSpecific_Address(updateProfileRequest.getSpecific_Address());
+        oldAccount.setSpecific_address(updateProfileRequest.getSpecific_Address());
 
 
         accountRepository.save(oldAccount);
