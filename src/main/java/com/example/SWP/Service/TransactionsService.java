@@ -305,7 +305,7 @@ public class TransactionsService {
                 if(koi.getQuantity() < 0 || koi.getQuantity() == 0){
                    koi.setStatus("SOLD OUT");
                 }  else  {
-                    koi.setStatus("CÒN HÀNG");
+                    koi.setStatus("IN STOCK");
                 }
 
             } else {
@@ -324,7 +324,7 @@ public class TransactionsService {
 
             koi.setQuantity(currentStock + orderedQuantity);
             koiRepository.save(koi);
-            koi.setStatus("CÒN HÀNG");
+            koi.setStatus("IN STOCK");
             // Update stock in the database
         }
     }

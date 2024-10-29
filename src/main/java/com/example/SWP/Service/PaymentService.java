@@ -6,7 +6,10 @@ import com.example.SWP.entity.*;
 
 import com.example.SWP.model.request.OrderCreationRequest;
 import com.example.SWP.model.request.OrderPayRequest;
+import com.example.SWP.model.response.KoiOrderResponse;
 import com.example.SWP.utils.AccountUtils;
+import jdk.jfr.BooleanFlag;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+
 @Service
 public class PaymentService {
 
@@ -30,6 +34,9 @@ public class PaymentService {
 
     @Autowired
     AccountUtils accountUtils;
+
+    Long lastPaidOrderId;
+
 
 
     public String createUrl(Long koiOrderId, OrderPayRequest request) throws  Exception {
@@ -47,15 +54,18 @@ public class PaymentService {
         koiOrder.setCity(request.getCity() != null && !request.getCity().isEmpty() ? request.getCity() : account.getCity());
         koiOrder.setAddress(request.getAddress() != null && !request.getAddress().isEmpty() ? request.getAddress() : account.getSpecific_address());
         koiOrder.setPhone(request.getPhone() != null && !request.getPhone().isEmpty() ? request.getPhone() : account.getPhone_number());
+        koiOrder.setEmail(request.getGmail() != null && !request.getGmail().isEmpty() ? request.getGmail() : account.getEmail());
 
         koiOrder.setOrderStatus(OrderStatus.PAID);
 
         orderRepository.save(koiOrder);
 
+        lastPaidOrderId = koiOrder.getId();
+
         String tmnCode = "T77TVJXG";
         String secretKey = "9P81P2EVHRIN0FTELZPCMURONQFHON7I";
         String vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        String returnUrl = "https://www.youtube.com/guide/swp/docker-local?koiOrderId=" + koiOrder.getId();
+        String returnUrl = "http://localhost:5173/orderSuccess?orderId=" + koiOrderId;
 
 
 
@@ -102,6 +112,26 @@ public class PaymentService {
         urlBuilder.deleteCharAt(urlBuilder.length() - 1); // Remove last '&'
 
         return urlBuilder.toString();
+    }
+    public KoiOrderResponse getLastPaidOrder() {
+        if (lastPaidOrderId != null) {
+            KoiOrder lastPaidOrder = orderRepository.findById(lastPaidOrderId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+            return new KoiOrderResponse(
+                    lastPaidOrder.getId(),
+                    lastPaidOrder.getTotalAmount(),
+                    lastPaidOrder.getShippingPee(),
+                    lastPaidOrder.getCountry(),
+                    lastPaidOrder.getCity(),
+                    lastPaidOrder.getAddress(),
+                    lastPaidOrder.getPhone(),
+                    lastPaidOrder.getOrderDate(),
+                    lastPaidOrder.getFullName(),
+                    lastPaidOrder.getEmail(),
+                    lastPaidOrder.getOrderStatus());
+        } else {
+            throw new RuntimeException("Chưa có đơn hàng nào được thanh toán gần đây");
+        }
     }
     private String generateHMAC(String secretKey, String signData) throws NoSuchAlgorithmException, InvalidKeyException {
         Mac hmacSha512 = Mac.getInstance("HmacSHA512");

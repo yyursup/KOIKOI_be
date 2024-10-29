@@ -57,7 +57,7 @@ public class KoiOrderService {
         koiOrder.setAccount(account);
         koiOrder.setFullName(account.getUsername());
         koiOrder.setPhone(account.getPhone_number());
-        koiOrder.setOrderDate(LocalDateTime.now());
+        koiOrder.setOrderDate(new Date());
         koiOrder.setOrderStatus(OrderStatus.PENDING);
         koiOrder.setAddress(account.getSpecific_address());
         koiOrder.setPhone(request.getPhone());
@@ -133,7 +133,7 @@ public class KoiOrderService {
         koiOrder.setAccount(account);
         koiOrder.setFullName(account.getUsername());
         koiOrder.setPhone(account.getPhone_number());
-        koiOrder.setOrderDate(LocalDateTime.now());
+        koiOrder.setOrderDate(new Date());
         koiOrder.setOrderStatus(OrderStatus.PENDING);
         koiOrder.setAddress(request.getAddress());
         koiOrder.setPhone(request.getPhone());

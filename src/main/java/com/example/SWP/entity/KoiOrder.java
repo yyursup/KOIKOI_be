@@ -28,8 +28,7 @@ public class KoiOrder {
 
     String phone;
 
-    @CreationTimestamp
-    LocalDateTime orderDate;
+    Date orderDate;
 
     String city;
 
@@ -38,6 +37,8 @@ public class KoiOrder {
     String note;
 
     String address;
+
+    String email;
 
     double totalAmount;
 
