@@ -2,5 +2,5 @@ package com.example.SWP.Enums;
 
 public enum Type {
     BUY,
-    CONSIGNMENT
+    CONSIGN
 }

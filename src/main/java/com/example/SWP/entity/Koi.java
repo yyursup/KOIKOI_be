@@ -1,6 +1,8 @@
 package com.example.SWP.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -53,7 +55,7 @@ public class Koi {
 
     @ManyToOne
     @JoinColumn(name = "KoiTypeID")
-
+    @JsonIgnore
     KoiType koiType;
 
     @OneToMany(mappedBy = "koi", cascade = CascadeType.ALL)
@@ -61,6 +63,7 @@ public class Koi {
     List<CartDetails> cartDetails;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "owner_id")
     Account account;
 }

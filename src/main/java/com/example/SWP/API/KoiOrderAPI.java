@@ -5,6 +5,7 @@ import com.example.SWP.entity.KoiOrder;
 import com.example.SWP.entity.OrderDetails;
 import com.example.SWP.model.request.OrderCancelRequest;
 import com.example.SWP.model.request.OrderCreationRequest;
+import com.example.SWP.model.request.RejectRequest;
 import com.example.SWP.model.response.OrderDetailsResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,13 @@ public class KoiOrderAPI {
         return ResponseEntity.ok(koiOrderService.convertCartToOrder(orderCreationRequest));
     }
 
-    @GetMapping
+    @PostMapping("/consignOrder")
+    public ResponseEntity createOrder2(@RequestParam long id,@RequestBody OrderCreationRequest orderCreationRequest){
+        return ResponseEntity.ok(koiOrderService.convertConsignToOrder(id, orderCreationRequest));
+    }
+
+
+    @GetMapping("showKoiOrder")
     public ResponseEntity getOrderByAccountById(){
         return ResponseEntity.ok(koiOrderService.getKoiOrderByAccountId());
     }
@@ -37,28 +44,31 @@ public class KoiOrderAPI {
     public ResponseEntity getAll(){
         return ResponseEntity.ok(koiOrderService.getAllOrders());
     }
+
     @GetMapping("pending")
     public ResponseEntity getPendingOrders() {
         return ResponseEntity.ok(koiOrderService.getPendingOrders());
     }
+
+    @GetMapping("paid")
+    public ResponseEntity getPaidOrders() {
+        return ResponseEntity.ok(koiOrderService.getPaidOrderes());
+    }
+
 
     @GetMapping("confirmed")
     public ResponseEntity getConfirmedOrders() {
         return ResponseEntity.ok(koiOrderService.getConfirmedOrders());
     }
 
-    @GetMapping("processing")
-    public ResponseEntity getProcessingOrders() {
-        return ResponseEntity.ok(koiOrderService.getProcessingOrders());
-    }
-
     @PutMapping("cancel/{id}")
     public ResponseEntity cancelOrder(@PathVariable long id, @RequestBody OrderCancelRequest request) {
         return ResponseEntity.ok(koiOrderService.cancelOrder(id, request));
     }
-    @PutMapping("refund/{id}")
-    public ResponseEntity refund(@PathVariable long id) {
-        return ResponseEntity.ok(koiOrderService.refund(id));
+
+    @PutMapping("reject/{id}")
+    public ResponseEntity cancelOrder(@PathVariable long id, @RequestBody RejectRequest request){
+        return ResponseEntity.ok(koiOrderService.rejectOrder(id,request));
     }
 
     @GetMapping("{id}")
@@ -72,7 +82,7 @@ public class KoiOrderAPI {
         return ResponseEntity.ok(koiOrderService.getListCancelOrders());
     }
 
-    @GetMapping("/ordersDetails/{orderId}")
+    @GetMapping("/details")
     public ResponseEntity  viewOrderDetails(@RequestParam long orderId) {
         Set<OrderDetailsResponse> orderDetails = koiOrderService.viewOrderDetails(orderId);
         return ResponseEntity.ok(orderDetails);

@@ -3,16 +3,17 @@ package com.example.SWP.Service;
 import com.example.SWP.Enums.Role;
 import com.example.SWP.entity.Cart;
 
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
+import com.google.firebase.auth.FirebaseAuth;
 import com.example.SWP.model.MailBody;
 import com.example.SWP.Repository.AccountRepository;
 import com.example.SWP.entity.Account;
+import com.example.SWP.model.request.LgGg;
 import com.example.SWP.model.request.LoginRequest;
 import com.example.SWP.model.request.RegisterRequest;
 import com.example.SWP.model.request.UpdateProfileRequest;
-import com.example.SWP.model.response.LoginResponse;
-import com.example.SWP.model.response.RegisterResponse;
-import com.example.SWP.model.response.UpdateAndDeleteProfileResponse;
-import com.example.SWP.model.response.ViewProfileResponse;
+import com.example.SWP.model.response.*;
 import com.example.SWP.utils.AccountUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,8 +89,6 @@ public class AccountService implements UserDetailsService {
         }
     }
 
-
-
     public LoginResponse loginWithUserName(LoginRequest loginRequest){
        try{
     Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -106,11 +105,6 @@ public class AccountService implements UserDetailsService {
     }
 
 
-
-//    public List<Account> getAllAccount() {
-//        List<Account> accountList = accountRepository.findAccountsByIsDeletedFalse();
-//        return accountList;
-//    }
     public List<ViewProfileResponse> getAllAccount() {
         List<Account> accountList = accountRepository.findAccountsByIsDeletedFalse();
 
@@ -119,16 +113,6 @@ public class AccountService implements UserDetailsService {
                 modelMapper.map(account, ViewProfileResponse.class)).collect(Collectors.toList());
     }
 
-//    public List<ViewProfileResponse> getAllAccount1() {
-//        List<Account> accountList = accountRepository.findAccountsByIsDeletedFalse();
-//        List<ViewProfileResponse> responses = new ArrayList<>();
-//        for(Account account : accountList){
-//            responses.add(modelMapper.map(account,ViewProfileResponse.class));
-//        }
-//        return responses;
-//
-//
-//    }
 
     public ViewProfileResponse viewProfile(){
         try{
@@ -153,10 +137,8 @@ public class AccountService implements UserDetailsService {
         oldAccount.setPhone_number(updateProfileRequest.getPhone_number());
         oldAccount.setEmail(updateProfileRequest.getEmail());
         oldAccount.setCity(updateProfileRequest.getCity());
-        oldAccount.setState(updateProfileRequest.getState());
         oldAccount.setCountry(updateProfileRequest.getCountry());
         oldAccount.setSpecific_address(updateProfileRequest.getSpecific_Address());
-//        oldAccount.setDeleted(account.isDeleted());
 
        accountRepository.save(oldAccount);
        return modelMapper.map(oldAccount, UpdateAndDeleteProfileResponse.class);
@@ -179,5 +161,36 @@ public class AccountService implements UserDetailsService {
         return accountRepository.findAccountByUsername(username);
     }
 
+    public AccountResponse loginGoogle(LgGg token) {
+        try{
+            FirebaseToken decodeToken = FirebaseAuth.getInstance().verifyIdToken(token.getToken());
+            String email = decodeToken.getEmail();
+            Account user = accountRepository.findAccountByEmail(email);
+            if(user == null) {
+                Account newUser = new Account();
+                newUser.setFullName(decodeToken.getName());
+                newUser.setEmail(email);
+                newUser.setUsername(email);
+                newUser.setRole(Role.CUSTOMER);
+                user = accountRepository.save(newUser);
+            }
+
+            AccountResponse accountResponse = new AccountResponse();
+            accountResponse.setId(user.getId());
+            accountResponse.setUsername(user.getUsername());
+            accountResponse.setEmail(user.getEmail());
+            accountResponse.setRole(user.getRole());
+            accountResponse.setToken(tokenService.generateToken(user));
+            return accountResponse;
+//            Optional<UserTeam> userTeam = user.getUserTeams().stream().findFirst();
+//            userTeam.ifPresent(team -> authenticationResponse.setTeamCode(team.getTeam().getCode()));
+//            authenticationResponse.setToken(jwtService.generateToken(user,UUID.randomUUID().toString(),false));
+//            return authenticationResponse;
+        } catch (FirebaseAuthException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

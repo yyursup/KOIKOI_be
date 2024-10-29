@@ -1,8 +1,12 @@
 package com.example.SWP.Service;
 
+import com.example.SWP.Enums.OrderStatus;
 import com.example.SWP.Repository.OrderRepository;
 import com.example.SWP.entity.*;
 
+import com.example.SWP.model.request.OrderCreationRequest;
+import com.example.SWP.model.request.OrderPayRequest;
+import com.example.SWP.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,25 +28,37 @@ public class PaymentService {
     @Autowired
     OrderRepository orderRepository;
 
+    @Autowired
+    AccountUtils accountUtils;
 
-    public String createUrl(Long koiOrderId) throws  Exception {
+
+    public String createUrl(Long koiOrderId, OrderPayRequest request) throws  Exception {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         LocalDateTime createDate = LocalDateTime.now();
         String formattedCreateDate = createDate.format(formatter);
 
+        Account account = accountUtils.getCurrentAccount();
         KoiOrder koiOrder = orderRepository.findById(koiOrderId)
                 .orElseThrow(() -> new RuntimeException("Can not found this order"));
         //KoiOrder koiOrder = orderRepository.findKoiOrderById(koiOrderId);
         double money = koiOrder.getTotalAmount() * 100;
         String amount = String.valueOf((int) money);
+        koiOrder.setCountry(request.getCountry() != null && !request.getCountry().isEmpty() ? request.getCountry() : account.getCountry());
+        koiOrder.setCity(request.getCity() != null && !request.getCity().isEmpty() ? request.getCity() : account.getCity());
+        koiOrder.setAddress(request.getAddress() != null && !request.getAddress().isEmpty() ? request.getAddress() : account.getSpecific_address());
+        koiOrder.setPhone(request.getPhone() != null && !request.getPhone().isEmpty() ? request.getPhone() : account.getPhone_number());
 
+        koiOrder.setOrderStatus(OrderStatus.PAID);
 
-
+        orderRepository.save(koiOrder);
 
         String tmnCode = "T77TVJXG";
         String secretKey = "9P81P2EVHRIN0FTELZPCMURONQFHON7I";
         String vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
         String returnUrl = "https://www.youtube.com/guide/swp/docker-local?koiOrderId=" + koiOrder.getId();
+
+
+
         String currCode = "VND";
         String vnpTxnRef = UUID.randomUUID().toString();
 

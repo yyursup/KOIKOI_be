@@ -23,11 +23,7 @@ public class Payment {
     Date paymentDate;
 
     @Enumerated(EnumType.STRING)
-    PaymentType paymentType;
-
-    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
-    @JsonIgnore
-    Set<PaymentMethod> paymentMethods;
+    PaymentType method;
 
     @OneToOne
     @JoinColumn(name = "koiOrder_id")
@@ -36,4 +32,10 @@ public class Payment {
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<Transactions> transactions;
+
+    @OneToOne(mappedBy = "payment", cascade = CascadeType.ALL)
+    @JsonIgnore
+    SystemProfit systemProfit;
+
+
 }

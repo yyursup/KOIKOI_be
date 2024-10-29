@@ -71,7 +71,6 @@ public class StaffService {
         oldAccount.setPhone_number(updateProfileRequest.getPhone_number());
         oldAccount.setEmail(updateProfileRequest.getEmail());
         oldAccount.setCity(updateProfileRequest.getCity());
-        oldAccount.setState(updateProfileRequest.getState());
         oldAccount.setCountry(updateProfileRequest.getCountry());
         oldAccount.setSpecific_address(updateProfileRequest.getSpecific_Address());
 

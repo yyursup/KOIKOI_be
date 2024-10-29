@@ -4,15 +4,19 @@ import com.example.SWP.Enums.OrderStatus;
 import com.example.SWP.Enums.Type;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class KoiOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +31,10 @@ public class KoiOrder {
     @CreationTimestamp
     LocalDateTime orderDate;
 
+    String city;
+
+    String country;
+
     String note;
 
     String address;
@@ -37,8 +45,6 @@ public class KoiOrder {
 
     Date processingDate;
 
-
-
     @Enumerated(EnumType.STRING)
     OrderStatus orderStatus;
 
@@ -47,7 +53,7 @@ public class KoiOrder {
 
     @ManyToOne
     @JoinColumn(name = "AccountID")
-    @JsonBackReference
+    @JsonIgnore
     Account account;
 
     @OneToMany(mappedBy = "koiOrder", cascade = CascadeType.ALL)
@@ -59,6 +65,7 @@ public class KoiOrder {
     CanceledOrder canceledOrder;
 
     @OneToOne(mappedBy = "koiOrder")
+    @JsonIgnore
     Payment payment;
 }
 

@@ -61,7 +61,6 @@ public class FeedbackService {
                 throw new EntityNotFoundException("Feedback with ID " + feedbackId + " not found");
             }
             oldFeedback.setFeedBackContent(feedBackRequest.getFeedBackContent());
-            oldFeedback.setFeedBackDay(feedBackRequest.getFeedBackDay());
             feedbackRepository.save(oldFeedback);
             return modelMapper.map(oldFeedback, FeedBackResponse.class);
         } catch (Exception e) {

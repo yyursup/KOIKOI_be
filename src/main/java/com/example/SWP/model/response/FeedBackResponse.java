@@ -11,4 +11,6 @@ public class FeedBackResponse {
     LocalDate feedBackDay;
 
     String feedBackContent;
+
+    String fullName;
 }

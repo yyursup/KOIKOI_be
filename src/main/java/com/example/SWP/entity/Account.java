@@ -55,8 +55,6 @@ public class Account implements UserDetails {
 
     String city;
 
-    String state;
-
     String country;
 
     String specific_address;
@@ -68,13 +66,12 @@ public class Account implements UserDetails {
     Set<CanceledOrder> canceledOrders;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonIgnore
     Set<KoiOrder> koiOrderList;
 
-
     @OneToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     @JoinColumn(name = "cart_id")
-    @JsonManagedReference
     Cart cart;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
@@ -92,6 +89,10 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonIgnore
     Set<Koi> kois;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Consignment> consignments = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

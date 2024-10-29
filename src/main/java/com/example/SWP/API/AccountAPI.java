@@ -1,6 +1,7 @@
 package com.example.SWP.API;
 
 import com.example.SWP.Service.AccountService;
+import com.example.SWP.model.request.LgGg;
 import com.example.SWP.model.request.LoginRequest;
 import com.example.SWP.model.request.RegisterRequest;
 import com.example.SWP.model.request.UpdateProfileRequest;
@@ -79,7 +80,10 @@ public class AccountAPI {
         }
     }
 
-
+    @PostMapping("/loginGoogle")
+    public ResponseEntity<?> loginGoogle(@RequestBody LgGg token) {
+        return ResponseEntity.ok(accountService.loginGoogle(token));
+    }
 
 }
 

@@ -1,5 +1,6 @@
 package com.example.SWP.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,7 +22,14 @@ public class SystemProfit {
 
     Date date;
 
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "transaction_id")
+//    @JsonIgnore
+//    Transactions transactions;
+
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "transaction_id")
-    Transactions transactions;
+    @JoinColumn(name = "payment_id")
+    @JsonIgnore
+    Payment payment;
+
 }

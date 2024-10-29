@@ -14,6 +14,12 @@ public interface KoiRepository extends JpaRepository<Koi, Long> {
 
     List<Koi> findKoisByIsDeletedFalse();
 
+    @Query("select sum(k.quantity) from Koi k")
+    long getTotalFishCount();
+
+
+
+
 
 
 }

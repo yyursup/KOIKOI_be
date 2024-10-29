@@ -1,6 +1,7 @@
 package com.example.SWP.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -13,7 +14,6 @@ public class CartDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-
     String image;
 
     String description;
@@ -24,11 +24,15 @@ public class CartDetails {
 
     int quantity;
 
+    boolean isDeleted = false;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CartID")
+    @JsonIgnore
     Cart cart;
 
     @ManyToOne
     @JoinColumn(name = "KoiID")
+    @JsonIgnore
     Koi koi;
 }

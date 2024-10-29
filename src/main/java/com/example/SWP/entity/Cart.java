@@ -1,6 +1,5 @@
 package com.example.SWP.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,6 +7,7 @@ import lombok.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -31,9 +31,18 @@ public class Cart {
 
     @ManyToOne
     @JoinColumn(name = "voucher_id")
+    //@JsonIgnore
     Voucher voucher;
 
     @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonIgnore
     Account account;
+
+
+    public List<CartDetails> getActiveCartDetails() {
+        return cartDetails.stream()
+                .filter(cartDetail -> !cartDetail.isDeleted())
+                .collect(Collectors.toList());
+    }
+
 }

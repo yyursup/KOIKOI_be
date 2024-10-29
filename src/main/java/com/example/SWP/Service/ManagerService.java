@@ -2,27 +2,24 @@ package com.example.SWP.Service;
 
 import com.example.SWP.Enums.Role;
 import com.example.SWP.Repository.AccountRepository;
+import com.example.SWP.Repository.PaymentRepository;
 import com.example.SWP.Repository.SystemProfitRepository;
 import com.example.SWP.Repository.TransactionsRepository;
 import com.example.SWP.entity.Account;
+import com.example.SWP.entity.Payment;
 import com.example.SWP.entity.SystemProfit;
 import com.example.SWP.entity.Transactions;
 import com.example.SWP.model.*;
 import com.example.SWP.model.request.RegisterRequest;
 import com.example.SWP.model.request.UpdateProfileRequest;
-import com.example.SWP.model.response.RegisterResponse;
-import com.example.SWP.model.response.UpdateAndDeleteProfileResponse;
-import com.example.SWP.model.response.ViewProfileResponse;
+import com.example.SWP.model.response.*;
 import com.example.SWP.utils.AccountUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ManagerService {
@@ -46,6 +43,9 @@ public class ManagerService {
 
     @Autowired
     ModelMapper modelMapper;
+
+    @Autowired
+    PaymentRepository paymentRepository;
 
     public RegisterResponse registerForManager(RegisterRequest registerRequest) {
         Account account = modelMapper.map(registerRequest, Account.class);
@@ -84,7 +84,6 @@ public class ManagerService {
         oldAccount.setPhone_number(updateProfileRequest.getPhone_number());
         oldAccount.setEmail(updateProfileRequest.getEmail());
         oldAccount.setCity(updateProfileRequest.getCity());
-        oldAccount.setState(updateProfileRequest.getState());
         oldAccount.setCountry(updateProfileRequest.getCountry());
         oldAccount.setSpecific_address(updateProfileRequest.getSpecific_Address());
 
@@ -103,50 +102,52 @@ public class ManagerService {
 
     }
 
-    public double systemProfit(int month, int year) {
-        List<Transactions> transactions = transactionsRepository.findAll();
+    public List<PaymentResponse> paymentsIncome(int month, int year) {
+        List<Payment> payments = paymentRepository.findAll();
+        List<PaymentResponse> validPayments = new ArrayList<>();
+        double totalIncome = 0;
 
-        double totalProfit = 0;
-
-        for (Transactions transaction : transactions) {
+        for (Payment payment : payments) {
             Calendar calendar = Calendar.getInstance();
-            calendar.setTime(transaction.getTransactionsDate());
+            calendar.setTime(payment.getPaymentDate());
 
-            int transactionMonth = calendar.get(Calendar.MONTH) + 1;
-            int transactionYear = calendar.get(Calendar.YEAR);
+            int paymentMonth = calendar.get(Calendar.MONTH) + 1;
+            int paymentYear = calendar.get(Calendar.YEAR);
 
-            if (transactionMonth == month && transactionYear == year) {
-                Account customer = transaction.getFrom();
-                Account manager = transaction.getTo();
+            if (paymentMonth == month && paymentYear == year) {
 
-                if (customer != null && manager != null && manager.getRole() == Role.MANAGER
-                        && "CUSTOMER TO MANAGER".equals(transaction.getDescription())) {
+                totalIncome += payment.getPaymentAmount();
 
-                    // Kiểm tra xem transaction đã tồn tại trong SystemProfit hay chưa
-                    Optional<SystemProfit> existingProfit = systemProfitRepository.findByTransactions(transaction);
 
-                    if (existingProfit.isPresent()) {
-                        // Nếu đã tồn tại, cập nhật profit
-                        SystemProfit systemProfit = existingProfit.get();
-                        systemProfitRepository.save(systemProfit);
-                    } else {
-                        // Nếu chưa tồn tại, thêm mới
-                        SystemProfit systemProfit = new SystemProfit();
-                        totalProfit = transaction.getTotalAmount();
-                        systemProfit.setBalance(totalProfit);
-                        systemProfit.setDescription("Profit for " + month + " / " + year
-                                + " from transaction ID " + transaction.getId());
-                        systemProfit.setDate(new Date());
-                        systemProfit.setTransactions(transaction);
-                        systemProfitRepository.save(systemProfit);
-                    }
+                Optional<SystemProfit> existingProfit = systemProfitRepository.findByPayment(payment);
+
+                if (existingProfit.isPresent()) {
+                    SystemProfit systemProfit = existingProfit.get();
+                    systemProfitRepository.save(systemProfit);
+                } else {
+                    SystemProfit systemProfit = new SystemProfit();
+                    systemProfit.setBalance(payment.getPaymentAmount());
+                    systemProfit.setDescription("Income for " + month + " / " + year
+                            + " from payment ID " + payment.getId());
+                    systemProfit.setDate(new Date());
+                    systemProfit.setPayment(payment);
+                    systemProfitRepository.save(systemProfit);
                 }
+
+                PaymentResponse paymentResponse = new PaymentResponse();
+                paymentResponse.setId(payment.getId());
+                paymentResponse.setTotalAmount(payment.getPaymentAmount());
+                paymentResponse.setPaymentDate(payment.getPaymentDate());
+                paymentResponse.setMethod(payment.getMethod());
+
+                validPayments.add(paymentResponse);
             }
         }
-        return totalProfit;
+
+        return validPayments;
     }
 
-    public Double getTotalSystemProfit(){
+    public Double getTotalIncome(){
         Double totalProfit = systemProfitRepository.getTotalSystemProfit();
         if(totalProfit == null){
             return 0.0;

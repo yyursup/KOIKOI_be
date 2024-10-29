@@ -29,18 +29,23 @@ public class Transactions {
 
     @ManyToOne
     @JoinColumn(name = "form_id")
+    @JsonIgnore
     Account from;
 
     @ManyToOne
     @JoinColumn(name = "to_id")
+    @JsonIgnore
     Account to;
+
 
     @ManyToOne
     @JoinColumn(name = "payment_id")
     Payment payment;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "transactions", cascade = CascadeType.ALL)
-    SystemProfit systemProfit;
+
+//    @OneToOne(mappedBy = "transactions", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    SystemProfit systemProfit;
+
 }
 

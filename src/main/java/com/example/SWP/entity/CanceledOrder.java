@@ -29,6 +29,7 @@ public class CanceledOrder {
 
     @ManyToOne
     @JoinColumn(name = "account_id")
+    @JsonIgnore
     Account account;
 
     Date cancelDate;
