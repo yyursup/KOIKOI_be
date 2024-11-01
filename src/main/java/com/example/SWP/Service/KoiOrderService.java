@@ -154,8 +154,8 @@ public class KoiOrderService {
             orderDetail.setKoi(consignmentDetails1.getKoi());
 
             // Check if getOrderDetails() is null before accessing getKoi()
-            if (consignmentDetails1.getOrderDetails() != null) {
-                orderDetail.setKoi(consignmentDetails1.getOrderDetails().getKoi());
+            if (consignmentDetails1.getConsignment().getOrderDetails() != null) {
+                orderDetail.setKoi(consignmentDetails1.getConsignment().getOrderDetails().getKoi());
             } else {
                 // Handle the case where getOrderDetails() is null
                 System.out.println("Warning: OrderDetails is null for ConsignmentDetails with ID " + consignmentDetails1.getId());

@@ -28,12 +28,6 @@ public class ConsignmentDetails {
     @JsonIgnore
     Consignment consignment;
 
-
-    @ManyToOne
-    @JoinColumn(name = "order_details_id")
-    @JsonIgnore
-    OrderDetails orderDetails;
-
     @OneToOne
     @JoinColumn(name = "koi_id")
     @JsonIgnore

@@ -93,7 +93,8 @@ public class ConsignmentService {
         consignmentDetails.setQuantity(orderDetails.getQuantity());
         consignmentDetails.setImage(orderDetails.getImage());
         consignmentDetails.setConsignment(consignment);
-        consignmentDetails.setOrderDetails(orderDetails);
+        consignmentDetails.setKoi(consignment.getOrderDetails().getKoi());
+//        consignmentDetails.setOrderDetails(orderDetails);
         consignment.getConsignmentDetailsSet().add(consignmentDetails);
 
 
@@ -238,7 +239,7 @@ public class ConsignmentService {
     public ConsignmentDetails add(long id) {
         ConsignmentDetails consignmentDetails = consignmentDetailsRepository
                 .findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-        if (consignmentDetails.getQuantity() >= consignmentDetails.getOrderDetails().getQuantity()) {
+        if (consignmentDetails.getQuantity() >= consignmentDetails.getConsignment().getOrderDetails().getQuantity()) {
             throw new RuntimeException("Trong đơn hàng không đủ ");
         }
         consignmentDetails.setQuantity(consignmentDetails.getQuantity() + 1);
@@ -252,7 +253,7 @@ public class ConsignmentService {
     public ConsignmentDetails removeOneProduct(long id) {
         ConsignmentDetails consignmentDetails = consignmentDetailsRepository
                 .findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-        if (consignmentDetails.getQuantity() > consignmentDetails.getOrderDetails().getQuantity()) {
+        if (consignmentDetails.getQuantity() > consignmentDetails.getConsignment().getOrderDetails().getQuantity()) {
             throw new RuntimeException("Trong đơn hàng không đủ");
         }
         consignmentDetails.setQuantity(consignmentDetails.getQuantity() - 1);
