@@ -97,7 +97,7 @@ public class KoiOrderService {
             throw new RuntimeException("Order not found with id " + orderId);
         }
 
-        Set<OrderDetails> orderDetailsSet = koiOrder.getOrderDetails();
+        List<OrderDetails> orderDetailsSet = koiOrder.getOrderDetails();
 
         if (orderDetailsSet.isEmpty()) {
             throw new RuntimeException("No order details found for order id " + orderId);
@@ -194,17 +194,17 @@ public class KoiOrderService {
     }
 
 
-    public KoiOrder getOrderById(long id) {
-        Account account = accountUtils.getCurrentAccount();
-        KoiOrder order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-        List<OrderDetails> orderItems = orderDetailsRepository.findByKoiOrderId(id);
-        Set<OrderDetails> orderDetails = new HashSet<>(orderItems);
-        for(OrderDetails item: orderDetails) {
-            System.out.println(item.getId());
-        }
-        order.setOrderDetails(orderDetails);
-        return order;
-    }
+//    public KoiOrder getOrderById(long id) {
+//        Account account = accountUtils.getCurrentAccount();
+//        KoiOrder order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+//        List<OrderDetails> orderItems = orderDetailsRepository.findByKoiOrderId(id);
+//        Set<OrderDetails> orderDetails = new HashSet<>(orderItems);
+//        for(OrderDetails item: orderDetails) {
+//            System.out.println(item.getId());
+//        }
+//        order.setOrderDetails(orderDetails);
+//        return order;
+//    }
 
     public KoiOrder cancelOrder(long orderId, OrderCancelRequest request){
         Account account = accountUtils.getCurrentAccount();
