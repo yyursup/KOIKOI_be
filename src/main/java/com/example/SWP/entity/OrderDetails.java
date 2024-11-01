@@ -33,7 +33,7 @@ public class OrderDetails {
 
     @ManyToOne
     @JoinColumn(name = "KoiOrderID")
-    @JsonIgnore
+            @JsonIgnore
     KoiOrder koiOrder;
 
     @ManyToOne
@@ -45,9 +45,5 @@ public class OrderDetails {
     @JsonIgnore
     Set<ConsignmentDetails> consignmentDetails = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "order_details_id")
-    @JsonIgnore
-    OrderDetails orderDetails;
 
 }
