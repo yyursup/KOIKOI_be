@@ -4,7 +4,4 @@ public enum StatusConsign {
     VALID,
     EXPIRED,
     CANCELLED,
-    ACCEPT,
-    REJECT,
-    PROCESSING
 }

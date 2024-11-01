@@ -41,11 +41,14 @@ public class ForgotPasswordService {
             MailBody mailBody = new MailBody();
             mailBody.setTo(account);
             mailBody.setSubject("Reset Password");
-            mailBody.setLink("https://chatgpt.com/c/6707ec1a-b6f0-800d-b47b-1bb34e4a9d7d/?token=" + tokenService.generateToken(account));
+            // Thiết lập link với token
+            String resetLink = "https://chatgpt.com/c/6707ec1a-b6f0-800d-b47b-1bb34e4a9d7d/?token=" + tokenService.generateToken(account);
+            mailBody.setLink(resetLink);
 
             emailService.sendSimpleMessage(mailBody);
         }
     }
+
 
     public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
         Account account = getCurrentAccount();

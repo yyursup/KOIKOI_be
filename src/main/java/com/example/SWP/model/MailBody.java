@@ -23,6 +23,4 @@ public class MailBody {
     Date expirationTime;
 
     String link;
-
-    int otp;
 }

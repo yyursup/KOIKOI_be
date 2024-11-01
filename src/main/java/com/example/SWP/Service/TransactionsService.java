@@ -128,7 +128,7 @@ public class TransactionsService {
         koiOrder.setOrderStatus(OrderStatus.CONFIRMED);
         payment.setKoiOrder(koiOrder);
 
-        double newBalance = manager.getBalance() + koiOrder.getTotalAmount() * 0.1;
+        double newBalance = manager.getBalance() + ((koiOrder.getTotalAmount() - koiOrder.getShippingPee()) *0.1);
         manager.setBalance(newBalance);
         setTransactions.add(transactions2);
         // manager to owner
@@ -140,7 +140,7 @@ public class TransactionsService {
         transactions3.setTotalAmount(newBalance);
         transactions3.setStatus(TransactionsEnum.SUCCESS);
         transactions3.setDescription("MANAGER TO OWNER");
-        double newBalance2 = owner.getBalance() + koiOrder.getTotalAmount() * 0.9;
+        double newBalance2 = owner.getBalance() + ((koiOrder.getTotalAmount() - koiOrder.getShippingPee()) * 0.9) + koiOrder.getShippingPee();
         owner.setBalance(newBalance2);
         setTransactions.add(transactions3);
 

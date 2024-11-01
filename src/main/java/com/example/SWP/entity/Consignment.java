@@ -45,5 +45,9 @@ public class Consignment {
     @OneToMany(mappedBy = "consignment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     Set<ConsignmentDetails> consignmentDetailsSet = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "order_details_id")
+    @JsonIgnore
+    OrderDetails orderDetails;
 
 }

@@ -4,6 +4,7 @@ import com.example.SWP.Enums.StatusConsign;
 import com.example.SWP.Enums.TypeOfConsign;
 import com.example.SWP.Repository.*;
 import com.example.SWP.entity.*;
+import com.example.SWP.model.MailBody;
 import com.example.SWP.model.request.KoiRequest;
 import com.example.SWP.model.response.ConsignmentDetailsResponse;
 import com.example.SWP.utils.AccountUtils;
@@ -11,10 +12,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,6 +56,12 @@ public class ConsignmentService {
         OrderDetails orderDetails = orderDetailsRepository.findById(orderDetailsId)
                 .orElseThrow(() -> new RuntimeException("OrderDetails not found"));
 
+        // Kiểm tra nếu sản phẩm đã được ký gửi trước đó
+        boolean isConsigned = consignmentRepository.existsByOrderDetails(orderDetails);
+        if (isConsigned) {
+            throw new RuntimeException("This product has already been consigned and cannot be consigned again.");
+        }
+
         KoiOrder koiOrder = orderDetails.getKoiOrder(); // Lấy KoiOrder từ OrderDetails
 
         Consignment consignment = new Consignment();
@@ -60,6 +69,8 @@ public class ConsignmentService {
         consignment.setEnd_date(endDate);
         consignment.setProduct_name(orderDetails.getName());
         consignment.setType(TypeOfConsign.CARE);
+        consignment.setStatus(StatusConsign.VALID);
+        consignment.setOrderDetails(orderDetails);
 
         long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
         if (daysBetween < 0) {
@@ -83,7 +94,6 @@ public class ConsignmentService {
         consignmentDetails.setImage(orderDetails.getImage());
         consignmentDetails.setConsignment(consignment);
         consignmentDetails.setOrderDetails(orderDetails);
-        consignmentDetails.setKoi(orderDetails.getKoi());
         consignment.getConsignmentDetailsSet().add(consignmentDetails);
 
 
@@ -324,6 +334,42 @@ public class ConsignmentService {
     @Scheduled(cron = "0 0 0 * * ?") // Chạy hàng ngày lúc nửa đêm
     public void scheduledConsignmentStatusCheck() {
         checkAndUpdateConsignmentStatus();
+    }
+
+
+    @Autowired
+    EmailService emailService;
+
+    public void notifyConsignmentExpiry() {
+        List<Consignment> consignments = consignmentRepository.findAll();
+
+        for (Consignment consignment : consignments) {
+            long daysLeft = ChronoUnit.DAYS.between(LocalDate.now(), consignment.getEnd_date());
+            if (daysLeft <=1 && consignment.getStatus() == StatusConsign.VALID) {
+                Account account = consignment.getAccount();
+
+                // Tạo nội dung email
+                MailBody mailBody = new MailBody();
+                mailBody.setTo(account); // Chỉ truyền email thay vì đối tượng account
+                mailBody.setSubject("Care Subscription Expiration Notice");
+                mailBody.setExpirationTime(new Date()); // Thiết lập thời gian hết hạn, nếu cần
+                // Tạo đường link dẫn tới trang web gia hạn
+                String renewalLink = "https://example.com/renewal?consignmentId=" + consignment.getId();
+
+                // Thiết lập các biến context cho email
+                Context context = new Context();
+                context.setVariable("name", account.getEmail());
+                context.setVariable("daysLeft", daysLeft);
+                context.setVariable("renewalLink", renewalLink);
+
+                // Gửi email
+                emailService.sendExpiryNotification(mailBody, context);
+            }
+        }
+    }
+    @Scheduled(cron = "0 31 16 * * ?")
+    public void scheduledExpiryNotification() {
+        notifyConsignmentExpiry();
     }
 
 }
