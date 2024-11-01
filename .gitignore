@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### Ignore Firebase Admin JSON key ###
-firebase-admin.json
+firebase-admin.jsonsrc/main/resources/firebase-admin.json
