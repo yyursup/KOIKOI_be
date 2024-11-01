@@ -59,7 +59,7 @@ public class KoiOrder {
 
     @OneToMany(mappedBy = "koiOrder", cascade = CascadeType.ALL)
     @JsonIgnore
-    Set<OrderDetails> orderDetails = new HashSet<>();
+    List<OrderDetails> orderDetails;
 
     @JsonIgnore
     @OneToOne(mappedBy = "koiOrder", cascade = CascadeType.ALL)
