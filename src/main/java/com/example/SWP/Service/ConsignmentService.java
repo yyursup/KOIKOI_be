@@ -72,6 +72,7 @@ public class ConsignmentService {
         consignment.setStatus(StatusConsign.VALID);
         consignment.setOrderDetails(orderDetails);
 
+
         long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
         if (daysBetween < 0) {
             throw new IllegalArgumentException("End date must be after start date");
@@ -127,6 +128,7 @@ public class ConsignmentService {
         Consignment consignment = new Consignment();
         consignment.setType(TypeOfConsign.SELL);
         consignment.setAccount(account);// Liên kết Consignment với Account
+        consignment.setStatus(StatusConsign.VALID);
 
 
         // Tạo ConsignmentDetails và liên kết với Koi và Consignment

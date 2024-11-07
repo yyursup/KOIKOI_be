@@ -178,19 +178,37 @@ public class KoiOrderService {
      }
 
     public List<KoiOrder> getPendingOrders() {
-        return orderRepository.findByOrderStatus(OrderStatus.PENDING);
+        return orderRepository.findByOrderStatusAndType(OrderStatus.PENDING,Type.BUY);
+    }
+
+    public List<KoiOrder> getPendingOrders2() {
+        return orderRepository.findByOrderStatusAndType(OrderStatus.PENDING,Type.CONSIGN);
     }
 
     public List<KoiOrder> getPaidOrderes(){
-        return orderRepository.findByOrderStatus(OrderStatus.PAID);
+        return orderRepository.findByOrderStatusAndType(OrderStatus.PAID,Type.BUY);
     }
 
     public List<KoiOrder> getConfirmedOrders() {
-        return orderRepository.findByOrderStatus(OrderStatus.CONFIRMED);
+        return orderRepository.findByOrderStatusAndType(OrderStatus.CONFIRMED,Type.BUY);
     }
+
+    public List<KoiOrder> getConfirmedOrders2() {
+        return orderRepository.findByOrderStatusAndType(OrderStatus.CONFIRMED,Type.CONSIGN);
+    }
+
+
 
     public List<KoiOrder> getAllOrders() {
         return orderRepository.findAll();
+    }
+
+    public List<KoiOrder> koiOrdersBuy(){
+        return orderRepository.findKoiOrderByType(Type.BUY);
+    }
+
+    public List<KoiOrder> koiOrdersConsign(){
+        return orderRepository.findKoiOrderByType(Type.CONSIGN);
     }
 
 

@@ -1,6 +1,7 @@
 package com.example.SWP.Repository;
 
 import com.example.SWP.entity.ConsignmentDetails;
+import com.example.SWP.entity.Koi;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,4 +13,6 @@ public interface ConsignmentDetailsRepository extends JpaRepository<ConsignmentD
     @Transactional
     @Query("DELETE FROM ConsignmentDetails c where c.id = :id")
     void deleteConsignmentDetails(@Param("id") long id);
+
+    ConsignmentDetails findByKoi(Koi koi);
 }

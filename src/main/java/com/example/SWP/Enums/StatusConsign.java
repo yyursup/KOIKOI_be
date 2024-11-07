@@ -4,4 +4,5 @@ public enum StatusConsign {
     VALID,
     EXPIRED,
     CANCELLED,
+    SOLD
 }

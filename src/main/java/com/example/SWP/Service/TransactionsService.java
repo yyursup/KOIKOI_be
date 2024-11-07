@@ -1,9 +1,6 @@
-package com.example.SWP.Service;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        package com.example.SWP.Service;
 
-import com.example.SWP.Enums.OrderStatus;
-import com.example.SWP.Enums.PaymentType;
-import com.example.SWP.Enums.Role;
-import com.example.SWP.Enums.TransactionsEnum;
+import com.example.SWP.Enums.*;
 import com.example.SWP.Repository.*;
 import com.example.SWP.entity.*;
 import com.example.SWP.utils.AccountUtils;
@@ -16,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class TransactionsService {
+public class  TransactionsService {
 
     @Autowired
     AccountUtils accountUtils;
@@ -35,6 +32,12 @@ public class TransactionsService {
 
     @Autowired
     TransactionsRepository transactionsRepository;
+
+    @Autowired
+    ConsignmentDetailsRepository consignmentDetailsRepository;
+
+    @Autowired
+    ConsignmentRepository consignmentRepository;
 
     public void createTransactions(long id) {
         KoiOrder koiOrder = orderRepository.findById(id)
@@ -275,7 +278,6 @@ public class TransactionsService {
 
         transactions.add(transactions1);
 
-
         transactionsRepository.save(transactions1);
         accountRepository.save(manager);
 
@@ -364,18 +366,30 @@ public class TransactionsService {
 
             if (currentStock >= orderedQuantity) {
                 koi.setQuantity(currentStock - orderedQuantity);
-                koiRepository.save(koi);// Update stock in the database
-                if(koi.getQuantity() < 0 || koi.getQuantity() == 0){
-                   koi.setStatus("SOLD OUT");
-                }  else  {
+                koiRepository.save(koi); // Update stock in the database
+
+                if (koi.getQuantity() <= 0) {
+                    koi.setStatus("SOLD OUT");
+
+                    // Tìm ConsignmentDetails dựa trên koi hiện tại
+                    ConsignmentDetails consignmentDetails = consignmentDetailsRepository.findByKoi(koi);
+                    if (consignmentDetails != null) {
+                        Consignment consignment = consignmentDetails.getConsignment();
+
+                        // Đặt trạng thái của Consignment thành SOLD OUT
+                        consignment.setStatus(StatusConsign.SOLD);
+                        consignmentRepository.save(consignment);
+
+                    }
+                } else {
                     koi.setStatus("IN STOCK");
                 }
-
             } else {
                 throw new RuntimeException("Not enough koi stock available for: " + koi.getName());
             }
         }
     }
+
 
     private void updateKoiStockForRefund(KoiOrder koiOrder) {
         List<OrderDetails> orderItems = koiOrder.getOrderDetails();
