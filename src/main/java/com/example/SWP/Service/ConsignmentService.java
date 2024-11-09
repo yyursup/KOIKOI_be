@@ -69,7 +69,7 @@ public class ConsignmentService {
         consignment.setEnd_date(endDate);
         consignment.setProduct_name(orderDetails.getName());
         consignment.setType(TypeOfConsign.CARE);
-        consignment.setStatus(StatusConsign.VALID);
+        consignment.setStatus(StatusConsign.PENDING);
         consignment.setOrderDetails(orderDetails);
 
 
@@ -104,6 +104,13 @@ public class ConsignmentService {
         return consignment;
     }
 
+    public Consignment getConsignmentById(Long id) {
+        return consignmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Consignment not found with id: " + id));
+    }
+
+
+
     public Consignment createConsignmentForSell(KoiRequest koiRequest, Long koiTypeId) {
         Account account = accountUtils.getCurrentAccount();
 
@@ -128,7 +135,6 @@ public class ConsignmentService {
         Consignment consignment = new Consignment();
         consignment.setType(TypeOfConsign.SELL);
         consignment.setAccount(account);// Liên kết Consignment với Account
-        consignment.setStatus(StatusConsign.VALID);
 
 
         // Tạo ConsignmentDetails và liên kết với Koi và Consignment
@@ -205,7 +211,7 @@ public class ConsignmentService {
         double totalAmount = calculateTotalAmount(subTotal, extensionDays);
 
         consignment.setEnd_date(new_EndDate);
-        consignment.setStatus(StatusConsign.VALID);
+        consignment.setStatus(StatusConsign.PENDING);
         consignment.setTotalAmount(totalAmount);
         consignment.setNote("Customer has extended the consignment for " + extensionDays + " more days");
         consignmentRepository.save(consignment);

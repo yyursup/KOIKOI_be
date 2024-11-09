@@ -62,9 +62,9 @@ public class ConsignmentAPI {
         return ResponseEntity.ok(consignment);
     }
 
-    @GetMapping("showConsignment")
-    public ResponseEntity getConsignmentByAccountById(){
-        return ResponseEntity.ok(consignmentService.getConsignmentByAccountId());
+    @GetMapping("showConsignment/{id}")
+    public ResponseEntity getConsignmentById(@PathVariable Long id) {
+        return ResponseEntity.ok(consignmentService.getConsignmentById(id));
     }
 
     @GetMapping("/details")
@@ -72,4 +72,5 @@ public class ConsignmentAPI {
         Set<ConsignmentDetailsResponse> consignments = consignmentService.viewConsignmentDetails(orderId);
         return ResponseEntity.ok(consignments);
     }
+
 }

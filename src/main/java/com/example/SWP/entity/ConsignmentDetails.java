@@ -28,7 +28,7 @@ public class ConsignmentDetails {
     @JsonIgnore
     Consignment consignment;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "koi_id")
     @JsonIgnore
     Koi koi;
