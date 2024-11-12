@@ -1,10 +1,16 @@
 package com.example.SWP.Service;
 
-import com.example.SWP.config.ThymeleafConfig;
+import com.example.SWP.Enums.Role;
+import com.example.SWP.Repository.AccountRepository;
+import com.example.SWP.entity.Account;
 import com.example.SWP.entity.Orders;
+import com.example.SWP.entity.Transactions;
 import com.example.SWP.model.MailBody;
+import com.example.SWP.model.request.TransactionRequest;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
@@ -13,8 +19,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Date;
 
 @Service
 public class EmailService {
@@ -25,6 +29,9 @@ public class EmailService {
 
     @Autowired
     JavaMailSender javaMailSender;
+
+    @Autowired
+    AccountRepository accountRepository;
 
     public void sendSimpleMessage(MailBody mailBody) {
         try {
@@ -116,4 +123,115 @@ public class EmailService {
             e.printStackTrace(); // Hiển thị chi tiết lỗi
         }
     }
+
+
+    public void sendConsignSuccessNotification(MailBody mailBody, Context context) {
+        Logger logger = LoggerFactory.getLogger(this.getClass());
+
+        try {
+            if (mailBody == null || mailBody.getTo() == null || mailBody.getTo().getEmail() == null) {
+                throw new IllegalArgumentException("Invalid MailBody: recipient email is missing");
+            }
+
+            String template = templateEngine.process("ConsignSuccessNotification", context);
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            mimeMessageHelper.setFrom("koifish669@gmail.com");
+            mimeMessageHelper.setTo(mailBody.getTo().getEmail());
+            mimeMessageHelper.setSubject(mailBody.getSubject());
+            mimeMessageHelper.setText(template, true);
+
+            javaMailSender.send(mimeMessage);
+            logger.info("Consignment success email sent to: {}", mailBody.getTo().getEmail());
+
+        } catch (MessagingException e) {
+            logger.error("Failed to send consignment success email to: {}", mailBody.getTo().getEmail(), e);
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid email details: ", e);
+        } catch (Exception e) {
+            logger.error("Unexpected error in sendConsignSuccessNotification", e);
+        }
+    }
+
+    // Gửi thông báo rút tiền thành công
+    public void sendWithdrawalConfirmationEmail(Account account, double amount, TransactionRequest transactionRequest) {
+        Context context = new Context();
+        context.setVariable("name", account.getEmail());
+        context.setVariable("amount", amount);
+        context.setVariable("accountNumber", transactionRequest.getAccountNumber());
+        context.setVariable("accountName", transactionRequest.getAccountName());
+        context.setVariable("bankName", transactionRequest.getBankName());
+
+        String template = templateEngine.process("withdrawalConfirmation", context);
+
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setTo(account.getEmail());
+            mimeMessageHelper.setSubject("Withdrawal Successful");
+            mimeMessageHelper.setText(template, true); // Cho phép HTML
+            mimeMessageHelper.setFrom("koifish669@gmail.com");
+
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            System.out.println("ERROR SEND EMAIL: " + e.getMessage());
+        }
+    }
+
+
+    // Gửi thông báo yêu cầu xác nhận rút tiền đến Manager
+    public void sendPendingWithdrawalRequestToManager(Transactions transaction) {
+        Account manager = accountRepository.findAccountByRole(Role.MANAGER);
+
+        Context context = new Context();
+        context.setVariable("amount", transaction.getTotalAmount());
+        context.setVariable("userEmail", transaction.getFrom().getEmail());
+        context.setVariable("accountNumber", transaction.getAccountNumber());
+        context.setVariable("accountName", transaction.getAccountName());
+        context.setVariable("bankName", transaction.getBankName());
+
+        String template = templateEngine.process("pendingWithdrawalRequest", context);
+
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setTo(manager.getEmail());
+            mimeMessageHelper.setSubject("Pending Withdrawal Request");
+            mimeMessageHelper.setText(template, true); // Cho phép HTML
+            mimeMessageHelper.setFrom("koifish669@gmail.com");
+
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            System.out.println("ERROR SEND EMAIL: " + e.getMessage());
+        }
+    }
+
+
+    public void sendWithdrawalRejectionEmail(Account account, double amount, TransactionRequest transactionRequest) {
+        Context context = new Context();
+        context.setVariable("name", account.getEmail());
+        context.setVariable("amount", amount);
+        context.setVariable("accountNumber", transactionRequest.getAccountNumber());
+        context.setVariable("accountName", transactionRequest.getAccountName());
+        context.setVariable("bankName", transactionRequest.getBankName());
+
+        String template = templateEngine.process("withdrawalRejection", context);
+
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setTo(account.getEmail());
+            mimeMessageHelper.setSubject("Withdrawal Request Rejected");
+            mimeMessageHelper.setText(template, true); // Cho phép HTML
+            mimeMessageHelper.setFrom("koifish669@gmail.com");
+
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            System.out.println("ERROR SEND EMAIL: " + e.getMessage());
+        }
+    }
+
+
+
 }

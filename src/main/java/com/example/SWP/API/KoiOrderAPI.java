@@ -50,35 +50,15 @@ public class KoiOrderAPI {
         return ResponseEntity.ok(koiOrderService.getPendingOrders());
     }
 
-    @GetMapping("pending2")
-    public ResponseEntity getPendingOrders2() {
-        return ResponseEntity.ok(koiOrderService.getPendingOrders2());
-    }
-
     @GetMapping("paid")
     public ResponseEntity getPaidOrders() {
         return ResponseEntity.ok(koiOrderService.getPaidOrderes());
-    }
-
-    @GetMapping("buy")
-    public ResponseEntity getBuy(){
-        return ResponseEntity.ok(koiOrderService.koiOrdersBuy());
-    }
-
-    @GetMapping("consign")
-    public ResponseEntity getConsign(){
-        return ResponseEntity.ok(koiOrderService.koiOrdersConsign());
     }
 
 
     @GetMapping("confirmed")
     public ResponseEntity getConfirmedOrders() {
         return ResponseEntity.ok(koiOrderService.getConfirmedOrders());
-    }
-
-    @GetMapping("confirmed2")
-    public ResponseEntity getConfirmedOrders2() {
-        return ResponseEntity.ok(koiOrderService.getConfirmedOrders2());
     }
 
     @PutMapping("cancel/{id}")

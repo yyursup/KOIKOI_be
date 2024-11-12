@@ -1,11 +1,14 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        package com.example.SWP.Service;
+package com.example.SWP.Service;
 
 import com.example.SWP.Enums.*;
 import com.example.SWP.Repository.*;
 import com.example.SWP.entity.*;
+import com.example.SWP.model.request.TransactionRequest;
 import com.example.SWP.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -13,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class  TransactionsService {
+public class TransactionsService {
 
     @Autowired
     AccountUtils accountUtils;
@@ -34,10 +37,13 @@ public class  TransactionsService {
     TransactionsRepository transactionsRepository;
 
     @Autowired
-    ConsignmentDetailsRepository consignmentDetailsRepository;
+    ConsignmentRepository consignmentRepository;
 
     @Autowired
-    ConsignmentRepository consignmentRepository;
+    ConsignmentService consignmentService;
+
+    @Autowired
+    EmailService emailService;
 
     public void createTransactions(long id) {
         KoiOrder koiOrder = orderRepository.findById(id)
@@ -199,14 +205,15 @@ public class  TransactionsService {
 
         payment.setTransactions(setTransactions);
 
+        accountRepository.save(manager);
+        paymentRepository.save(payment);
+
+        // Cập nhật trạng thái Consignment sau khi transaction thành công
         List<Consignment> consignments = consignmentRepository.findByAccount(customer);
         for (Consignment consignment : consignments) {
             consignment.setStatus(StatusConsign.VALID);
             consignmentRepository.save(consignment);
         }
-
-        accountRepository.save(manager);
-        paymentRepository.save(payment);
 
     }
     public void createTransactionForExtendConsign(long id) {
@@ -255,12 +262,6 @@ public class  TransactionsService {
 
         payment.setTransactions(setTransactions);
 
-        List<Consignment> consignments = consignmentRepository.findByAccount(customer);
-        for (Consignment consignment : consignments) {
-            consignment.setStatus(StatusConsign.VALID);
-            consignmentRepository.save(consignment);
-        }
-
         accountRepository.save(manager);
         paymentRepository.save(payment);
 
@@ -289,6 +290,7 @@ public class  TransactionsService {
         customer.setBalance(newBalance);
 
         transactions.add(transactions1);
+
 
         transactionsRepository.save(transactions1);
         accountRepository.save(manager);
@@ -329,44 +331,60 @@ public class  TransactionsService {
         orderRepository.save(koiOrder);
     }
 
-    public void BuyKoiFromUser(long id) {
-        KoiOrder koiOrder = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cannot find order with ID: " + id));
+    public void BuyKoiFromUser(long orderId) {
+        // Lấy thông tin đơn hàng cá koi dựa trên orderId
+        KoiOrder koiOrder = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Cannot find order with ID: " + orderId));
 
+        // Lấy tài khoản của người bán (chủ cá koi) và manager
+        Account seller = koiOrder.getAccount();
+        Account manager = accountRepository.findAccountByRole(Role.MANAGER);
+
+        // Kiểm tra nếu manager có đủ tiền trong TopUpBalance
+        if (manager.getBalance() < koiOrder.getTotalAmount()) {
+            throw new RuntimeException("Insufficient balance in manager's top-up balance");
+        }
+
+        // Khởi tạo một đối tượng Payment cho giao dịch
         Payment payment = new Payment();
         payment.setKoiOrder(koiOrder);
         payment.setPaymentDate(new Date());
         payment.setMethod(PaymentType.BANKING);
         payment.setPaymentAmount(koiOrder.getTotalAmount());
-        koiOrder.setConfirmDate(new Date());
 
-        Account owner = koiOrder.getAccount();
-        Account manager = accountRepository.findAccountByRole(Role.MANAGER);
+        // Khởi tạo tập hợp giao dịch để quản lý các giao dịch liên quan
+        Set<Transactions> transactionsSet = new HashSet<>();
 
-        Set<Transactions> setTransactions = new HashSet<>();
+        // Tạo giao dịch trừ tiền từ Manager đến Seller (người bán)
+        Transactions purchaseTransaction = new Transactions();
+        purchaseTransaction.setFrom(manager);
+        purchaseTransaction.setTo(seller);
+        purchaseTransaction.setTotalAmount(koiOrder.getTotalAmount());
+        purchaseTransaction.setTransactionsDate(new Date());
+        purchaseTransaction.setDescription("BUY KOI FISH FROM CUSTOMER");
+        purchaseTransaction.setStatus(TransactionsEnum.SUCCESS);
+        transactionsSet.add(purchaseTransaction);
 
-        Transactions transactions1 = new Transactions();
-        transactions1.setFrom(manager);
-        transactions1.setTo(owner);
-        transactions1.setTotalAmount(koiOrder.getTotalAmount());
-        transactions1.setTransactionsDate(new Date());
-        transactions1.setDescription("BUY KOI FISH FROM CUSTOMER");
-        transactions1.setStatus(TransactionsEnum.SUCCESS);
-        setTransactions.add(transactions1);
+        // Cập nhật trạng thái đơn hàng
         koiOrder.setOrderStatus(OrderStatus.CONFIRMED);
+
+        // Cập nhật kho cá koi
         updateKoiStock(koiOrder);
 
-        // Update balances
+        // Trừ tiền từ TopUpBalance của Manager và cộng vào balance của Seller
         manager.setBalance(manager.getBalance() - koiOrder.getTotalAmount());
-        owner.setBalance(owner.getBalance() + koiOrder.getTotalAmount());
-        payment.setTransactions(setTransactions);
+        seller.setBalance(seller.getBalance() + koiOrder.getTotalAmount());
 
-        // Save entities
+        // Liên kết giao dịch với Payment và lưu vào hệ thống
+        payment.setTransactions(transactionsSet);
+
+        // Lưu các thực thể vào cơ sở dữ liệu
         accountRepository.save(manager);
-        accountRepository.save(owner);
+        accountRepository.save(seller);
         paymentRepository.save(payment);
-        orderRepository.save(koiOrder);  // Save the updated order status
+        orderRepository.save(koiOrder);  // Lưu trạng thái cập nhật của đơn hàng
     }
+
 
     private void updateKoiStock(KoiOrder koiOrder) {
         Set<OrderDetails> orderItems = koiOrder.getOrderDetails();
@@ -378,24 +396,12 @@ public class  TransactionsService {
 
             if (currentStock >= orderedQuantity) {
                 koi.setQuantity(currentStock - orderedQuantity);
-                koiRepository.save(koi); // Update stock in the database
-
                 if (koi.getQuantity() <= 0) {
                     koi.setStatus("SOLD OUT");
-
-                    // Tìm ConsignmentDetails dựa trên koi hiện tại
-                    ConsignmentDetails consignmentDetails = consignmentDetailsRepository.findByKoi(koi);
-                    if (consignmentDetails != null) {
-                        Consignment consignment = consignmentDetails.getConsignment();
-
-                        // Đặt trạng thái của Consignment thành SOLD OUT
-                        consignment.setStatus(StatusConsign.SOLD);
-                        consignmentRepository.save(consignment);
-
-                    }
                 } else {
                     koi.setStatus("IN STOCK");
                 }
+                koiRepository.save(koi); // Cập nhật kho trong cơ sở dữ liệu
             } else {
                 throw new RuntimeException("Not enough koi stock available for: " + koi.getName());
             }
@@ -415,6 +421,164 @@ public class  TransactionsService {
             koiRepository.save(koi);
             koi.setStatus("IN STOCK");
             // Update stock in the database
+        }
+    }
+
+    public void topUpManagerBalance(TransactionRequest transactionRequest) {
+        // Lấy thông tin người dùng đăng nhập
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account manager = accountRepository.findAccountByUsername(username);
+        if(manager == null) {
+            throw new RuntimeException("Account not found");
+        }
+
+        // Kiểm tra role
+        if (manager.getRole() != Role.MANAGER) {
+            throw new RuntimeException("Only managers can perform a top-up.");
+        }
+
+        // Lấy số tiền nạp từ request
+        double amount = transactionRequest.getAmount();
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than zero");
+        }
+
+        // Cộng số tiền vào balance
+        manager.setBalance(manager.getBalance() + amount);
+
+        // Tạo giao dịch nạp tiền
+        Transactions transaction = new Transactions();
+        transaction.setFrom(null);
+        transaction.setTo(manager);
+        transaction.setTotalAmount(amount);
+        transaction.setTransactionsDate(new Date());
+        transaction.setDescription("Manager Top-Up");
+        transaction.setStatus(TransactionsEnum.SUCCESS);
+
+        transactionsRepository.save(transaction);
+        accountRepository.save(manager);
+    }
+
+
+    // Phương thức rút tiền
+    public void withdrawFunds(TransactionRequest transactionRequest) {
+        // Lấy thông tin người dùng đăng nhập
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account account = accountRepository.findAccountByUsername(username);
+        if (account == null) {
+            throw new RuntimeException("Account not found");
+        }
+
+
+        // Lấy số tiền cần rút từ request
+        double amount = transactionRequest.getAmount();
+
+        // Kiểm tra số dư
+        if (account.getBalance() < amount) {
+            throw new RuntimeException("Insufficient balance for withdrawal");
+        }
+
+        if (account.getRole() == Role.MANAGER) {
+            processWithdrawal(account, amount);
+            emailService.sendWithdrawalConfirmationEmail(account, amount, transactionRequest);
+        } else {
+            // Tạo giao dịch pending chờ Manager xác nhận
+            Transactions pendingTransaction = new Transactions();
+            pendingTransaction.setFrom(account);
+            pendingTransaction.setTotalAmount(amount); // Sử dụng số tiền từ request
+            pendingTransaction.setTransactionsDate(new Date());
+            pendingTransaction.setDescription("Withdrawal request pending Manager approval");
+            pendingTransaction.setStatus(TransactionsEnum.PENDING);
+            pendingTransaction.setAccountNumber(transactionRequest.getAccountNumber());
+            pendingTransaction.setAccountName(transactionRequest.getAccountName());
+            pendingTransaction.setBankName(transactionRequest.getBankName());
+
+            transactionsRepository.save(pendingTransaction);
+            emailService.sendPendingWithdrawalRequestToManager(pendingTransaction);
+        }
+    }
+
+
+    // Phương thức xử lý rút tiền cho Manager và khi User được duyệt
+    private void processWithdrawal(Account account, double amount) {
+        account.setBalance(account.getBalance() - amount);
+        accountRepository.save(account);
+    }
+
+    // Phương thức xác nhận rút tiền của Manager cho user
+    public void approveWithdrawalRequest(long transactionId) {
+        Transactions transaction = transactionsRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+
+        if (transaction.getStatus() != TransactionsEnum.PENDING) {
+            throw new RuntimeException("Transaction is not pending approval");
+        }
+
+        Account userAccount = transaction.getFrom();
+        double amount = transaction.getTotalAmount();
+
+        if (userAccount.getBalance() < amount) {
+            throw new RuntimeException("Insufficient balance for withdrawal");
+        }
+
+        // Trừ tiền khỏi tài khoản của user và cập nhật giao dịch
+        userAccount.setBalance(userAccount.getBalance() - amount);
+        transaction.setStatus(TransactionsEnum.SUCCESS);
+        transactionsRepository.save(transaction);
+        accountRepository.save(userAccount);
+
+        // Tạo đối tượng TransactionRequest từ thông tin trong transaction
+        TransactionRequest transactionRequest = new TransactionRequest();
+        transactionRequest.setAmount(transaction.getAmount());
+        transactionRequest.setAccountNumber(transaction.getAccountNumber());
+        transactionRequest.setAccountName(transaction.getAccountName());
+        transactionRequest.setBankName(transaction.getBankName());
+
+        // Gửi email xác nhận rút tiền cho user
+        emailService.sendWithdrawalConfirmationEmail(userAccount, amount, transactionRequest);
+    }
+
+
+    public void rejectWithdrawalRequest(long transactionId) {
+        Transactions transaction = transactionsRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+
+        // Kiểm tra xem giao dịch có đang chờ xác nhận không
+        if (transaction.getStatus() != TransactionsEnum.PENDING) {
+            throw new RuntimeException("Transaction is not pending approval");
+        }
+
+        // Cập nhật trạng thái giao dịch thành REJECTED
+        transaction.setStatus(TransactionsEnum.REJECTED);
+        transactionsRepository.save(transaction);
+
+        // Tạo đối tượng TransactionRequest từ thông tin trong transaction
+        TransactionRequest transactionRequest = new TransactionRequest();
+        transactionRequest.setAmount(transaction.getAmount());
+        transactionRequest.setAccountNumber(transaction.getAccountNumber());
+        transactionRequest.setAccountName(transaction.getAccountName());
+        transactionRequest.setBankName(transaction.getBankName());
+
+        // Gửi email thông báo từ chối rút tiền
+        emailService.sendWithdrawalRejectionEmail(transaction.getFrom(), transaction.getTotalAmount(), transactionRequest);
+    }
+
+    public List<Transactions> getTransactionsWithoutPayment() {
+        // Lấy thông tin người dùng hiện tại
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account account = accountRepository.findAccountByUsername(username);
+
+        if (account == null) {
+            throw new RuntimeException("Account not found");
+        }
+
+        // Kiểm tra vai trò của tài khoản
+        if (account.getRole() == Role.MANAGER) {
+            // Nếu là Manager, trả về tất cả các giao dịch không có Payment
+            return transactionsRepository.findAllByPaymentIsNull();
+        } else {
+            // Nếu không phải Manager, chỉ trả về các giao dịch của tài khoản hiện tại
+            return transactionsRepository.findAllByPaymentIsNullAndFrom(account);
         }
     }
 

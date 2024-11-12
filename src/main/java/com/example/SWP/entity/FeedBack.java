@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Data
@@ -15,7 +14,7 @@ public class FeedBack {
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     long id;
 
-    Date feedBackDay;
+    LocalDate feedBackDay;
 
     String feedBackContent;
 
@@ -24,4 +23,10 @@ public class FeedBack {
     @ManyToOne
     @JoinColumn(name = "customer_id")
     Account account;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "orderId")
+    KoiOrder koiOrder;
+
+
 }

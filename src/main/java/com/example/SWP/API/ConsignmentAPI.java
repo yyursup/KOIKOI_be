@@ -24,14 +24,14 @@ public class ConsignmentAPI {
     ConsignmentService consignmentService;
 
     @PostMapping("care/{id}")
-    public ResponseEntity createConsignment(@PathVariable long id, @RequestBody ConsignmentRequest consignmentRequest) {
+    public ResponseEntity createConsignmentCare(@PathVariable long id, @RequestBody ConsignmentRequest consignmentRequest) {
         Consignment consignment   =  consignmentService.createConsignment
              (id,consignmentRequest.getStart_date(),consignmentRequest.getEnd_date());
         return ResponseEntity.ok(consignment);
     }
 
-    @PostMapping("sell/{id}")
-    public ResponseEntity createConsignment(@RequestBody KoiRequest request, @RequestParam long koiTypeId) {
+    @PostMapping("sell/{koiTypeId}")
+    public ResponseEntity createConsignment(@RequestBody KoiRequest request, @PathVariable long koiTypeId) {
         Consignment consignment  = consignmentService.createConsignmentForSell(request,koiTypeId);
         return ResponseEntity.ok(consignment);
     }

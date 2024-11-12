@@ -3,15 +3,14 @@ package com.example.SWP.model.response;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 public class FeedBackResponse {
     long  id;
 
-    Date feedBackDay;
+    LocalDate feedBackDay;
 
     String feedBackContent;
 
-    String email;
+    String fullName;
 }

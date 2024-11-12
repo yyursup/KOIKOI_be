@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
@@ -191,6 +192,20 @@ public class AccountService implements UserDetailsService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public double getBalance() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // Tìm tài khoản liên kết với tên người dùng đó
+        Account account = accountRepository.findAccountByUsername(username);
+
+        if (account == null) {
+            throw new RuntimeException("Account not found");
+        }
+
+        // Trả về số dư hiện tại của tài khoản người dùng
+        return account.getBalance();
     }
 
 }

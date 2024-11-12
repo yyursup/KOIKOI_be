@@ -40,7 +40,7 @@ public class DashBoardService {
 
     public Map<String, Object> getMonthlyRevenue() {
         Map<String, Object> monthlyRevenue = new HashMap<>();
-        List<Object[]> results = paymentRepository.findMonthlyNetRevenue();
+        List<Object[]> results = paymentRepository.findMonthlyRevenue();
         List<Map<String, Object>> mapList = new ArrayList<>();
 
         for (Object[] result : results) {

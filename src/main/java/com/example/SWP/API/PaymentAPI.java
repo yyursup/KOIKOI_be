@@ -30,5 +30,5 @@ public class PaymentAPI {
     public ResponseEntity  getLastPaidOrder() {
       KoiOrderResponse response = paymentService.getLastPaidOrder();
       return ResponseEntity.ok(response);
-    }   
+    }
 }
