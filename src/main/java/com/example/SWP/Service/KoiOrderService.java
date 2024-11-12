@@ -177,7 +177,7 @@ public class KoiOrderService {
      return koiOrderList;
      }
 
-    public List<KoiOrder> getPendingOrders() {
+    public List<KoiOrder> getPendingOrders1() {
         return orderRepository.findByOrderStatusAndType(OrderStatus.PENDING,Type.BUY);
     }
 
@@ -193,7 +193,7 @@ public class KoiOrderService {
         return orderRepository.findByOrderStatusAndType(OrderStatus.CONFIRMED,Type.BUY);
     }
 
-    public List<KoiOrder> getConfirmedOrders2() {
+    public List<KoiOrder> getConfirmedOrder2() {
         return orderRepository.findByOrderStatusAndType(OrderStatus.CONFIRMED,Type.CONSIGN);
     }
 
@@ -207,12 +207,12 @@ public class KoiOrderService {
         return orderRepository.findAll();
     }
 
-    public List<KoiOrder> koiOrdersBuy(){
+    public List<KoiOrder> koiOrdersBuys(){
 
         return orderRepository.findKoiOrderByType(Type.BUY);
     }
 
-    public List<KoiOrder> koiOrdersConsign(){
+    public List<KoiOrder> koiOrdersConsigns(){
         return orderRepository.findKoiOrderByType(Type.CONSIGN);
     }
 
