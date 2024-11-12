@@ -25,7 +25,8 @@ public class Transactions {
     String accountNumber;
     String accountName;
     String bankName;
-    double amount;
+
+
 
     @Enumerated(EnumType.STRING)
     TransactionsEnum status;

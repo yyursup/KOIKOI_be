@@ -529,7 +529,7 @@ public class TransactionsService {
 
         // Tạo đối tượng TransactionRequest từ thông tin trong transaction
         TransactionRequest transactionRequest = new TransactionRequest();
-        transactionRequest.setAmount(transaction.getAmount());
+        transactionRequest.setAmount(transaction.getTotalAmount());
         transactionRequest.setAccountNumber(transaction.getAccountNumber());
         transactionRequest.setAccountName(transaction.getAccountName());
         transactionRequest.setBankName(transaction.getBankName());
@@ -554,7 +554,7 @@ public class TransactionsService {
 
         // Tạo đối tượng TransactionRequest từ thông tin trong transaction
         TransactionRequest transactionRequest = new TransactionRequest();
-        transactionRequest.setAmount(transaction.getAmount());
+        transactionRequest.setAmount(transaction.getTotalAmount());
         transactionRequest.setAccountNumber(transaction.getAccountNumber());
         transactionRequest.setAccountName(transaction.getAccountName());
         transactionRequest.setBankName(transaction.getBankName());
