@@ -24,10 +24,4 @@ public class FeedBack {
     @ManyToOne
     @JoinColumn(name = "customer_id")
     Account account;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "orderId")
-    KoiOrder koiOrder;
-
-
 }
