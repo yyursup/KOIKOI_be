@@ -92,7 +92,7 @@ public class Account implements UserDetails {
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Consignment> consignments = new HashSet<>();
+     Set<Consignment> consignments = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

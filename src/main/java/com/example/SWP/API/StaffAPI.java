@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/Staff")
 @CrossOrigin("*")
@@ -31,6 +33,12 @@ public class StaffAPI {
     public ResponseEntity ViewProfile(){
         ViewProfileResponse view = staffService.viewProfile();
         return ResponseEntity.ok(view);
+    }
+
+    @GetMapping()
+    public ResponseEntity getAllList(){
+        List<ViewProfileResponse> accountList = staffService.getAllAccount();
+        return ResponseEntity.ok(accountList);
     }
 
     @PutMapping("{id}")

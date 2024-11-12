@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StaffService {
@@ -59,6 +61,15 @@ public class StaffService {
 
         }
     }
+
+    public List<ViewProfileResponse> getAllAccount() {
+        List<Account> accountList = accountRepository.findAccountsByRole(Role.STAFF);
+
+
+        return accountList.stream().map(account ->
+                modelMapper.map(account, ViewProfileResponse.class)).collect(Collectors.toList());
+    }
+
 
     public UpdateAndDeleteProfileResponse accountUpdate(UpdateProfileRequest updateProfileRequest, Long AccountId) {
         Account oldAccount = accountRepository.findAccountById(AccountId);
