@@ -178,19 +178,37 @@ public class KoiOrderService {
      }
 
     public List<KoiOrder> getPendingOrders() {
-        return orderRepository.findByOrderStatus(OrderStatus.PENDING);
+        return orderRepository.findByOrderStatusAndType(OrderStatus.PENDING,Type.BUY);
+    }
+
+    public List<KoiOrder> getPendingOrders2() {
+        return orderRepository.findByOrderStatusAndType(OrderStatus.PENDING,Type.CONSIGN);
     }
 
     public List<KoiOrder> getPaidOrderes(){
-        return orderRepository.findByOrderStatus(OrderStatus.PAID);
+        return orderRepository.findByOrderStatusAndType(OrderStatus.PAID,Type.BUY);
     }
 
     public List<KoiOrder> getConfirmedOrders() {
-        return orderRepository.findByOrderStatus(OrderStatus.CONFIRMED);
+        return orderRepository.findByOrderStatusAndType(OrderStatus.CONFIRMED,Type.BUY);
     }
+
+    public List<KoiOrder> getConfirmedOrders2() {
+        return orderRepository.findByOrderStatusAndType(OrderStatus.CONFIRMED,Type.CONSIGN);
+    }
+
+
 
     public List<KoiOrder> getAllOrders() {
         return orderRepository.findAll();
+    }
+
+    public List<KoiOrder> koiOrdersBuy(){
+        return orderRepository.findKoiOrderByType(Type.BUY);
+    }
+
+    public List<KoiOrder> koiOrdersConsign(){
+        return orderRepository.findKoiOrderByType(Type.CONSIGN);
     }
 
 
@@ -229,38 +247,6 @@ public class KoiOrderService {
         order.setNote(request.getNote());
         accountRepository.save(account);
         return orderRepository.save(order);
-    }
-
-    @Scheduled(fixedRate = 900000) // Chạy mỗi 15 phút (900000 milliseconds)
-    @Transactional // Đảm bảo phiên Hibernate mở trong quá trình xử lý
-    public void autoCancelUnpaidOrders() {
-        // Tìm các đơn hàng có trạng thái PENDING và ngày xử lý cũ hơn 15 phút
-        List<KoiOrder> unpaidOrders = orderRepository.findAllByOrderStatusAndProcessingDateLessThan(
-                OrderStatus.PENDING,
-                new Date(System.currentTimeMillis() + 900000)); // Thời gian 15 phút sau
-
-
-        for (KoiOrder order : unpaidOrders) {
-            // Kiểm tra xem đơn hàng chưa được thanh toán
-            if (!OrderStatus.PAID.equals(order.getOrderStatus()) &&
-                    !OrderStatus.CONFIRMED.equals(order.getOrderStatus())) {
-                // Cập nhật trạng thái đơn hàng thành CANCELED
-                order.setOrderStatus(OrderStatus.CANCELED);
-
-                // Tạo yêu cầu hủy đơn hàng và đặt lý do
-                CanceledOrder canceledOrder = new CanceledOrder();
-                canceledOrder.setReason("THỜI GIAN THANH TOÁN HẾT HẠN");
-                canceledOrder.setAccount(order.getAccount());
-                canceledOrder.setTotalAmount(order.getTotalAmount());
-                canceledOrder.setCancelDate(new Date());
-                canceledOrder.setCancelOrderStatus(CancelOrderStatus.FINISHED);
-                canceledOrder.setKoiOrder(order);
-
-                // Lưu trạng thái mới của đơn hàng và yêu cầu hủy vào cơ sở dữ liệu
-                orderRepository.save(order);
-                cancelOrderRepository.save(canceledOrder);
-            }
-        }
     }
 
     public List<CanceledOrder> getListCancelOrders(){
