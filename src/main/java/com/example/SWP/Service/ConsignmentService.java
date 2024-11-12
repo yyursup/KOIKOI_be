@@ -69,8 +69,9 @@ public class ConsignmentService {
         consignment.setEnd_date(endDate);
         consignment.setProduct_name(orderDetails.getName());
         consignment.setType(TypeOfConsign.CARE);
-        consignment.setStatus(StatusConsign.PENDING); // Đặt trạng thái ban đầu là PENDING
+        consignment.setStatus(StatusConsign.PENDING);
         consignment.setOrderDetails(orderDetails);
+
 
         long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
         if (daysBetween < 0) {
@@ -80,10 +81,12 @@ public class ConsignmentService {
         consignment.setNote("You consign this koi for : " + daysBetween + " days");
         consignment.setAccount(account);
 
+
         double subTotal = calculateSubTotal(orderDetails);
         double totalAmount = calculateTotalAmount(subTotal, daysBetween);
 
         consignment.setTotalAmount(totalAmount);
+
 
         ConsignmentDetails consignmentDetails = new ConsignmentDetails();
         consignmentDetails.setName(orderDetails.getName());
@@ -92,12 +95,20 @@ public class ConsignmentService {
         consignmentDetails.setImage(orderDetails.getImage());
         consignmentDetails.setConsignment(consignment);
         consignmentDetails.setKoi(consignment.getOrderDetails().getKoi());
+//        consignmentDetails.setOrderDetails(orderDetails);
         consignment.getConsignmentDetailsSet().add(consignmentDetails);
+
 
         consignmentRepository.save(consignment);
 
         return consignment;
     }
+
+    public Consignment getConsignmentById(Long id) {
+        return consignmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Consignment not found with id: " + id));
+    }
+
 
 
     public Consignment createConsignmentForSell(KoiRequest koiRequest, Long koiTypeId) {
@@ -124,6 +135,7 @@ public class ConsignmentService {
         Consignment consignment = new Consignment();
         consignment.setType(TypeOfConsign.SELL);
         consignment.setAccount(account);// Liên kết Consignment với Account
+
 
         // Tạo ConsignmentDetails và liên kết với Koi và Consignment
         ConsignmentDetails consignmentDetails = new ConsignmentDetails();
@@ -199,7 +211,7 @@ public class ConsignmentService {
         double totalAmount = calculateTotalAmount(subTotal, extensionDays);
 
         consignment.setEnd_date(new_EndDate);
-        consignment.setStatus(StatusConsign.VALID);
+        consignment.setStatus(StatusConsign.PENDING);
         consignment.setTotalAmount(totalAmount);
         consignment.setNote("Customer has extended the consignment for " + extensionDays + " more days");
         consignmentRepository.save(consignment);
@@ -364,11 +376,10 @@ public class ConsignmentService {
             }
         }
     }
-    @Scheduled(cron = "0 50 6 * * ?")
+    @Scheduled(cron = "0 31 16 * * ?")
     public void scheduledExpiryNotification() {
         notifyConsignmentExpiry();
     }
-
 
     public void sendPaymentSuccessEmail(Consignment consignment) {
         MailBody mailBody = new MailBody();
@@ -385,9 +396,6 @@ public class ConsignmentService {
 
         emailService.sendConsignSuccessNotification(mailBody, context);
     }
-
-
-
 
 }
 

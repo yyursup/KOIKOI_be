@@ -1,5 +1,6 @@
 package com.example.SWP.Repository;
 
+import com.example.SWP.entity.Account;
 import com.example.SWP.entity.Consignment;
 import com.example.SWP.entity.OrderDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +18,7 @@ public interface ConsignmentRepository extends JpaRepository<Consignment, Long> 
     @Query("SELECT COUNT(c) > 0 FROM Consignment c WHERE c.orderDetails = :orderDetails AND c.status = 'VALID'")
     boolean existsByOrderDetails(@Param("orderDetails") OrderDetails orderDetails);
 
-    Optional<Consignment> findByOrderDetails(OrderDetails orderDetails);
+    List<Consignment> findByAccount(Account account);
 
 
 }
