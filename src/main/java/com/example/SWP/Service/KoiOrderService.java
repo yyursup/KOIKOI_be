@@ -97,7 +97,7 @@ public class KoiOrderService {
             throw new RuntimeException("Order not found with id " + orderId);
         }
 
-        List<OrderDetails> orderDetailsSet = koiOrder.getOrderDetails();
+        Set<OrderDetails> orderDetailsSet = koiOrder.getOrderDetails();
 
         if (orderDetailsSet.isEmpty()) {
             throw new RuntimeException("No order details found for order id " + orderId);
