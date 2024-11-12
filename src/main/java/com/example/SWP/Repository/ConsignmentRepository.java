@@ -20,5 +20,6 @@ public interface ConsignmentRepository extends JpaRepository<Consignment, Long> 
 
     List<Consignment> findByAccount(Account account);
 
-    List<Consignment> findAllConsignTypeByAccount(Account account, TypeOfConsign type);
+    List<Consignment> findAllByAccountAndType(Account account, TypeOfConsign type);
+
 }

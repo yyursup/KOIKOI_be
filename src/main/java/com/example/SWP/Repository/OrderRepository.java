@@ -18,15 +18,15 @@ public interface OrderRepository extends JpaRepository<KoiOrder, Long> {
     @Query("SELECT o FROM KoiOrder o where o.account.id = :accountId ")
     List<KoiOrder> findAllOrdersByAccountId(@Param("accountId") long accountId);
 
-    List<KoiOrder> findByOrderStatusAndType(OrderStatus orderStatus, Type type);
+
 
     KoiOrder findKoiOrderById(long id);
 
-    List<KoiOrder> findAllByOrderStatusAndProcessingDateLessThan(OrderStatus orderStatus, Date processingDate);
+
+
+    List<KoiOrder> findByOrderStatus(OrderStatus status);
+
+    List<KoiOrder> findByOrderStatusAndType(OrderStatus status, Type type);
 
     List<KoiOrder> findKoiOrderByType(Type type);
-
-    List<KoiOrder> findOrderByStatus(OrderStatus orderStatus);
-
-
 }

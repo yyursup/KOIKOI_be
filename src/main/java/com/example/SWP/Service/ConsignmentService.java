@@ -1,8 +1,6 @@
 package com.example.SWP.Service;
 
-import com.example.SWP.Enums.OrderStatus;
 import com.example.SWP.Enums.StatusConsign;
-import com.example.SWP.Enums.Type;
 import com.example.SWP.Enums.TypeOfConsign;
 import com.example.SWP.Repository.*;
 import com.example.SWP.entity.*;
@@ -198,9 +196,9 @@ public class ConsignmentService {
 
     public List<Consignment> getCareList() {
         Account account = accountUtils.getCurrentAccount();
-        return consignmentRepository.findAllConsignTypeByAccount(account, TypeOfConsign.CARE);
-
+        return consignmentRepository.findAllByAccountAndType(account, TypeOfConsign.CARE);
     }
+
 
 
 
