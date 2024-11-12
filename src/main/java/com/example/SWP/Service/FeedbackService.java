@@ -26,20 +26,29 @@ public class FeedbackService {
     @Autowired
     AccountUtils accountUtils;
 
-    public List<FeedBackResponse> getAllFeedback(){
+    public List<FeedBackResponse> getAllFeedback() {
         List<FeedBack> feedBacks = feedbackRepository.findFeedBackByIsDeletedFalse();
-        return feedBacks.stream().map(feedBack ->
-                modelMapper.map(feedBack, FeedBackResponse.class)).collect(Collectors.toList());
+        return feedBacks.stream().map(feedBack -> {
+            FeedBackResponse response = modelMapper.map(feedBack, FeedBackResponse.class);
+            response.setEmail(feedBack.getAccount().getEmail());
+            response.setFeedBackDay(feedBack.getFeedBackDay());
+            return response;
+        }).collect(Collectors.toList());
     }
 
     public FeedBackResponse feedback(FeedBackRequest feedBackRequest){
         Account account = accountUtils.getCurrentAccount();
         FeedBack feedBack = modelMapper.map(feedBackRequest,FeedBack.class);
+
         feedBack.setAccount(account);
+        feedBack.setFeedBackDay(feedBackRequest.getDateFeedback());
         try {
             FeedBack newFeedBack = feedbackRepository.save(feedBack);
+            FeedBackResponse response = modelMapper.map(newFeedBack, FeedBackResponse.class);
+            response.setEmail(account.getEmail()); // Gán email từ account
+            response.setFeedBackDay(feedBackRequest.getDateFeedback());
+            return response;
 
-            return modelMapper.map(newFeedBack, FeedBackResponse.class);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -67,6 +76,5 @@ public class FeedbackService {
             throw new RuntimeException("An error occurred while updating the feedback", e);
         }
     }
-
 
 }

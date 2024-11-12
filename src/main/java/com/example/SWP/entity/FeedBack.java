@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Data
@@ -14,7 +15,7 @@ public class FeedBack {
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     long id;
 
-    LocalDate feedBackDay;
+    Date feedBackDay;
 
     String feedBackContent;
 
