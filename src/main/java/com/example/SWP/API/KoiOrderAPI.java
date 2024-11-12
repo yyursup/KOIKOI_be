@@ -91,11 +91,11 @@ public class KoiOrderAPI {
         return ResponseEntity.ok(koiOrderService.rejectOrder(id,request));
     }
 
-//    @GetMapping("{id}")
-//    public ResponseEntity getOrderById(@PathVariable long id) {
-//        KoiOrder order = koiOrderService.getOrderById(id);
-//        return ResponseEntity.ok(order);
-//    }
+    @GetMapping("{id}")
+    public ResponseEntity getOrderById(@PathVariable long id) {
+        KoiOrder order = koiOrderService.getOrderById(id);
+        return ResponseEntity.ok(order);
+    }
 
     @GetMapping("canceled")
     public ResponseEntity getListCanceledOrder() {

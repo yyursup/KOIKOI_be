@@ -97,7 +97,7 @@ public class KoiOrderService {
             throw new RuntimeException("Order not found with id " + orderId);
         }
 
-        List<OrderDetails> orderDetailsSet = koiOrder.getOrderDetails();
+        Set<OrderDetails> orderDetailsSet = koiOrder.getOrderDetails();
 
         if (orderDetailsSet.isEmpty()) {
             throw new RuntimeException("No order details found for order id " + orderId);
@@ -212,17 +212,17 @@ public class KoiOrderService {
     }
 
 
-//    public KoiOrder getOrderById(long id) {
-//        Account account = accountUtils.getCurrentAccount();
-//        KoiOrder order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-//        List<OrderDetails> orderItems = orderDetailsRepository.findByKoiOrderId(id);
-//        Set<OrderDetails> orderDetails = new HashSet<>(orderItems);
-//        for(OrderDetails item: orderDetails) {
-//            System.out.println(item.getId());
-//        }
-//        order.setOrderDetails(orderDetails);
-//        return order;
-//    }
+    public KoiOrder getOrderById(long id) {
+        Account account = accountUtils.getCurrentAccount();
+        KoiOrder order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+        List<OrderDetails> orderItems = orderDetailsRepository.findByKoiOrderId(id);
+        Set<OrderDetails> orderDetails = new HashSet<>(orderItems);
+        for(OrderDetails item: orderDetails) {
+            System.out.println(item.getId());
+        }
+        order.setOrderDetails(orderDetails);
+        return order;
+    }
 
     public KoiOrder cancelOrder(long orderId, OrderCancelRequest request){
         Account account = accountUtils.getCurrentAccount();
@@ -247,38 +247,6 @@ public class KoiOrderService {
         order.setNote(request.getNote());
         accountRepository.save(account);
         return orderRepository.save(order);
-    }
-
-    @Scheduled(fixedRate = 900000) // Chạy mỗi 15 phút (900000 milliseconds)
-    @Transactional // Đảm bảo phiên Hibernate mở trong quá trình xử lý
-    public void autoCancelUnpaidOrders() {
-        // Tìm các đơn hàng có trạng thái PENDING và ngày xử lý cũ hơn 15 phút
-        List<KoiOrder> unpaidOrders = orderRepository.findAllByOrderStatusAndProcessingDateLessThan(
-                OrderStatus.PENDING,
-                new Date(System.currentTimeMillis() + 900000)); // Thời gian 15 phút sau
-
-
-        for (KoiOrder order : unpaidOrders) {
-            // Kiểm tra xem đơn hàng chưa được thanh toán
-            if (!OrderStatus.PAID.equals(order.getOrderStatus()) &&
-                    !OrderStatus.CONFIRMED.equals(order.getOrderStatus())) {
-                // Cập nhật trạng thái đơn hàng thành CANCELED
-                order.setOrderStatus(OrderStatus.CANCELED);
-
-                // Tạo yêu cầu hủy đơn hàng và đặt lý do
-                CanceledOrder canceledOrder = new CanceledOrder();
-                canceledOrder.setReason("THỜI GIAN THANH TOÁN HẾT HẠN");
-                canceledOrder.setAccount(order.getAccount());
-                canceledOrder.setTotalAmount(order.getTotalAmount());
-                canceledOrder.setCancelDate(new Date());
-                canceledOrder.setCancelOrderStatus(CancelOrderStatus.FINISHED);
-                canceledOrder.setKoiOrder(order);
-
-                // Lưu trạng thái mới của đơn hàng và yêu cầu hủy vào cơ sở dữ liệu
-                orderRepository.save(order);
-                cancelOrderRepository.save(canceledOrder);
-            }
-        }
     }
 
     public List<CanceledOrder> getListCancelOrders(){

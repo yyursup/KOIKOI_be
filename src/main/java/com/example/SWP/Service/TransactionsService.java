@@ -136,7 +136,7 @@ public class  TransactionsService {
         setTransactions.add(transactions2);
         // manager to owner
         Transactions transactions3 = new Transactions();
-        Account owner = koiOrder.getOrderDetails().get(0).getKoi().getAccount();
+        Account owner = koiOrder.getOrderDetails().iterator().next().getKoi().getAccount();
         transactions3.setFrom(customer);
         transactions3.setTo(manager);
         transactions3.setPayment(payment);
@@ -369,7 +369,7 @@ public class  TransactionsService {
     }
 
     private void updateKoiStock(KoiOrder koiOrder) {
-        List<OrderDetails> orderItems = koiOrder.getOrderDetails();
+        Set<OrderDetails> orderItems = koiOrder.getOrderDetails();
 
         for (OrderDetails item : orderItems) {
             Koi koi = item.getKoi();
@@ -404,7 +404,7 @@ public class  TransactionsService {
 
 
     private void updateKoiStockForRefund(KoiOrder koiOrder) {
-        List<OrderDetails> orderItems = koiOrder.getOrderDetails();
+        Set<OrderDetails> orderItems = koiOrder.getOrderDetails();
 
         for (OrderDetails item : orderItems) {
             Koi koi = item.getKoi();

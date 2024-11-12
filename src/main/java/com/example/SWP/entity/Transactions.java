@@ -43,9 +43,5 @@ public class Transactions {
     Payment payment;
 
 
-//    @OneToOne(mappedBy = "transactions", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    SystemProfit systemProfit;
-
 }
 
