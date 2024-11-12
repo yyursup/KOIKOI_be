@@ -47,7 +47,7 @@ public class KoiOrderAPI {
 
     @GetMapping("pending")
     public ResponseEntity getPendingOrders() {
-        return ResponseEntity.ok(koiOrderService.getPendingOrders1());
+        return ResponseEntity.ok(koiOrderService.getPendingOrders());
     }
 
     @GetMapping("pending2")
@@ -62,12 +62,12 @@ public class KoiOrderAPI {
 
     @GetMapping("buy")
     public ResponseEntity getBuy(){
-        return ResponseEntity.ok(koiOrderService.koiOrdersBuys());
+        return ResponseEntity.ok(koiOrderService.koiOrdersBuy());
     }
 
     @GetMapping("consign")
     public ResponseEntity getConsign(){
-        return ResponseEntity.ok(koiOrderService.koiOrdersConsigns());
+        return ResponseEntity.ok(koiOrderService.koiOrdersConsign());
     }
 
 
@@ -78,7 +78,7 @@ public class KoiOrderAPI {
 
     @GetMapping("confirmed2")
     public ResponseEntity getConfirmedOrders2() {
-        return ResponseEntity.ok(koiOrderService.getConfirmedOrder2());
+        return ResponseEntity.ok(koiOrderService.getConfirmedOrders2());
     }
 
     @PutMapping("cancel/{id}")
