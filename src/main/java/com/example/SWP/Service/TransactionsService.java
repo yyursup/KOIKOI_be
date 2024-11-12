@@ -208,15 +208,19 @@ public class TransactionsService {
 
         payment.setTransactions(setTransactions);
 
-        accountRepository.save(manager);
-        paymentRepository.save(payment);
 
-        // Cập nhật trạng thái Consignment sau khi transaction thành công
         List<Consignment> consignments = consignmentRepository.findByAccount(customer);
         for (Consignment consignment : consignments) {
             consignment.setStatus(StatusConsign.VALID);
             consignmentRepository.save(consignment);
         }
+
+
+        accountRepository.save(manager);
+        paymentRepository.save(payment);
+
+
+
 
     }
     public void createTransactionForExtendConsign(long id) {
