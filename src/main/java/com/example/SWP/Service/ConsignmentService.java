@@ -381,5 +381,21 @@ public class ConsignmentService {
         notifyConsignmentExpiry();
     }
 
+    public void sendPaymentSuccessEmail(Consignment consignment) {
+        MailBody mailBody = new MailBody();
+        mailBody.setTo(consignment.getAccount());
+        mailBody.setSubject("Thông báo ký gửi thành công");
+
+        long daysConsigned = ChronoUnit.DAYS.between(consignment.getStart_date(), consignment.getEnd_date());
+        double totalAmount = consignment.getTotalAmount();
+
+        Context context = new Context();
+        context.setVariable("name", consignment.getAccount().getEmail());
+        context.setVariable("daysConsigned", daysConsigned);
+        context.setVariable("totalAmount", totalAmount);
+
+        emailService.sendConsignSuccessNotification(mailBody, context);
+    }
+
 }
 
