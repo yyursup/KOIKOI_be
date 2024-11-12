@@ -209,11 +209,9 @@ public class TransactionsService {
         paymentRepository.save(payment);
 
         // Cập nhật trạng thái Consignment sau khi transaction thành công
-        Set<OrderDetails> orderDetailsList = koiOrder.getOrderDetails();
-        for (OrderDetails orderDetails : orderDetailsList) {
-            Consignment consignment = consignmentRepository.findByOrderDetails(orderDetails)
-                    .orElseThrow(() -> new RuntimeException("Consignment not found for this order"));
-            consignment.setStatus(StatusConsign.VALID); // Cập nhật trạng thái thành VALID
+        List<Consignment> consignments = consignmentRepository.findByAccount(customer);
+        for (Consignment consignment : consignments) {
+            consignment.setStatus(StatusConsign.VALID);
             consignmentRepository.save(consignment);
         }
 
