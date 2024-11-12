@@ -1,5 +1,6 @@
 package com.example.SWP.Repository;
 
+import com.example.SWP.Enums.TypeOfConsign;
 import com.example.SWP.entity.Account;
 import com.example.SWP.entity.Consignment;
 import com.example.SWP.entity.OrderDetails;
@@ -18,4 +19,6 @@ public interface ConsignmentRepository extends JpaRepository<Consignment, Long> 
     boolean existsByOrderDetails(@Param("orderDetails") OrderDetails orderDetails);
 
     List<Consignment> findByAccount(Account account);
+
+    List<Consignment> findAllConsignTypeByAccount(Account account, TypeOfConsign type);
 }

@@ -185,7 +185,7 @@ public class KoiOrderService {
         return orderRepository.findByOrderStatusAndType(OrderStatus.PENDING,Type.CONSIGN);
     }
 
-    public List<KoiOrder> getPaidOrderes(){
+    public List<KoiOrder> getPaidOrders(){
         return orderRepository.findByOrderStatusAndType(OrderStatus.PAID,Type.BUY);
     }
 
@@ -195,6 +195,10 @@ public class KoiOrderService {
 
     public List<KoiOrder> getConfirmedOrders2() {
         return orderRepository.findByOrderStatusAndType(OrderStatus.CONFIRMED,Type.CONSIGN);
+    }
+
+    public List<KoiOrder> getCancelList(){
+        return orderRepository.findOrderByStatus(OrderStatus.CANCELED);
     }
 
 
@@ -231,8 +235,10 @@ public class KoiOrderService {
         order.setOrderStatus(OrderStatus.CANCELED);
         CanceledOrder canceledOrder = new CanceledOrder();
         canceledOrder.setCancelOrderStatus(CancelOrderStatus.FINISHED);
+        canceledOrder.setOrderStatus(OrderStatus.CANCELED);
         canceledOrder.setTotalAmount(order.getTotalAmount());
         canceledOrder.setAccount(order.getAccount());
+        canceledOrder.setEmail(account.getEmail());
         canceledOrder.setReason(request.getNote());
         canceledOrder.setCancelDate(new Date());
         canceledOrder.setKoiOrder(order);
@@ -253,4 +259,5 @@ public class KoiOrderService {
     public List<CanceledOrder> getListCancelOrders(){
         return cancelOrderRepository.findAll();
     }
+
 }

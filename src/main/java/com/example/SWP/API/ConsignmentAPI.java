@@ -73,4 +73,9 @@ public class ConsignmentAPI {
         return ResponseEntity.ok(consignments);
     }
 
+    @GetMapping("showConsignment")
+    public ResponseEntity getOrderByAccountById(){
+        return ResponseEntity.ok(consignmentService.getCareList());
+    }
+
 }
