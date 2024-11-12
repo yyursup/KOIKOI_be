@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ConsignmentRepository extends JpaRepository<Consignment, Long> {
 
@@ -15,4 +16,8 @@ public interface ConsignmentRepository extends JpaRepository<Consignment, Long> 
 
     @Query("SELECT COUNT(c) > 0 FROM Consignment c WHERE c.orderDetails = :orderDetails AND c.status = 'VALID'")
     boolean existsByOrderDetails(@Param("orderDetails") OrderDetails orderDetails);
+
+    Optional<Consignment> findByOrderDetails(OrderDetails orderDetails);
+
+
 }

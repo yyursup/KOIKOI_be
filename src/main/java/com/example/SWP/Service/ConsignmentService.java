@@ -69,7 +69,7 @@ public class ConsignmentService {
         consignment.setEnd_date(endDate);
         consignment.setProduct_name(orderDetails.getName());
         consignment.setType(TypeOfConsign.CARE);
-        consignment.setStatus(StatusConsign.VALID);
+        consignment.setStatus(StatusConsign.PENDING); // Đặt trạng thái ban đầu là PENDING
         consignment.setOrderDetails(orderDetails);
 
         long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
@@ -80,12 +80,10 @@ public class ConsignmentService {
         consignment.setNote("You consign this koi for : " + daysBetween + " days");
         consignment.setAccount(account);
 
-
         double subTotal = calculateSubTotal(orderDetails);
         double totalAmount = calculateTotalAmount(subTotal, daysBetween);
 
         consignment.setTotalAmount(totalAmount);
-
 
         ConsignmentDetails consignmentDetails = new ConsignmentDetails();
         consignmentDetails.setName(orderDetails.getName());
@@ -93,14 +91,14 @@ public class ConsignmentService {
         consignmentDetails.setQuantity(orderDetails.getQuantity());
         consignmentDetails.setImage(orderDetails.getImage());
         consignmentDetails.setConsignment(consignment);
-        consignmentDetails.setOrderDetails(orderDetails);
+        consignmentDetails.setKoi(consignment.getOrderDetails().getKoi());
         consignment.getConsignmentDetailsSet().add(consignmentDetails);
-
 
         consignmentRepository.save(consignment);
 
         return consignment;
     }
+
 
     public Consignment createConsignmentForSell(KoiRequest koiRequest, Long koiTypeId) {
         Account account = accountUtils.getCurrentAccount();
@@ -126,7 +124,6 @@ public class ConsignmentService {
         Consignment consignment = new Consignment();
         consignment.setType(TypeOfConsign.SELL);
         consignment.setAccount(account);// Liên kết Consignment với Account
-
 
         // Tạo ConsignmentDetails và liên kết với Koi và Consignment
         ConsignmentDetails consignmentDetails = new ConsignmentDetails();
@@ -238,7 +235,7 @@ public class ConsignmentService {
     public ConsignmentDetails add(long id) {
         ConsignmentDetails consignmentDetails = consignmentDetailsRepository
                 .findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-        if (consignmentDetails.getQuantity() >= consignmentDetails.getOrderDetails().getQuantity()) {
+        if (consignmentDetails.getQuantity() >= consignmentDetails.getConsignment().getOrderDetails().getQuantity()) {
             throw new RuntimeException("Trong đơn hàng không đủ ");
         }
         consignmentDetails.setQuantity(consignmentDetails.getQuantity() + 1);
@@ -252,7 +249,7 @@ public class ConsignmentService {
     public ConsignmentDetails removeOneProduct(long id) {
         ConsignmentDetails consignmentDetails = consignmentDetailsRepository
                 .findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-        if (consignmentDetails.getQuantity() > consignmentDetails.getOrderDetails().getQuantity()) {
+        if (consignmentDetails.getQuantity() > consignmentDetails.getConsignment().getOrderDetails().getQuantity()) {
             throw new RuntimeException("Trong đơn hàng không đủ");
         }
         consignmentDetails.setQuantity(consignmentDetails.getQuantity() - 1);
@@ -367,10 +364,30 @@ public class ConsignmentService {
             }
         }
     }
-    @Scheduled(cron = "0 31 16 * * ?")
+    @Scheduled(cron = "0 50 6 * * ?")
     public void scheduledExpiryNotification() {
         notifyConsignmentExpiry();
     }
+
+
+    public void sendPaymentSuccessEmail(Consignment consignment) {
+        MailBody mailBody = new MailBody();
+        mailBody.setTo(consignment.getAccount());
+        mailBody.setSubject("Thông báo ký gửi thành công");
+
+        long daysConsigned = ChronoUnit.DAYS.between(consignment.getStart_date(), consignment.getEnd_date());
+        double totalAmount = consignment.getTotalAmount();
+
+        Context context = new Context();
+        context.setVariable("name", consignment.getAccount().getEmail());
+        context.setVariable("daysConsigned", daysConsigned);
+        context.setVariable("totalAmount", totalAmount);
+
+        emailService.sendConsignSuccessNotification(mailBody, context);
+    }
+
+
+
 
 }
 

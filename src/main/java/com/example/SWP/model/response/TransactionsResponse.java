@@ -9,5 +9,8 @@ public class TransactionsResponse {
      double totalAmount;
      Date transactionsDate;
      String description;
+     String accountNumber;
+     String accountName;
+     String bankName;
 }
 

@@ -12,6 +12,7 @@ import com.example.SWP.model.response.ViewProfileResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,6 +84,19 @@ public class AccountAPI {
     @PostMapping("/loginGoogle")
     public ResponseEntity<?> loginGoogle(@RequestBody LgGg token) {
         return ResponseEntity.ok(accountService.loginGoogle(token));
+    }
+
+    // Endpoint để lấy số dư của người dùng hiện tại
+    @GetMapping("/balance")
+    public ResponseEntity<Double> getBalance() {
+        try {
+            // Gọi phương thức getBalance từ service để lấy số dư
+            double balance = accountService.getBalance();
+            return ResponseEntity.ok(balance);
+        } catch (RuntimeException e) {
+            // Trả về lỗi nếu có vấn đề xảy ra
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
 }

@@ -154,8 +154,8 @@ public class KoiOrderService {
             orderDetail.setKoi(consignmentDetails1.getKoi());
 
             // Check if getOrderDetails() is null before accessing getKoi()
-            if (consignmentDetails1.getOrderDetails() != null) {
-                orderDetail.setKoi(consignmentDetails1.getOrderDetails().getKoi());
+            if (consignmentDetails1.getConsignment().getOrderDetails() != null) {
+                orderDetail.setKoi(consignmentDetails1.getConsignment().getOrderDetails().getKoi());
             } else {
                 // Handle the case where getOrderDetails() is null
                 System.out.println("Warning: OrderDetails is null for ConsignmentDetails with ID " + consignmentDetails1.getId());
@@ -194,17 +194,17 @@ public class KoiOrderService {
     }
 
 
-//    public KoiOrder getOrderById(long id) {
-//        Account account = accountUtils.getCurrentAccount();
-//        KoiOrder order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-//        List<OrderDetails> orderItems = orderDetailsRepository.findByKoiOrderId(id);
-//        Set<OrderDetails> orderDetails = new HashSet<>(orderItems);
-//        for(OrderDetails item: orderDetails) {
-//            System.out.println(item.getId());
-//        }
-//        order.setOrderDetails(orderDetails);
-//        return order;
-//    }
+    public KoiOrder getOrderById(long id) {
+        Account account = accountUtils.getCurrentAccount();
+        KoiOrder order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+        List<OrderDetails> orderItems = orderDetailsRepository.findByKoiOrderId(id);
+        Set<OrderDetails> orderDetails = new HashSet<>(orderItems);
+        for(OrderDetails item: orderDetails) {
+            System.out.println(item.getId());
+        }
+        order.setOrderDetails(orderDetails);
+        return order;
+    }
 
     public KoiOrder cancelOrder(long orderId, OrderCancelRequest request){
         Account account = accountUtils.getCurrentAccount();

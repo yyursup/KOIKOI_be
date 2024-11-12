@@ -22,6 +22,11 @@ public class Transactions {
 
     Date transactionsDate;
 
+    String accountNumber;
+    String accountName;
+    String bankName;
+    double amount;
+
     @Enumerated(EnumType.STRING)
     TransactionsEnum status;
 
@@ -41,11 +46,6 @@ public class Transactions {
     @ManyToOne
     @JoinColumn(name = "payment_id")
     Payment payment;
-
-
-//    @OneToOne(mappedBy = "transactions", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    SystemProfit systemProfit;
 
 }
 
