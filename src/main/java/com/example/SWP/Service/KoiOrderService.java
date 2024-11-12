@@ -204,6 +204,7 @@ public class KoiOrderService {
     }
 
     public List<KoiOrder> koiOrdersBuy(){
+
         return orderRepository.findKoiOrderByType(Type.BUY);
     }
 
