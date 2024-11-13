@@ -34,6 +34,7 @@ public class Consignment {
 
     String userName;
 
+    @Column(columnDefinition = "TEXT")
     String image;
 
     String Category;
