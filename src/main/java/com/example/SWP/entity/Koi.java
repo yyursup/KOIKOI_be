@@ -21,6 +21,7 @@ public class Koi {
     @NotBlank(message = "This name can not be empty!")
     String name;
 
+    @Column(columnDefinition = "TEXT")
     String description;
 
     boolean isDeleted = false;
@@ -43,6 +44,7 @@ public class Koi {
 
     int quantity;
 
+    @Column(columnDefinition = "TEXT")
     String image;
 
     String category;
