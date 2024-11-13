@@ -1,5 +1,6 @@
 package com.example.SWP.entity;
 
+import com.example.SWP.Enums.Author;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -28,7 +29,6 @@ public class Koi {
 
     int age;
 
-
     @NotBlank(message = "This size can not be empty!")
     String size;
 
@@ -47,6 +47,7 @@ public class Koi {
 
     String category;
 
+    Author author;
 
     @OneToMany(mappedBy = "koi", cascade = CascadeType.ALL)
     @JsonIgnore

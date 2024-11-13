@@ -10,8 +10,10 @@ import com.example.SWP.model.response.OrderDetailsResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -71,6 +73,51 @@ public class ConsignmentAPI {
     public ResponseEntity  viewOrderDetails(@RequestParam long orderId) {
         Set<ConsignmentDetailsResponse> consignments = consignmentService.viewConsignmentDetails(orderId);
         return ResponseEntity.ok(consignments);
+    }
+
+    // Lấy tất cả các yêu cầu ký gửi - chỉ dành cho MANAGER
+    @GetMapping("/allOfSell")
+    public ResponseEntity<List<Consignment>> getAllConsignments() {
+        List<Consignment> consignments = consignmentService.getAllConsignments();
+        return ResponseEntity.ok(consignments);
+    }
+
+    @GetMapping("/allOfCare")
+    public ResponseEntity<List<Consignment>> getAllConsignments2() {
+        List<Consignment> consignments = consignmentService.getAllConsignments2();
+        return ResponseEntity.ok(consignments);
+    }
+
+    // Lấy các yêu cầu ký gửi của user hiện tại
+    @GetMapping("/user")
+    public ResponseEntity<List<Consignment>> getUserConsignments() {
+        List<Consignment> consignments = consignmentService.getUserConsignments();
+        return ResponseEntity.ok(consignments);
+    }
+
+    // Phê duyệt yêu cầu ký gửi - chỉ dành cho MANAGER
+    @PostMapping("/approve/{id}")
+    public ResponseEntity<String> approveConsignment(@PathVariable Long id) {
+        consignmentService.approveConsignment(id);
+        return ResponseEntity.ok("Consignment approved successfully.");
+    }
+
+    // Từ chối yêu cầu ký gửi - chỉ dành cho MANAGER
+    @PostMapping("/reject/{id}")
+    public ResponseEntity<String> rejectConsignment(@PathVariable Long id) {
+        consignmentService.rejectConsignment(id);
+        return ResponseEntity.ok("Consignment rejected successfully.");
+    }
+
+    @GetMapping("/approved")
+    public ResponseEntity<List<Consignment>> getApprovedConsignments() {
+        List<Consignment> approvedConsignments = consignmentService.getApprovedConsignments();
+        return ResponseEntity.ok(approvedConsignments);
+    }
+
+    @GetMapping("showConsign")
+    public ResponseEntity getOrderByAccountById(){
+        return ResponseEntity.ok(consignmentService.getCareList());
     }
 
 }

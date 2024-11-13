@@ -1,5 +1,6 @@
 package com.example.SWP.Service;
 
+import com.example.SWP.Enums.Author;
 import com.example.SWP.Repository.KoiRepository;
 import com.example.SWP.Repository.KoiTypeRepository;
 import com.example.SWP.entity.Koi;
@@ -32,7 +33,7 @@ public class KoiService {
     KoiTypeRepository koiTypeRepository;
 
     public List<KoiResponse> getAllKoi() {
-        List<Koi> koiList = koiRepository.findKoisByIsDeletedFalse();
+        List<Koi> koiList = koiRepository.findKoiByAuthor(Author.SHOP);
         return koiList.stream().map(koi ->
                 modelMapper.map(koi, KoiResponse.class)).collect(Collectors.toList());
     }
@@ -40,12 +41,13 @@ public class KoiService {
     public KoiResponse createKoi(KoiRequest koiRequest, Long koiTypeId) {
         Koi koi = modelMapper.map(koiRequest, Koi.class);
         koi.setAccount(accountUtils.getCurrentAccount());
+        koi.setAuthor(Author.SHOP);
 
-        // Fetch the KoiType using koiTypeId
+        // Lấy KoiType từ koiTypeId
         KoiType koiType = koiTypeRepository.findById(koiTypeId)
                 .orElseThrow(() -> new RuntimeException("KoiType not found"));
 
-        // Set the KoiType to the Koi entity
+        // Gán KoiType và Category cho Koi
         koi.setKoiType(koiType);
         koi.setCategory(koiType.getCategory());
         try {

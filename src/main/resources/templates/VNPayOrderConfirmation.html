@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>Xin chào, <span th:text="${customerName}">Khách hàng</span>!</h2>
+<p>Cảm ơn bạn đã đặt hàng thành công qua VNPay. Dưới đây là thông tin đơn hàng:</p>
+<ul>
+    <li>Mã đơn hàng: <span th:text="${orderId}">12345</span></li>
+    <li>Sản phẩm: <span th:text="${Product}">Sản phẩm A</span></li>
+    <li>Số tiền thanh toán: <span th:text="${amount}">100000</span> VND</li>
+</ul>
+<p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+</body>
+</html>

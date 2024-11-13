@@ -33,17 +33,11 @@ public class OrderDetails {
 
     @ManyToOne
     @JoinColumn(name = "KoiOrderID")
-            @JsonIgnore
+    @JsonIgnore
     KoiOrder koiOrder;
 
     @ManyToOne
     @JoinColumn(name = "KoiID")
     @JsonIgnore
     Koi koi;
-
-    @OneToMany(mappedBy = "orderDetails", cascade = CascadeType.ALL)
-    @JsonIgnore
-    Set<ConsignmentDetails> consignmentDetails = new HashSet<>();
-
-
 }

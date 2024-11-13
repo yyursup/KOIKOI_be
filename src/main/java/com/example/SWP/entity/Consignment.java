@@ -1,5 +1,7 @@
 package com.example.SWP.entity;
 
+import com.example.SWP.Enums.ApprovalStatus;
+import com.example.SWP.Enums.Author;
 import com.example.SWP.Enums.StatusConsign;
 import com.example.SWP.Enums.TypeOfConsign;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,11 +26,33 @@ public class Consignment {
 
     LocalDate end_date;
 
-    String product_name;
+    String name;
 
     String note;
 
     double totalAmount;
+
+    String userName;
+
+    String image;
+
+    String Category;
+
+    double price;
+
+    Author author;
+
+    String description;
+
+    int age;
+
+    String size;
+
+    String origin;
+
+    int quantity;
+
+    ApprovalStatus approvalStatus;
 
     @Enumerated(EnumType.STRING)
     StatusConsign status;

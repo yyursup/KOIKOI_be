@@ -1,7 +1,6 @@
 package com.example.SWP.Service;
 
-import com.example.SWP.Enums.StatusConsign;
-import com.example.SWP.Enums.TypeOfConsign;
+import com.example.SWP.Enums.*;
 import com.example.SWP.Repository.*;
 import com.example.SWP.entity.*;
 import com.example.SWP.model.MailBody;
@@ -11,6 +10,8 @@ import com.example.SWP.utils.AccountUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
@@ -29,8 +30,6 @@ public class ConsignmentService {
     @Autowired
     AccountUtils accountUtils;
 
-    @Autowired
-    OrderRepository orderRepository;
 
     @Autowired
     OrderDetailsRepository orderDetailsRepository;
@@ -65,9 +64,10 @@ public class ConsignmentService {
         KoiOrder koiOrder = orderDetails.getKoiOrder(); // Lấy KoiOrder từ OrderDetails
 
         Consignment consignment = new Consignment();
+        consignment.setImage(orderDetails.getImage());
         consignment.setStart_date(startDate);
         consignment.setEnd_date(endDate);
-        consignment.setProduct_name(orderDetails.getName());
+        consignment.setName(orderDetails.getName());
         consignment.setType(TypeOfConsign.CARE);
         consignment.setStatus(StatusConsign.PENDING);
         consignment.setOrderDetails(orderDetails);
@@ -79,7 +79,9 @@ public class ConsignmentService {
         }
 
         consignment.setNote("You consign this koi for : " + daysBetween + " days");
+        consignment.setUserName(account.getUsername());
         consignment.setAccount(account);
+
 
 
         double subTotal = calculateSubTotal(orderDetails);
@@ -104,6 +106,13 @@ public class ConsignmentService {
         return consignment;
     }
 
+
+    public List<Consignment> getCareList() {
+        Account account = accountUtils.getCurrentAccount();
+        return consignmentRepository.findAllByAccountAndType(account, TypeOfConsign.CARE);
+    }
+
+
     public Consignment getConsignmentById(Long id) {
         return consignmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Consignment not found with id: " + id));
@@ -115,9 +124,10 @@ public class ConsignmentService {
     public Consignment createConsignmentForSell(KoiRequest koiRequest, Long koiTypeId) {
         Account account = accountUtils.getCurrentAccount();
 
-        // Tạo Koi từ KoiRequest
+        // Tạo đối tượng Koi từ KoiRequest
         Koi koi = modelMapper.map(koiRequest, Koi.class);
         koi.setAccount(account);
+        koi.setAuthor(Author.USER);
 
         // Lấy KoiType và thiết lập cho Koi
         KoiType koiType = koiTypeRepository.findById(koiTypeId)
@@ -132,35 +142,106 @@ public class ConsignmentService {
             throw new RuntimeException("Failed to save Koi", e);
         }
 
-        // Tạo Consignment và liên kết với Account
+        // Tạo đối tượng Consignment và thiết lập thông tin
         Consignment consignment = new Consignment();
+        consignment.setImage(koi.getImage());
+        consignment.setCategory(koi.getCategory());
+        consignment.setPrice(koi.getPrice());
+        consignment.setAuthor(Author.USER);
         consignment.setType(TypeOfConsign.SELL);
-        consignment.setAccount(account);// Liên kết Consignment với Account
+        consignment.setAccount(account);
+        consignment.setApprovalStatus(ApprovalStatus.PENDING); // Mặc định là PENDING
+        consignment.setAge(koi.getAge());
+        consignment.setSize(koi.getSize());
+        consignment.setOrigin(koi.getOrigin());
+        consignment.setQuantity(koi.getQuantity());
+        consignment.setDescription(koi.getDescription());
 
-
-        // Tạo ConsignmentDetails và liên kết với Koi và Consignment
+        // Tạo ConsignmentDetails và thiết lập thông tin
         ConsignmentDetails consignmentDetails = new ConsignmentDetails();
         consignmentDetails.setName(koi.getName());
         consignmentDetails.setQuantity(koi.getQuantity());
         consignmentDetails.setPrice(koi.getPrice());
         consignmentDetails.setImage(koi.getImage());
-        consignmentDetails.setKoi(koi); // Liên kết với Koi
-        consignmentDetails.setConsignment(consignment); // Liên kết với Consignment
+        consignmentDetails.setKoi(koi);
+        consignmentDetails.setConsignment(consignment);
 
         // Thêm ConsignmentDetails vào Consignment
         consignment.getConsignmentDetailsSet().add(consignmentDetails);
 
         double totalAmount = consignmentDetails.getQuantity() * consignmentDetails.getPrice();
         consignment.setTotalAmount(totalAmount);
-        consignment.setProduct_name(consignmentDetails.getName());
+        consignment.setName(consignmentDetails.getName());
         consignment.setNote("I want to sell " + consignmentDetails.getQuantity() + " koi fish with price : " + consignmentDetails.getPrice());
-
 
         // Lưu Consignment vào cơ sở dữ liệu
         consignmentRepository.save(consignment);
 
         return consignment;
     }
+
+
+    public List<Consignment> getUserConsignments() {
+        Account account = accountUtils.getCurrentAccount();
+        return consignmentRepository.findByAccountAndType(account, TypeOfConsign.SELL);
+    }
+
+
+    public List<Consignment> getAllConsignments() {
+        Account account = accountUtils.getCurrentAccount();
+
+        // Kiểm tra nếu người dùng không có vai trò MANAGER
+        if (account.getRole() != Role.MANAGER) {
+            throw new RuntimeException("Chỉ có Manager mới có quyền truy cập vào dữ liệu này");
+        }
+
+        // Lấy các consignment có type là SELL
+        return consignmentRepository.findByType(TypeOfConsign.SELL);
+    }
+
+    public List<Consignment> getAllConsignments2() {
+        Account account = accountUtils.getCurrentAccount();
+
+        // Kiểm tra nếu người dùng không có vai trò MANAGER
+        if (account.getRole() != Role.MANAGER) {
+            throw new RuntimeException("Chỉ có Manager mới có quyền truy cập vào dữ liệu này");
+        }
+
+        // Lấy các consignment có type là SELL
+        return consignmentRepository.findByType(TypeOfConsign.CARE);
+    }
+
+
+    public List<Consignment> getApprovedConsignments() {
+        return consignmentRepository.findByApprovalStatus(ApprovalStatus.APPROVED);
+    }
+
+
+    public void approveConsignment(Long consignmentId) {
+        Account account = accountUtils.getCurrentAccount();
+        if (account.getRole() != Role.MANAGER) {
+            throw new RuntimeException("Chỉ có quản lý mới có quyền phê duyệt ký gửi");
+        }
+
+        Consignment consignment = consignmentRepository.findById(consignmentId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy ký gửi"));
+        consignment.setApprovalStatus(ApprovalStatus.APPROVED);
+        consignmentRepository.save(consignment);
+    }
+
+    public void rejectConsignment(Long consignmentId) {
+        Account account = accountUtils.getCurrentAccount();
+        if (account.getRole() != Role.MANAGER) {
+            throw new RuntimeException("Chỉ có quản lý mới có quyền từ chối ký gửi");
+        }
+
+        Consignment consignment = consignmentRepository.findById(consignmentId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy ký gửi"));
+        consignment.setApprovalStatus(ApprovalStatus.REJECTED);
+        consignmentRepository.save(consignment);
+    }
+
+
 
 
     public Consignment cancelConsignment(long consignmentId, LocalDate cancelDate) {

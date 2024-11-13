@@ -252,4 +252,8 @@ public class KoiOrderService {
     public List<CanceledOrder> getListCancelOrders(){
         return cancelOrderRepository.findAll();
     }
+
+    public List<KoiOrder> getCancelList(){
+        return orderRepository.findByOrderStatus(OrderStatus.CANCELED);
+    }
 }
