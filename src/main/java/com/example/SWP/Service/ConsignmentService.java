@@ -107,10 +107,6 @@ public class ConsignmentService {
     }
 
 
-    public List<Consignment> getCareList() {
-        Account account = accountUtils.getCurrentAccount();
-        return consignmentRepository.findAllByAccountAndType(account, TypeOfConsign.CARE);
-    }
 
 
     public Consignment getConsignmentById(Long id) {

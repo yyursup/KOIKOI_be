@@ -70,11 +70,6 @@ public class KoiOrderAPI {
         return ResponseEntity.ok(koiOrderService.koiOrdersConsign());
     }
 
-    @GetMapping("cancel")
-    public ResponseEntity getCancelList(){
-        return ResponseEntity.ok(koiOrderService.getCancelList());
-    }
-
 
     @GetMapping("confirmed")
     public ResponseEntity getConfirmedOrders() {
