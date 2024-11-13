@@ -29,6 +29,8 @@ public class OrderDetails {
 
     int quantity;
 
+
+    @Column(columnDefinition = "TEXT")
     String image;
 
     @ManyToOne

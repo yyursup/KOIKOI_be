@@ -14,8 +14,11 @@ public class CartDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
+
+    @Column(columnDefinition = "TEXT")
     String image;
 
+    @Column(columnDefinition = "TEXT")
     String description;
 
     String name;

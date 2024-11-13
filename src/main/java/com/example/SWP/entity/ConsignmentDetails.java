@@ -21,6 +21,7 @@ public class ConsignmentDetails {
 
     int quantity;
 
+    @Column(columnDefinition = "TEXT")
     String image;
 
     @ManyToOne

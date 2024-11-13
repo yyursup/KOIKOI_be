@@ -3,8 +3,6 @@ package com.example.SWP.Service;
 import com.example.SWP.Enums.Role;
 import com.example.SWP.Repository.AccountRepository;
 import com.example.SWP.entity.Account;
-import com.example.SWP.entity.KoiOrder;
-import com.example.SWP.entity.Orders;
 import com.example.SWP.entity.Transactions;
 import com.example.SWP.model.MailBody;
 import com.example.SWP.model.request.TransactionRequest;
@@ -53,26 +51,6 @@ public class EmailService {
         }
     }
 
-
-
-    public void sendOrderConfirmationEmail (Orders order) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(order.getCustomer_Email());
-        message.setSubject("Xác nhận đặt hàng thành công");
-
-        String body = "Xin chào " + order.getCustomer_Name() + ",\n\n" +
-                "Cảm ơn bạn đã đặt hàng. Dưới đây là thông tin đơn hàng của bạn:\n" +
-                "Tên sản phẩm: " + order.getProduct_Name() + "\n" +
-                "Số lượng: " + order.getQuantity() + "\n" +
-                "Giá: " + order.getPrice() + " VND\n\n" +
-                "Chúng tôi sẽ liên hệ với bạn sớm để xác nhận đơn hàng.\n" +
-                "Cảm ơn bạn đã mua sắm tại cửa hàng chúng tôi!\n";
-
-        message.setText(body);
-        message.setFrom("koifish669@gmail.com");
-
-        javaMailSender.send(message);
-    }
 
     public void sendSimpleMessage2(MailBody mailBody) {
         try {
