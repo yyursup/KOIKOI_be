@@ -2,19 +2,77 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pending Withdrawal Request</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .email-container {
+      width: 100%;
+      background-color: #ffffff;
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      border: 1px solid #dddddd;
+    }
+
+    .header {
+      text-align: center;
+      padding: 20px 0;
+      background-color: #112d4e;
+      color: #ffffff;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .content {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #888888;
+    }
+
+    .footer a {
+      color: #3f72af;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-<p>Dear Manager,</p>
-<p>A withdrawal request of [[${amount}]] from [[${userEmail}]] is pending your approval.</p>
-<p>Withdrawal Account Information:</p>
-<ul>
-  <li>Account Number: [[${accountNumber}]]</li>
-  <li>Account Name: [[${accountName}]]</li>
-  <li>Bank Name: [[${bankName}]]</li>
-</ul>
-<p>Please log in to the system to review and approve the request.</p>
-<p>Thank you,</p>
-<p>Your Company</p>
+<div class="email-container">
+  <div class="header">
+    <h1>Pending Withdrawal Request</h1>
+  </div>
+
+  <div class="content">
+    <p>Dear Manager,</p>
+    <p>A withdrawal request of [[${amount}]] from [[${userEmail}]] is pending your approval.</p>
+    <p>Withdrawal Account Information:</p>
+    <ul style="list-style-type: none; padding: 0;">
+      <li>Account Number: [[${accountNumber}]]</li>
+      <li>Account Name: [[${accountName}]]</li>
+      <li>Bank Name: [[${bankName}]]</li>
+    </ul>
+    <p>Please log in to the system to review and approve the request.</p>
+  </div>
+
+  <div class="footer">
+    <p>Thank you,</p>
+    <p>Your Company</p>
+  </div>
+</div>
 </body>
 </html>

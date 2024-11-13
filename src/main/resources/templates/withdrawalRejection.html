@@ -2,19 +2,77 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Withdrawal Request Rejected</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .email-container {
+      width: 100%;
+      background-color: #ffffff;
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      border: 1px solid #dddddd;
+    }
+
+    .header {
+      text-align: center;
+      padding: 20px 0;
+      background-color: #112d4e;
+      color: #ffffff;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .content {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #888888;
+    }
+
+    .footer a {
+      color: #3f72af;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-<p>Dear [[${name}]],</p>
-<p>Your withdrawal request of [[${amount}]] has been rejected.</p>
-<p>Withdrawal Account Information:</p>
-<ul>
-  <li>Account Number: [[${accountNumber}]]</li>
-  <li>Account Name: [[${accountName}]]</li>
-  <li>Bank Name: [[${bankName}]]</li>
-</ul>
-<p>If you have any questions, please contact support.</p>
-<p>Thank you,</p>
-<p>Your Company</p>
+<div class="email-container">
+  <div class="header">
+    <h1>Withdrawal Request Rejected</h1>
+  </div>
+
+  <div class="content">
+    <p>Dear [[${name}]],</p>
+    <p>Your withdrawal request of [[${amount}]] has been rejected.</p>
+    <p>Withdrawal Account Information:</p>
+    <ul>
+      <li>Account Number: [[${accountNumber}]]</li>
+      <li>Account Name: [[${accountName}]]</li>
+      <li>Bank Name: [[${bankName}]]</li>
+    </ul>
+    <p>If you have any questions, please contact support.</p>
+  </div>
+
+  <div class="footer">
+    <p>Thank you,</p>
+    <p>Your Company</p>
+  </div>
+</div>
 </body>
 </html>

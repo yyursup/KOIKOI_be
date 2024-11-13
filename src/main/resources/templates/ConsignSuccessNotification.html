@@ -2,12 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consignment Successful</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+          margin: 0;
+          padding: 0;
+        }
+
+        .email-container {
+          width: 100%;
+          background-color: #ffffff;
+          padding: 20px;
+          max-width: 600px;
+          margin: 0 auto;
+          border: 1px solid #dddddd;
+        }
+
+        .header {
+          text-align: center;
+          padding: 20px 0;
+          background-color: #112d4e;
+          color: #ffffff;
+        }
+
+        .header h1 {
+          margin: 0;
+          font-size: 24px;
+        }
+
+        .content {
+          padding: 20px;
+          text-align: center;
+        }
+
+        .footer {
+          text-align: center;
+          padding: 20px;
+          font-size: 12px;
+          color: #888888;
+        }
+
+        .footer a {
+          color: #3f72af;
+          text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-     <p>Xin chào [[${name}]],</p>
-     <p>Bạn đã ký gửi thành công con cá Koi với số ngày là [[${daysConsigned}]] ngày.</p>
-     <p>Tổng số tiền bạn đã thanh toán là: [[${totalAmount}]] VND.</p>
-     <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+<div class="email-container">
+    <div class="header">
+        <h1>Consignment Successful</h1>
+    </div>
+
+    <div class="content">
+        <p>Dear [[${name}]],</p>
+        <p>You have successfully consigned a Koi fish for [[${daysConsigned}]] days.</p>
+        <p>The total amount you have paid is: [[${totalAmount}]] VND.</p>
+        <p>Thank you for using our service!</p>
+    </div>
+
+    <div class="footer">
+        <p>Thank you,</p>
+        <p>Your Company</p>
+    </div>
+</div>
 </body>
 </html>
