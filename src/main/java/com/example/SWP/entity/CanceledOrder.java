@@ -2,6 +2,7 @@ package com.example.SWP.entity;
 
 import com.example.SWP.Enums.CancelOrderStatus;
 
+import com.example.SWP.Enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.Order;
@@ -38,6 +39,12 @@ public class CanceledOrder {
 
     double totalAmount;
 
+    String email;
+
     @Enumerated(value = EnumType.STRING)
     CancelOrderStatus cancelOrderStatus;
+
+
+    @Enumerated(EnumType.STRING)
+    OrderStatus orderStatus;
 }

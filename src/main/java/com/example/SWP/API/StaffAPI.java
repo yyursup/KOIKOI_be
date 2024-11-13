@@ -29,17 +29,18 @@ public class StaffAPI {
         return ResponseEntity.ok(newAccount);
     }
 
+    @GetMapping()
+    public ResponseEntity getAllList(){
+        List<ViewProfileResponse> accountList = staffService.getAllAccount();
+        return ResponseEntity.ok(accountList);
+    }
+
     @GetMapping("Profile")
     public ResponseEntity ViewProfile(){
         ViewProfileResponse view = staffService.viewProfile();
         return ResponseEntity.ok(view);
     }
 
-    @GetMapping()
-    public ResponseEntity getAllList(){
-        List<ViewProfileResponse> accountList = staffService.getAllAccount();
-        return ResponseEntity.ok(accountList);
-    }
 
     @PutMapping("{id}")
     public ResponseEntity updateAccount(@Valid @RequestBody UpdateProfileRequest updateProfileRequest, @PathVariable Long id){

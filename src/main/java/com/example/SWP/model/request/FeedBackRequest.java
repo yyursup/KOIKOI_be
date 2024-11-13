@@ -7,11 +7,9 @@ import java.util.Date;
 
 @Data
 public class FeedBackRequest {
+
     String email;
     String feedBackContent;
     Date dateFeedback;
 
-
 }
-
-

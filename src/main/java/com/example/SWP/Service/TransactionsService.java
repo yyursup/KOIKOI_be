@@ -45,6 +45,9 @@ public class TransactionsService {
     @Autowired
     EmailService emailService;
 
+    @Autowired
+    CancelOrderRepository cancelOrderRepository;
+
     public void createTransactions(long id) {
         KoiOrder koiOrder = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Can not found order"));
@@ -205,15 +208,19 @@ public class TransactionsService {
 
         payment.setTransactions(setTransactions);
 
-        accountRepository.save(manager);
-        paymentRepository.save(payment);
 
-        // Cập nhật trạng thái Consignment sau khi transaction thành công
         List<Consignment> consignments = consignmentRepository.findByAccount(customer);
         for (Consignment consignment : consignments) {
             consignment.setStatus(StatusConsign.VALID);
             consignmentRepository.save(consignment);
         }
+
+
+        accountRepository.save(manager);
+        paymentRepository.save(payment);
+
+
+
 
     }
     public void createTransactionForExtendConsign(long id) {
@@ -325,10 +332,16 @@ public class TransactionsService {
 
         updateKoiStockForRefund(koiOrder);
 
+        CanceledOrder canceledOrder = koiOrder.getCanceledOrder();
+        if (canceledOrder != null) {
+            canceledOrder.setOrderStatus(OrderStatus.REFUND);
+        }
+
         accountRepository.save(manager);
         accountRepository.save(customer);
         transactionsRepository.save(transactions1);
         orderRepository.save(koiOrder);
+        cancelOrderRepository.save(canceledOrder);
     }
 
     public void BuyKoiFromUser(long orderId) {

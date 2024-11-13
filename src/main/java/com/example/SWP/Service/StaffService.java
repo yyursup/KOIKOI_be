@@ -70,7 +70,6 @@ public class StaffService {
                 modelMapper.map(account, ViewProfileResponse.class)).collect(Collectors.toList());
     }
 
-
     public UpdateAndDeleteProfileResponse accountUpdate(UpdateProfileRequest updateProfileRequest, Long AccountId) {
         Account oldAccount = accountRepository.findAccountById(AccountId);
 

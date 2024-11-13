@@ -275,6 +275,14 @@ public class ConsignmentService {
 
     }
 
+    public List<Consignment> getCareList() {
+        Account account = accountUtils.getCurrentAccount();
+        return consignmentRepository.findAllByAccountAndType(account, TypeOfConsign.CARE);
+    }
+
+
+
+
     public Consignment extendConsignment(long consignmentId, LocalDate new_EndDate) {
         Consignment consignment = consignmentRepository.findById(consignmentId)
                 .orElseThrow(() -> new RuntimeException("Not found"));

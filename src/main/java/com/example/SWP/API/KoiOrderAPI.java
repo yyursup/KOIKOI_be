@@ -57,7 +57,7 @@ public class KoiOrderAPI {
 
     @GetMapping("paid")
     public ResponseEntity getPaidOrders() {
-        return ResponseEntity.ok(koiOrderService.getPaidOrderes());
+        return ResponseEntity.ok(koiOrderService.getPaidOrders());
     }
 
     @GetMapping("buy")
@@ -89,6 +89,10 @@ public class KoiOrderAPI {
     @PutMapping("cancel/{id}")
     public ResponseEntity cancelOrder(@PathVariable long id, @RequestBody OrderCancelRequest request) {
         return ResponseEntity.ok(koiOrderService.cancelOrder(id, request));
+    }
+    @GetMapping("cancel")
+    public ResponseEntity getCancelList(){
+        return ResponseEntity.ok(koiOrderService.getCancelList());
     }
 
     @PutMapping("reject/{id}")
