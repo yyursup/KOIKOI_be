@@ -22,10 +22,6 @@ public class SystemProfit {
 
     Date date;
 
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "transaction_id")
-//    @JsonIgnore
-//    Transactions transactions;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_id")
