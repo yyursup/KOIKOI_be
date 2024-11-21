@@ -47,8 +47,14 @@ public class AccountAPI {
 //    }
 
     @GetMapping()
-    public ResponseEntity getAllList1(){
+    public ResponseEntity getAllList(){
         List<ViewProfileResponse> accountList = accountService.getAllAccount();
+        return ResponseEntity.ok(accountList);
+    }
+
+    @GetMapping("customer")
+    public ResponseEntity getAllList2(){
+        List<ViewProfileResponse> accountList = accountService.getAllAccount1();
         return ResponseEntity.ok(accountList);
     }
 

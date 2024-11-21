@@ -5,5 +5,6 @@ public enum StatusConsign {
     EXPIRED,
     CANCELLED,
     SOLD,
-    PENDING
+    PENDING,
+    PAID
 }

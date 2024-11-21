@@ -1,7 +1,9 @@
 package com.example.SWP.Service;
 
 import com.example.SWP.Enums.OrderStatus;
+import com.example.SWP.Enums.StatusConsign;
 import com.example.SWP.Repository.OrderRepository;
+import com.example.SWP.config.VNPayConfig;
 import com.example.SWP.entity.*;
 
 import com.example.SWP.model.request.OrderCreationRequest;
@@ -23,6 +25,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static com.example.SWP.config.VNPayConfig.*;
+
 
 @Service
 public class PaymentService {
@@ -34,6 +38,7 @@ public class PaymentService {
 
     @Autowired
     AccountUtils accountUtils;
+
 
     Long lastPaidOrderId;
 
@@ -56,21 +61,20 @@ public class PaymentService {
         koiOrder.setPhone(request.getPhone() != null && !request.getPhone().isEmpty() ? request.getPhone() : account.getPhone_number());
         koiOrder.setEmail(request.getGmail() != null && !request.getGmail().isEmpty() ? request.getGmail() : account.getEmail());
 
-        koiOrder.setOrderStatus(OrderStatus.PAID);
 
         orderRepository.save(koiOrder);
 
         lastPaidOrderId = koiOrder.getId();
 
-        String tmnCode = "T77TVJXG";
-        String secretKey = "9P81P2EVHRIN0FTELZPCMURONQFHON7I";
-        String vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        String returnUrl = "http://localhost:5173/orderSuccess?orderId=" + koiOrderId;
+         String vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 
+         String returnUrl = "http://localhost:5173/orderSuccess?orderId=" + koiOrderId;
 
+         String currCode = "VND";
+         String vnpTxnRef = getRandomNumber(8);
+         koiOrder.setVnPayTxRef(vnpTxnRef);
+         orderRepository.save(koiOrder);
 
-        String currCode = "VND";
-        String vnpTxnRef = UUID.randomUUID().toString();
 
         Map<String, String> vnpParams = new TreeMap<>();
         vnpParams.put("vnp_Version", "2.1.0");
@@ -145,4 +149,5 @@ public class PaymentService {
         }
         return result.toString();
     }
+
 }

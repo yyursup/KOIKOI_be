@@ -55,7 +55,6 @@ public class Koi {
     @JsonIgnore
     List<OrderDetails> orderDetails;
 
-
     @ManyToOne
     @JoinColumn(name = "KoiTypeID")
     @JsonIgnore
@@ -69,4 +68,9 @@ public class Koi {
     @JsonIgnore
     @JoinColumn(name = "owner_id")
     Account account;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "identification_certificate_id")
+    @JsonIgnore
+    IdentificationCertificate identificationCertificate;
 }

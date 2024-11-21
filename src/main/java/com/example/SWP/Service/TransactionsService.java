@@ -5,15 +5,14 @@ import com.example.SWP.Repository.*;
 import com.example.SWP.entity.*;
 import com.example.SWP.model.request.TransactionRequest;
 import com.example.SWP.utils.AccountUtils;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class TransactionsService {
@@ -40,239 +39,158 @@ public class TransactionsService {
     ConsignmentRepository consignmentRepository;
 
     @Autowired
-    ConsignmentService consignmentService;
-
-    @Autowired
     EmailService emailService;
 
     @Autowired
     CancelOrderRepository cancelOrderRepository;
 
     public void createTransactions(long id) {
+        // Retrieve the koi order by ID
         KoiOrder koiOrder = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Can not found order"));
+                .orElseThrow(() -> new RuntimeException("Cannot find order with ID: " + id));
 
-        Payment payment = new Payment();
-        payment.setKoiOrder(koiOrder);
-        payment.setPaymentDate(new Date());
-        payment.setMethod(PaymentType.BANKING);
-        payment.setPaymentAmount(koiOrder.getTotalAmount());
-        koiOrder.setConfirmDate(new Date());
-        updateKoiStock(koiOrder);
+        Koi koi = koiOrder.getOrderDetails().iterator().next().getKoi();
+        if (koi == null || koi.getAccount() == null || koi.getAccount().getRole() == null) {
+            throw new RuntimeException("Invalid koi ownership role: Missing data");
+        }
 
-        Set<Transactions> setTransactions = new HashSet<>();
+        if (koi.getAccount().getRole() == Role.MANAGER) {
 
-        Transactions transactions1 = new Transactions();
-        Account customer = koiOrder.getAccount();
-        //VNPAY TO CUSTOMER
-        transactions1.setFrom(null);
-        transactions1.setTo(customer);
-        transactions1.setPayment(payment);
-        transactions1.setTotalAmount(koiOrder.getTotalAmount());
-        transactions1.setTransactionsDate(new Date());
-        transactions1.setDescription("VNPAY TO CUSTOMER");
-        transactions1.setStatus(TransactionsEnum.SUCCESS);
+            koiOrder.setConfirmDate(new Date());
+            Set<Transactions> transactions = new HashSet<>();
 
-        setTransactions.add(transactions1);
-
-        // customer to manager
-        Transactions transactions2 = new Transactions();
-        Account manager = accountRepository.findAccountByRole(Role.MANAGER);
-        transactions2.setFrom(customer);
-        transactions2.setTo(manager);
-        transactions2.setPayment(payment);
-        transactions2.setTotalAmount(koiOrder.getTotalAmount());
-        transactions2.setTransactionsDate(new Date());
-        transactions2.setDescription("CUSTOMER TO MANAGER");
-        transactions2.setStatus(TransactionsEnum.SUCCESS);
-        koiOrder.setOrderStatus(OrderStatus.CONFIRMED);
-
-        payment.setKoiOrder(koiOrder);
-
-        double newBalance = manager.getBalance() + koiOrder.getTotalAmount();
-        manager.setBalance(newBalance);
-        setTransactions.add(transactions2);
+            Account customer = koiOrder.getAccount();
+            Account manager = accountRepository.findAccountByRole(Role.MANAGER);
 
 
-        payment.setTransactions(setTransactions);
+            Transactions transaction = new Transactions();
+            transaction.setFrom(customer);
+            transaction.setTo(manager);
+            transaction.setTotalAmount(koiOrder.getTotalAmount());
+            transaction.setTransactionsDate(new Date());
+            transaction.setDescription("CUSTOMER TO MANAGER");
+            transaction.setStatus(TransactionsEnum.SUCCESS);
+            koiOrder.setOrderStatus(OrderStatus.CONFIRMED);
 
-        accountRepository.save(manager);
-        paymentRepository.save(payment);
 
+            manager.setBalance(manager.getBalance() + koiOrder.getTotalAmount());
+            customer.setBalance(customer.getBalance() - koiOrder.getTotalAmount());
+
+            transactions.add(transaction);
+
+
+            updateKoiStock(koiOrder);
+
+
+            accountRepository.save(manager);
+            accountRepository.save(customer);
+            transactionsRepository.save(transaction);
+            orderRepository.save(koiOrder);
+
+        } else if (koi.getAccount().getRole() == Role.CUSTOMER)  {
+
+            Account buyer = koiOrder.getAccount();
+            Account manager = accountRepository.findAccountByRole(Role.MANAGER);
+
+            Account seller = koiOrder.getOrderDetails().iterator().next().getKoi().getAccount();
+
+            Transactions commissionTransaction = new Transactions();
+            commissionTransaction.setFrom(buyer);
+            commissionTransaction.setTo(manager);
+            commissionTransaction.setTotalAmount(koiOrder.getTotalAmount());
+            commissionTransaction.setTransactionsDate(new Date());
+            commissionTransaction.setDescription("CUSTOMER TO MANAGER");
+            commissionTransaction.setStatus(TransactionsEnum.SUCCESS);
+
+
+            Transactions sellerTransaction = new Transactions();
+            sellerTransaction.setFrom(manager);
+            sellerTransaction.setTo(seller);
+            sellerTransaction.setTotalAmount((koiOrder.getTotalAmount() - koiOrder.getShippingPee()) * 0.9 + koiOrder.getShippingPee());
+            sellerTransaction.setTransactionsDate(new Date());
+            sellerTransaction.setDescription("MANAGER TO OWNER");
+            sellerTransaction.setStatus(TransactionsEnum.SUCCESS);
+
+
+            double managerBalance =  manager.getBalance() + ((koiOrder.getTotalAmount() - koiOrder.getShippingPee()) * 0.1);
+            double sellerBalance = seller.getBalance() + sellerTransaction.getTotalAmount();
+            double buyerBalance = buyer.getBalance() - koiOrder.getTotalAmount();
+
+            manager.setBalance(managerBalance);
+            seller.setBalance(sellerBalance);
+            buyer.setBalance(buyerBalance);
+
+
+            updateKoiStock(koiOrder);
+
+            transactionsRepository.save(commissionTransaction);
+            transactionsRepository.save(sellerTransaction);
+            accountRepository.save(manager);
+            accountRepository.save(seller);
+            accountRepository.save(buyer);
+
+            // Update order status
+            koiOrder.setOrderStatus(OrderStatus.CONFIRMED);
+            koiOrder.setConfirmDate(new Date());
+            orderRepository.save(koiOrder);
+        } else {
+            throw new RuntimeException("Invalid koi ownership role");
+        }
+
+        // Gửi email xác nhận
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("customerName", koiOrder.getAccount().getFullName());
+        templateModel.put("orderId", koiOrder.getId());
+        templateModel.put("confirmDate", koiOrder.getConfirmDate());
+        templateModel.put("totalAmount", koiOrder.getTotalAmount());
+
+        try {
+            emailService.sendOrderConfirmationEmail(
+                    koiOrder.getAccount().getEmail(),
+                    "Xác nhận đơn hàng thành công",
+                    templateModel
+            );
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
-    public void createTransactions3(long id) {
-        KoiOrder koiOrder = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Can not found order"));
 
-        Payment payment = new Payment();
-        payment.setKoiOrder(koiOrder);
-        payment.setPaymentDate(new Date());
-        payment.setMethod(PaymentType.BANKING);
-        payment.setPaymentAmount(koiOrder.getTotalAmount());
-        koiOrder.setConfirmDate(new Date());
-        updateKoiStock(koiOrder);
-
-        Set<Transactions> setTransactions = new HashSet<>();
-
-        Transactions transactions1 = new Transactions();
-        Account customer = koiOrder.getAccount();
-        //VNPAY TO CUSTOMER
-        transactions1.setFrom(null);
-        transactions1.setTo(customer);
-        transactions1.setPayment(payment);
-        transactions1.setTotalAmount(koiOrder.getTotalAmount());
-        transactions1.setTransactionsDate(new Date());
-        transactions1.setDescription("VNPAY TO CUSTOMER");
-        transactions1.setStatus(TransactionsEnum.SUCCESS);
-
-        setTransactions.add(transactions1);
-
-        // customer to manager
-        Transactions transactions2 = new Transactions();
-        Account manager = accountRepository.findAccountByRole(Role.MANAGER);
-        transactions2.setFrom(customer);
-        transactions2.setTo(manager);
-        transactions2.setPayment(payment);
-        transactions2.setTotalAmount(koiOrder.getTotalAmount());
-        transactions2.setTransactionsDate(new Date());
-        transactions2.setDescription("CUSTOMER TO MANAGER");
-        transactions2.setStatus(TransactionsEnum.SUCCESS);
-        koiOrder.setOrderStatus(OrderStatus.CONFIRMED);
-        payment.setKoiOrder(koiOrder);
-
-        double newBalance = manager.getBalance() + ((koiOrder.getTotalAmount() - koiOrder.getShippingPee()) * 0.1);
-        manager.setBalance(newBalance);
-        setTransactions.add(transactions2);
-        // manager to owner
-        Transactions transactions3 = new Transactions();
-        Account owner = koiOrder.getOrderDetails().iterator().next().getKoi().getAccount();
-        transactions3.setFrom(customer);
-        transactions3.setTo(manager);
-        transactions3.setPayment(payment);
-        transactions3.setTotalAmount(newBalance);
-        transactions3.setStatus(TransactionsEnum.SUCCESS);
-        transactions3.setDescription("MANAGER TO OWNER");
-        double newBalance2 = owner.getBalance() + ((koiOrder.getTotalAmount() - koiOrder.getShippingPee()) * 0.9) + koiOrder.getShippingPee();
-        owner.setBalance(newBalance2);
-        setTransactions.add(transactions3);
-
-
-        payment.setTransactions(setTransactions);
-
-        accountRepository.save(manager);
-        paymentRepository.save(payment);
-
-    }
     public void createTransactionsForConsign(long id) {
         KoiOrder koiOrder = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Can not found order"));
 
-        Payment payment = new Payment();
-        payment.setKoiOrder(koiOrder);
-        payment.setPaymentDate(new Date());
-        payment.setMethod(PaymentType.BANKING);
-        payment.setPaymentAmount(koiOrder.getTotalAmount());
         koiOrder.setConfirmDate(new Date());
         Set<Transactions> setTransactions = new HashSet<>();
-
-        Transactions transactions1 = new Transactions();
         Account customer = koiOrder.getAccount();
-        //VNPAY TO CUSTOMER
-        transactions1.setFrom(null);
-        transactions1.setTo(customer);
-        transactions1.setPayment(payment);
-        transactions1.setTotalAmount(koiOrder.getTotalAmount());
-        transactions1.setTransactionsDate(new Date());
-        transactions1.setDescription("VNPAY TO CUSTOMER");
-        transactions1.setStatus(TransactionsEnum.SUCCESS);
 
-        setTransactions.add(transactions1);
 
-        // customer to manager
         Transactions transactions2 = new Transactions();
         Account manager = accountRepository.findAccountByRole(Role.MANAGER);
         transactions2.setFrom(customer);
         transactions2.setTo(manager);
-        transactions2.setPayment(payment);
         transactions2.setTotalAmount(koiOrder.getTotalAmount());
         transactions2.setTransactionsDate(new Date());
         transactions2.setDescription("CUSTOMER TO MANAGER");
         transactions2.setStatus(TransactionsEnum.SUCCESS);
         koiOrder.setOrderStatus(OrderStatus.CONFIRMED);
-
-        payment.setKoiOrder(koiOrder);
-
-        double newBalance = manager.getBalance() + koiOrder.getTotalAmount();
-        manager.setBalance(newBalance);
+        double managerBalance = manager.getBalance() + koiOrder.getTotalAmount();
+        double customerBalance = customer.getBalance() - koiOrder.getTotalAmount();
+        manager.setBalance(managerBalance);
+        customer.setBalance(customerBalance);
         setTransactions.add(transactions2);
 
-        payment.setTransactions(setTransactions);
-
-
-        List<Consignment> consignments = consignmentRepository.findByAccount(customer);
-        for (Consignment consignment : consignments) {
-            consignment.setStatus(StatusConsign.VALID);
-            consignmentRepository.save(consignment);
+       Consignment consignments = consignmentRepository.findById(koiOrder.getConsignment().getId())
+                .orElse(null);
+       if (consignments != null) {
+            consignments.setStatus(StatusConsign.VALID);
+            consignmentRepository.save(consignments);
         }
 
-
         accountRepository.save(manager);
-        paymentRepository.save(payment);
-
-
-
-
+        orderRepository.save(koiOrder);
+        transactionsRepository.save(transactions2);
     }
-    public void createTransactionForExtendConsign(long id) {
-        KoiOrder koiOrder = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Can not found order"));
 
-        Payment payment = new Payment();
-        payment.setKoiOrder(koiOrder);
-        payment.setPaymentDate(new Date());
-        payment.setMethod(PaymentType.BANKING);
-        payment.setPaymentAmount(koiOrder.getTotalAmount());
-        koiOrder.setConfirmDate(new Date());
-        Set<Transactions> setTransactions = new HashSet<>();
-
-        Transactions transactions1 = new Transactions();
-        Account customer = koiOrder.getAccount();
-        //VNPAY TO CUSTOMER
-        transactions1.setFrom(null);
-        transactions1.setTo(customer);
-        transactions1.setPayment(payment);
-        transactions1.setTotalAmount(koiOrder.getTotalAmount());
-        transactions1.setTransactionsDate(new Date());
-        transactions1.setDescription("VNPAY TO CUSTOMER");
-        transactions1.setStatus(TransactionsEnum.SUCCESS);
-
-        setTransactions.add(transactions1);
-
-        // customer to manager
-        Transactions transactions2 = new Transactions();
-        Account manager = accountRepository.findAccountByRole(Role.MANAGER);
-        transactions2.setFrom(customer);
-        transactions2.setTo(manager);
-        transactions2.setPayment(payment);
-        transactions2.setTotalAmount(koiOrder.getTotalAmount());
-        transactions2.setTransactionsDate(new Date());
-        transactions2.setDescription("CUSTOMER TO MANAGER");
-        transactions2.setStatus(TransactionsEnum.SUCCESS);
-        koiOrder.setOrderStatus(OrderStatus.CONFIRMED);
-
-        payment.setKoiOrder(koiOrder);
-
-        double newBalance = manager.getBalance() + koiOrder.getTotalAmount();
-        manager.setBalance(newBalance);
-        setTransactions.add(transactions2);
-
-
-        payment.setTransactions(setTransactions);
-
-        accountRepository.save(manager);
-        paymentRepository.save(payment);
-
-    }
     public void createTransactionForCancelConsign(long id) {
         KoiOrder koiOrder = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Can not found order"));
@@ -300,6 +218,7 @@ public class TransactionsService {
 
 
         transactionsRepository.save(transactions1);
+        orderRepository.save(koiOrder);
         accountRepository.save(manager);
 
     }
@@ -411,6 +330,12 @@ public class TransactionsService {
                 koi.setQuantity(currentStock - orderedQuantity);
                 if (koi.getQuantity() <= 0) {
                     koi.setStatus("SOLD OUT");
+                    List<Consignment> consignments = consignmentRepository.findByAccount(koi.getAccount());
+                    for (Consignment consignment : consignments) {
+                        consignment.setStatus(StatusConsign.SOLD);
+                        consignment.setEnd_date(LocalDate.now());
+                        consignmentRepository.save(consignment);
+                    }
                 } else {
                     koi.setStatus("IN STOCK");
                 }
@@ -594,6 +519,7 @@ public class TransactionsService {
             return transactionsRepository.findAllByPaymentIsNullAndFrom(account);
         }
     }
+
 
 }
 

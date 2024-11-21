@@ -50,6 +50,7 @@ public class ManagerService {
     public RegisterResponse registerForManager(RegisterRequest registerRequest) {
         Account account = modelMapper.map(registerRequest, Account.class);
         account.setRole(Role.MANAGER);
+        account.setStatus("ACTIVE");
         try {
             String originpassword = account.getPassword();
             account.setPassword(passwordEncoder.encode(originpassword));

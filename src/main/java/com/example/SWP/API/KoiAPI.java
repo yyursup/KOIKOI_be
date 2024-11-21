@@ -1,6 +1,7 @@
 package com.example.SWP.API;
 
 import com.example.SWP.Service.KoiService;
+import com.example.SWP.entity.IdentificationCertificate;
 import com.example.SWP.entity.Koi;
 import com.example.SWP.model.request.KoiRequest;
 import com.example.SWP.model.response.KoiResponse;
@@ -21,9 +22,9 @@ public class KoiAPI {
     @Autowired
     KoiService koiService;
 
-    @PostMapping("{id}")
-    public ResponseEntity newKoiFish(@Valid @RequestBody KoiRequest koiRequest, @PathVariable Long id ) {
-        KoiResponse newKoi = koiService.createKoi(koiRequest,id);
+    @PostMapping("{id}/{idCertificate}")
+    public ResponseEntity newKoiFish(@Valid @RequestBody KoiRequest koiRequest, @PathVariable Long id, @PathVariable Long idCertificate ) {
+        KoiResponse newKoi = koiService.createKoi(koiRequest, id, idCertificate);
         return ResponseEntity.ok(newKoi);
     }
 
@@ -33,15 +34,16 @@ public class KoiAPI {
         return ResponseEntity.ok(koiList);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity updateKoi(@Valid @RequestBody KoiRequest koiRequest, @PathVariable Long id){
-        try{
-            KoiResponse newKoi = koiService.updateKoi(id, koiRequest);
+    @PutMapping("{id}/{id2}")
+    public ResponseEntity updateKoi(@Valid @RequestBody KoiRequest koiRequest, @PathVariable Long id, @PathVariable Long id2){
+            KoiResponse newKoi = koiService.updateKoi(id, koiRequest, id2);
             return ResponseEntity.ok(newKoi);
-        }catch (Exception e){
-            throw new RuntimeException("Id of koi " + id + " not found ");
-        }
 
+    }
+
+    @GetMapping("/certificate")
+    public IdentificationCertificate getCertificateByKoi(@RequestParam long id) {
+        return koiService.getCertificateByKoiId(id);
     }
 
     @DeleteMapping("{id}")

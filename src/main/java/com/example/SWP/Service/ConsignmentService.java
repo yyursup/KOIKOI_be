@@ -20,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,20 +49,20 @@ public class ConsignmentService {
 
     @Autowired
     KoiTypeRepository koiTypeRepository;
-
     public Consignment createConsignment(long orderDetailsId, LocalDate startDate, LocalDate endDate) {
         Account account = accountUtils.getCurrentAccount();
 
         OrderDetails orderDetails = orderDetailsRepository.findById(orderDetailsId)
                 .orElseThrow(() -> new RuntimeException("OrderDetails not found"));
 
-        // Kiểm tra nếu sản phẩm đã được ký gửi trước đó
-        boolean isConsigned = consignmentRepository.existsByOrderDetails(orderDetails);
-        if (isConsigned) {
-            throw new RuntimeException("This product has already been consigned and cannot be consigned again.");
-        }
+        orderDetails.setStatus(StatusOrderDetails.CONSIGN);
+        KoiOrder koiOrder = orderDetails.getKoiOrder();
 
-        KoiOrder koiOrder = orderDetails.getKoiOrder(); // Lấy KoiOrder từ OrderDetails
+
+        boolean isAlreadyConsigned = consignmentRepository.existsByKoiAndStatus(orderDetails.getKoi(), StatusConsign.VALID);
+        if (isAlreadyConsigned) {
+            throw new RuntimeException("This koi has already been consigned with status VALID.");
+        }
 
         Consignment consignment = new Consignment();
         consignment.setImage(orderDetails.getImage());
@@ -70,7 +71,10 @@ public class ConsignmentService {
         consignment.setName(orderDetails.getName());
         consignment.setType(TypeOfConsign.CARE);
         consignment.setStatus(StatusConsign.PENDING);
-        consignment.setOrderDetails(orderDetails);
+        consignment.setKoiOrder(koiOrder);
+        consignment.setCategory(orderDetails.getKoi().getCategory());
+        consignment.setOrigin(orderDetails.getKoi().getOrigin());
+        consignment.setPrice(orderDetails.getKoi().getPrice());
 
 
         long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
@@ -78,15 +82,14 @@ public class ConsignmentService {
             throw new IllegalArgumentException("End date must be after start date");
         }
 
-        consignment.setNote("You consign this koi for : " + daysBetween + " days");
+        consignment.setNote("You consign this koi for: " + daysBetween + " days");
+        consignment.setDescription("Total amount for consignment is 5% value of koi fish per day");
         consignment.setUserName(account.getUsername());
         consignment.setAccount(account);
 
 
-
         double subTotal = calculateSubTotal(orderDetails);
         double totalAmount = calculateTotalAmount(subTotal, daysBetween);
-
         consignment.setTotalAmount(totalAmount);
 
 
@@ -96,18 +99,13 @@ public class ConsignmentService {
         consignmentDetails.setQuantity(orderDetails.getQuantity());
         consignmentDetails.setImage(orderDetails.getImage());
         consignmentDetails.setConsignment(consignment);
-        consignmentDetails.setKoi(consignment.getOrderDetails().getKoi());
-//        consignmentDetails.setOrderDetails(orderDetails);
+        consignmentDetails.setKoi(orderDetails.getKoi());
         consignment.getConsignmentDetailsSet().add(consignmentDetails);
 
-
         consignmentRepository.save(consignment);
-
+        orderDetailsRepository.save(orderDetails);
         return consignment;
     }
-
-
-
 
     public Consignment getConsignmentById(Long id) {
         return consignmentRepository.findById(id)
@@ -151,7 +149,9 @@ public class ConsignmentService {
         consignment.setSize(koi.getSize());
         consignment.setOrigin(koi.getOrigin());
         consignment.setQuantity(koi.getQuantity());
+        consignment.setStart_date(LocalDate.now());
         consignment.setDescription(koi.getDescription());
+
 
         // Tạo ConsignmentDetails và thiết lập thông tin
         ConsignmentDetails consignmentDetails = new ConsignmentDetails();
@@ -222,6 +222,7 @@ public class ConsignmentService {
         Consignment consignment = consignmentRepository.findById(consignmentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy ký gửi"));
         consignment.setApprovalStatus(ApprovalStatus.APPROVED);
+        consignment.setStatus(StatusConsign.VALID);
         consignmentRepository.save(consignment);
     }
 
@@ -275,9 +276,6 @@ public class ConsignmentService {
         Account account = accountUtils.getCurrentAccount();
         return consignmentRepository.findAllByAccountAndType(account, TypeOfConsign.CARE);
     }
-
-
-
 
     public Consignment extendConsignment(long consignmentId, LocalDate new_EndDate) {
         Consignment consignment = consignmentRepository.findById(consignmentId)
@@ -333,7 +331,7 @@ public class ConsignmentService {
     public ConsignmentDetails add(long id) {
         ConsignmentDetails consignmentDetails = consignmentDetailsRepository
                 .findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-        if (consignmentDetails.getQuantity() >= consignmentDetails.getConsignment().getOrderDetails().getQuantity()) {
+        if (consignmentDetails.getQuantity() >= consignmentDetails.getConsignment().getKoiOrder().getOrderDetails().iterator().next().getQuantity()) {
             throw new RuntimeException("Trong đơn hàng không đủ ");
         }
         consignmentDetails.setQuantity(consignmentDetails.getQuantity() + 1);
@@ -344,10 +342,11 @@ public class ConsignmentService {
         return consignmentDetails;
     }
 
+
     public ConsignmentDetails removeOneProduct(long id) {
         ConsignmentDetails consignmentDetails = consignmentDetailsRepository
                 .findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-        if (consignmentDetails.getQuantity() > consignmentDetails.getConsignment().getOrderDetails().getQuantity()) {
+        if (consignmentDetails.getQuantity() > consignmentDetails.getConsignment().getKoiOrder().getOrderDetails().iterator().next().getQuantity()) {
             throw new RuntimeException("Trong đơn hàng không đủ");
         }
         consignmentDetails.setQuantity(consignmentDetails.getQuantity() - 1);

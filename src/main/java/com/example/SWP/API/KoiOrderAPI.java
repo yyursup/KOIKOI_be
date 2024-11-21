@@ -76,6 +76,11 @@ public class KoiOrderAPI {
         return ResponseEntity.ok(koiOrderService.getConfirmedOrders());
     }
 
+    @GetMapping("confirm")
+    public ResponseEntity getConfirmOrders() {
+        return ResponseEntity.ok(koiOrderService.getConfirmOrders());
+    }
+
     @GetMapping("confirmed2")
     public ResponseEntity getConfirmedOrders2() {
         return ResponseEntity.ok(koiOrderService.getConfirmedOrders2());

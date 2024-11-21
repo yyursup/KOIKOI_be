@@ -2,6 +2,7 @@ package com.example.SWP.Service;
 
 import com.example.SWP.Enums.CancelOrderStatus;
 import com.example.SWP.Enums.OrderStatus;
+import com.example.SWP.Enums.StatusOrderDetails;
 import com.example.SWP.Enums.Type;
 import com.example.SWP.Repository.*;
 import com.example.SWP.entity.*;
@@ -108,7 +109,8 @@ public class KoiOrderService {
                         orderDetails.getName(),
                         orderDetails.getPrice(),
                         orderDetails.getQuantity(),
-                        orderDetails.getImage()))
+                        orderDetails.getImage(),
+                        orderDetails.getStatus()))
                 .collect(Collectors.toSet());
 
         return orderDetailsResponseSet;
@@ -140,7 +142,9 @@ public class KoiOrderService {
         koiOrder.setNote(consignment.getNote());
         koiOrder.setTotalAmount(consignment.getTotalAmount());
         koiOrder.setProcessingDate(new Date());
+        koiOrder.setConsignment(consignment);
         koiOrder.setType(Type.CONSIGN);
+
 
         koiOrder = orderRepository.save(koiOrder);
 
@@ -152,10 +156,12 @@ public class KoiOrderService {
             orderDetail.setPrice(consignmentDetails1.getPrice());
             orderDetail.setImage(consignmentDetails1.getImage());
             orderDetail.setKoi(consignmentDetails1.getKoi());
+            orderDetail.setStatus(StatusOrderDetails.CONSIGN);
+
 
             // Check if getOrderDetails() is null before accessing getKoi()
-            if (consignmentDetails1.getConsignment().getOrderDetails() != null) {
-                orderDetail.setKoi(consignmentDetails1.getConsignment().getOrderDetails().getKoi());
+            if (consignmentDetails1.getConsignment().getKoiOrder().getOrderDetails() != null) {
+                orderDetail.setKoi(consignmentDetails1.getConsignment().getKoiOrder().getOrderDetails().iterator().next().getKoi());
             } else {
                 // Handle the case where getOrderDetails() is null
                 System.out.println("Warning: OrderDetails is null for ConsignmentDetails with ID " + consignmentDetails1.getId());
@@ -195,6 +201,10 @@ public class KoiOrderService {
 
     public List<KoiOrder> getConfirmedOrders2() {
         return orderRepository.findByOrderStatusAndType(OrderStatus.CONFIRMED,Type.CONSIGN);
+    }
+
+    public List<KoiOrder> getConfirmOrders(){
+        return orderRepository.findByOrderStatus(OrderStatus.CONFIRMED);
     }
 
     public List<KoiOrder> getCancelList(){

@@ -1,5 +1,6 @@
 package com.example.SWP.model.response;
 
+import com.example.SWP.Enums.StatusOrderDetails;
 import lombok.*;
 
 @Data
@@ -13,4 +14,5 @@ public class OrderDetailsResponse {
     private double price;
     private int quantity;
     private String image;
+    private StatusOrderDetails status;
 }

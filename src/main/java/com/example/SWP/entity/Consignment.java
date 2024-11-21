@@ -1,78 +1,83 @@
-package com.example.SWP.entity;
+    package com.example.SWP.entity;
 
-import com.example.SWP.Enums.ApprovalStatus;
-import com.example.SWP.Enums.Author;
-import com.example.SWP.Enums.StatusConsign;
-import com.example.SWP.Enums.TypeOfConsign;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+    import com.example.SWP.Enums.ApprovalStatus;
+    import com.example.SWP.Enums.Author;
+    import com.example.SWP.Enums.StatusConsign;
+    import com.example.SWP.Enums.TypeOfConsign;
+    import com.fasterxml.jackson.annotation.JsonIgnore;
+    import jakarta.persistence.*;
+    import lombok.Getter;
+    import lombok.Setter;
 
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+    import java.time.LocalDate;
+    import java.util.HashSet;
+    import java.util.List;
+    import java.util.Set;
 
-@Entity
-@Getter
-@Setter
-public class Consignment {
+    @Entity
+    @Getter
+    @Setter
+    public class Consignment {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        long id;
 
-    LocalDate start_date;
+        LocalDate start_date;
 
-    LocalDate end_date;
+        LocalDate end_date;
 
-    String name;
+        String name;
 
-    String note;
+        String note;
 
-    double totalAmount;
+        double totalAmount;
 
-    String userName;
+        String userName;
 
-    @Column(columnDefinition = "TEXT")
-    String image;
+        @Column(columnDefinition = "TEXT")
+        String image;
 
-    String Category;
+        String Category;
 
-    double price;
+        double price;
 
-    Author author;
+        Author author;
 
-    String description;
+        String description;
 
-    int age;
+        int age;
 
-    String size;
+        String size;
 
-    String origin;
+        String origin;
 
-    int quantity;
+        int quantity;
 
-    ApprovalStatus approvalStatus;
+        ApprovalStatus approvalStatus;
 
-    @Enumerated(EnumType.STRING)
-    StatusConsign status;
+        @Enumerated(EnumType.STRING)
+        StatusConsign status;
 
 
-    @Enumerated(EnumType.STRING)
-    TypeOfConsign type;
+        @Enumerated(EnumType.STRING)
+        TypeOfConsign type;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-    @JsonIgnore
-    Account account;
+        @ManyToOne
+        @JoinColumn(name = "account_id")
+        @JsonIgnore
+        Account account;
 
-    @OneToMany(mappedBy = "consignment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    Set<ConsignmentDetails> consignmentDetailsSet = new HashSet<>();
+        @OneToMany(mappedBy = "consignment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+        Set<ConsignmentDetails> consignmentDetailsSet = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "order_details_id")
-    @JsonIgnore
-    OrderDetails orderDetails;
+        @ManyToOne
+        @JoinColumn(name = "koiOrder_id")
+        @JsonIgnore
+        KoiOrder koiOrder;
 
-}
+        @OneToMany(mappedBy = "consignment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+        @JsonIgnore
+        List<KoiOrder> koiOrders;
+
+    }

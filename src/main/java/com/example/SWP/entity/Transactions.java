@@ -23,10 +23,12 @@ public class Transactions {
     Date transactionsDate;
 
     String accountNumber;
+
     String accountName;
+
     String bankName;
 
-
+    String transactionIdVNPay;
 
     @Enumerated(EnumType.STRING)
     TransactionsEnum status;
@@ -42,7 +44,6 @@ public class Transactions {
     @JoinColumn(name = "to_id")
     @JsonIgnore
     Account to;
-
 
     @ManyToOne
     @JoinColumn(name = "payment_id")

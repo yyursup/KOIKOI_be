@@ -1,6 +1,7 @@
 package com.example.SWP.model.response;
 
 import com.example.SWP.Enums.Author;
+import com.example.SWP.entity.IdentificationCertificate;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -35,4 +36,7 @@ public class KoiResponse {
     String category;
 
     Author author;
+
+    IdentificationCertificate identificationCertificate;
+
 }

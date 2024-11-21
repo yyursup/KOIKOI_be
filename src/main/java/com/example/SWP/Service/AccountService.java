@@ -61,6 +61,7 @@ public class AccountService implements UserDetailsService {
     public RegisterResponse register(RegisterRequest registerRequest) {
         Account account = modelMapper.map(registerRequest, Account.class);
         account.setRole(Role.CUSTOMER);
+        account.setStatus("ACTIVE");
         try {
             String originpassword = account.getPassword();
             account.setPassword(passwordEncoder.encode(originpassword));
@@ -113,6 +114,15 @@ public class AccountService implements UserDetailsService {
         return accountList.stream().map(account ->
                 modelMapper.map(account, ViewProfileResponse.class)).collect(Collectors.toList());
     }
+
+    public List<ViewProfileResponse> getAllAccount1() {
+        List<Account> accountList = accountRepository.findAccountsByRole(Role.CUSTOMER);
+
+
+        return accountList.stream().map(account ->
+                modelMapper.map(account, ViewProfileResponse.class)).collect(Collectors.toList());
+    }
+
 
 
     public ViewProfileResponse viewProfile(){
@@ -169,6 +179,9 @@ public class AccountService implements UserDetailsService {
             Account user = accountRepository.findAccountByEmail(email);
             if(user == null) {
                 Account newUser = new Account();
+                Cart cart = new Cart();
+                cart.setAccount(newUser);
+                newUser.setCart(cart);
                 newUser.setFullName(decodeToken.getName());
                 newUser.setEmail(email);
                 newUser.setUsername(email);
@@ -183,10 +196,6 @@ public class AccountService implements UserDetailsService {
             accountResponse.setRole(user.getRole());
             accountResponse.setToken(tokenService.generateToken(user));
             return accountResponse;
-//            Optional<UserTeam> userTeam = user.getUserTeams().stream().findFirst();
-//            userTeam.ifPresent(team -> authenticationResponse.setTeamCode(team.getTeam().getCode()));
-//            authenticationResponse.setToken(jwtService.generateToken(user,UUID.randomUUID().toString(),false));
-//            return authenticationResponse;
         } catch (FirebaseAuthException e)
         {
             e.printStackTrace();

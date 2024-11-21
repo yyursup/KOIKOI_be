@@ -27,13 +27,6 @@ public class TransactionsAPI {
         return ResponseEntity.ok("SUCCESS");
     }
 
-    @PostMapping("transactions3")
-    public ResponseEntity create3(@RequestParam Long koiOrderId) throws Exception {
-
-        transactionsService.createTransactions3(koiOrderId);
-        return ResponseEntity.ok("SUCCESS");
-    }
-
     @PostMapping("transactionsCosign")
     public ResponseEntity createConsign(@RequestParam Long koiOrderId) throws Exception {
 
@@ -53,12 +46,6 @@ public class TransactionsAPI {
         return ResponseEntity.ok("SUCCESS");
     }
 
-    @PostMapping("extendConsign")
-    public ResponseEntity extendConsign(@RequestParam Long koiOrderId) throws Exception {
-
-        transactionsService.createTransactionForExtendConsign(koiOrderId);
-        return ResponseEntity.ok("SUCCESS");
-    }
     @PostMapping("cancelConsign")
     public ResponseEntity cancelConsign(@RequestParam Long koiOrderId) throws Exception {
         transactionsService.createTransactionForCancelConsign(koiOrderId);

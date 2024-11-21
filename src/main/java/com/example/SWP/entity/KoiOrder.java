@@ -52,12 +52,14 @@ public class KoiOrder {
     @Enumerated(EnumType.STRING)
     Type type;
 
+    String vnPayTxRef;
+
     @ManyToOne
     @JoinColumn(name = "AccountID")
     @JsonIgnore
     Account account;
 
-    @OneToMany(mappedBy = "koiOrder", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "koiOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     Set<OrderDetails> orderDetails = new HashSet<>();
 
@@ -68,5 +70,14 @@ public class KoiOrder {
     @OneToOne(mappedBy = "koiOrder")
     @JsonIgnore
     Payment payment;
+
+    @OneToMany(mappedBy = "koiOrder",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JsonIgnore
+    List<Shipping> shippingList;
+
+    @ManyToOne
+    @JoinColumn(name = "consignment_id")
+    @JsonIgnore
+    Consignment consignment;
 }
 

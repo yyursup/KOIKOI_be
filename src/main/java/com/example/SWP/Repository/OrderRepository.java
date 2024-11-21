@@ -1,6 +1,7 @@
 package com.example.SWP.Repository;
 
 import com.example.SWP.Enums.Type;
+import com.example.SWP.entity.Consignment;
 import com.example.SWP.entity.KoiOrder;
 import com.example.SWP.Enums.OrderStatus;
 import jakarta.persistence.criteria.Order;
@@ -25,5 +26,9 @@ public interface OrderRepository extends JpaRepository<KoiOrder, Long> {
     List<KoiOrder> findByOrderStatusAndType(OrderStatus status, Type type);
 
     List<KoiOrder> findKoiOrderByType(Type type);
+
+    KoiOrder findByVnPayTxRef(String id );
+
+
 
 }

@@ -2,6 +2,7 @@ package com.example.SWP.Repository;
 
 import com.example.SWP.Enums.Author;
 import com.example.SWP.entity.Account;
+import com.example.SWP.entity.IdentificationCertificate;
 import com.example.SWP.entity.Koi;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +19,9 @@ public interface KoiRepository extends JpaRepository<Koi, Long> {
 
     @Query("select sum(k.quantity) from Koi k")
     long getTotalFishCount();
+
+    @Query("SELECT k.identificationCertificate FROM Koi k WHERE k.id = :koiId")
+    IdentificationCertificate findCertificateByKoiId(long koiId);
 
 
 

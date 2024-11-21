@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class KoiRequest {
-    long id;
 
     @NotBlank(message = "This name can not be empty!")
     String name;

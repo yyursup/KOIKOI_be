@@ -1,15 +1,12 @@
-package com.example.SWP.entity;
+package com.example.SWP.model.response;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import lombok.Data;
 
 import java.util.Date;
-@Data
-@Entity
-public class IdentificationCertificate {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Data
+public class CertificateResponse {
     long id;
 
     String Name;
@@ -26,6 +23,4 @@ public class IdentificationCertificate {
 
     @Column(columnDefinition = "TEXT")
     String image;
-
-    boolean isDeleted = false;
 }
